@@ -22,16 +22,7 @@ function DraggableShip({
     : undefined;
   if (isHorizontal[shipType]) {
     return (
-      <div
-        onTouchEnd={() => {
-          setIsHorizontal((prev: any) => ({ ...prev, [shipType]: true }));
-          setShipOrientation((prev: any) => ({
-            ...prev,
-            [shipType]: "vertical",
-          }));
-        }}
-        className="flex gap-2 items-center"
-      >
+      <div className="flex gap-2 items-center">
         <div
           id={shipType}
           data-ship={shipType}
@@ -69,16 +60,7 @@ function DraggableShip({
     );
   } else {
     return (
-      <div
-        onTouchEnd={() => {
-          setIsHorizontal((prev: any) => ({ ...prev, [shipType]: true }));
-          setShipOrientation((prev: any) => ({
-            ...prev,
-            [shipType]: "vertical",
-          }));
-        }}
-        className="flex gap-2 items-center"
-      >
+      <div className="flex gap-2 items-center">
         <div
           id={shipType}
           data-ship={shipType}

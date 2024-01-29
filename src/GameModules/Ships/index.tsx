@@ -14,7 +14,6 @@ function DraggableShip({
       length,
     },
   });
-  console.log(active);
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -22,7 +21,7 @@ function DraggableShip({
     : undefined;
   if (isHorizontal[shipType]) {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center p-1">
         <div
           id={shipType}
           data-ship={shipType}
@@ -83,7 +82,6 @@ function DraggableShip({
         !playerShipsCoordinates[shipType]?.length ? (
           <button
             onClick={() => {
-              console.log("sad");
               setIsHorizontal((prev: any) => ({ ...prev, [shipType]: true }));
               setShipOrientation((prev: any) => ({
                 ...prev,

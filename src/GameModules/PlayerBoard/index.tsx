@@ -46,7 +46,7 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`flex flex-col max-w-[300px] gap-5 my-5`}>
+        <div className={`flex flex-wrap max-w-[300px] gap-1 my-5`}>
           <DraggableShip
             isHorizontal={isHorizontal}
             playerShipsCoordinates={props.playerShipsCoordinates}

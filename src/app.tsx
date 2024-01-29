@@ -51,7 +51,7 @@ function App() {
     let topDistance, leftDistance;
     if (shipsOreintation[ship] === "horizontal") {
       topDistance = `${Math.floor(start / 10) * 30 + 5}px`;
-      leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 30 + 5}px`;
+      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 30 + 5}px`;
       return { topDistance, leftDistance };
     }
     topDistance = `${Math.floor(start / 10) * 30 + 5}px`;
@@ -108,9 +108,13 @@ function App() {
     if (collisions.length === active.data.current.length + 1) {
       sortedCollisions.pop();
     }
-    if (collisions.length < active.data.current.length) {
+    if (
+      collisions.length < active.data.current.length ||
+      collisions.length > active.data.current.length
+    ) {
       return false;
     }
+
     const draggedElement = document.getElementById(active.id);
     let shipStartIndex, shipEndIndex, ifCollision;
     if (draggedElement) {
@@ -118,6 +122,7 @@ function App() {
       shipEndIndex = sortedCollisions[sortedCollisions.length - 1].id;
       ifCollision = checkIfShipCollision(sortedCollisions, active.id);
       if (ifCollision) {
+        alert("122");
         return false;
       }
       setPlayerShipsCoordinates((prev: any) => ({
@@ -144,7 +149,7 @@ function App() {
     >
       <main className="container-fluid bg-black text-white p-3">
         <section className="container mx-auto">
-          <h1 className="text-4xl text-center my-20">Sea Battle</h1>
+          <h1 className="text-4xl text-center my-5">Sea Battle</h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 items-start">
             <PlayerBoard

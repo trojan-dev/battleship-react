@@ -1,4 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
+import Flame from "../../assets/Flame/Flame";
 const SHIPS = [
   {
     shipType: "BATTLESHIP",
@@ -130,13 +131,15 @@ function OpponentBoard(props: any) {
     }
   }, [sankShips]);
 
+  console.log(shipCoordinatesArr, currentHitShip);
+
   return (
     <div className="relative h-full flex flex-col">
       <div
         style={{ cursor: "url(./assets/weapon.png), auto" }}
         className={`${
           !props.startGame ? "opacity-40" : ""
-        } grid grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
+        } grid gap-2 grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
@@ -148,7 +151,7 @@ function OpponentBoard(props: any) {
             {cellStatus[block] && !allPlacedCoordinates.includes(block) ? (
               "X"
             ) : cellStatus[block] && allPlacedCoordinates.includes(block) ? (
-              <div className="w-3 h-3 rounded-full bg-red-600"></div>
+              <Flame />
             ) : (
               ""
             )}

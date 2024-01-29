@@ -2,18 +2,18 @@ import { useDraggable } from "@dnd-kit/core";
 import RotateIcon from "../../assets/RotateIcon";
 
 const SHIP_DIMENSIONS_HORIZONTAL: any = {
-  CARRIER: "w-[150px] ship",
-  BATTLESHIP: "w-[120px] ship",
-  CRUISER: "w-[90px] ship",
-  DESTROYER: "w-[90px] ship",
-  SUBMARINE: "w-[60px] submarine",
+  CARRIER: "w-[195px] ship",
+  BATTLESHIP: "w-[150px] ship",
+  CRUISER: "w-[120px] ship",
+  DESTROYER: "w-[120px] ship",
+  SUBMARINE: "w-[75px] submarine",
 };
 const SHIP_DIMENSIONS_VERTICAL: any = {
-  CARRIER: "h-[150px] vertical-ship",
-  BATTLESHIP: "h-[125px] vertical-ship",
-  CRUISER: "h-[95px] vertical-ship",
-  DESTROYER: "h-[95px] vertical-ship",
-  SUBMARINE: "h-[60px] submarine",
+  CARRIER: "h-[195px] vertical-ship",
+  BATTLESHIP: "h-[150px] vertical-ship",
+  CRUISER: "h-[120px] vertical-ship",
+  DESTROYER: "h-[120px] vertical-ship",
+  SUBMARINE: "h-[75px] submarine",
 };
 
 function ShipComponent({

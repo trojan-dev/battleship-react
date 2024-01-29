@@ -69,12 +69,12 @@ function App() {
   const calculateCellDistance = (start: any, ship: any) => {
     let topDistance, leftDistance;
     if (shipsOreintation[ship] === "horizontal") {
-      topDistance = `${Math.floor(start / 10) * 30 + 4}px`;
-      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 30 + 3}px`;
+      topDistance = `${Math.floor(start / 10) * 43 + 5}px`;
+      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 43 + 5}px`;
       return { topDistance, leftDistance };
     }
-    topDistance = `${Math.floor(start / 10) * 30 + 4}px`;
-    leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 30 + 5}px`;
+    topDistance = `${Math.floor(start / 10) * 43 + 5}px`;
+    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 43 + 5}px`;
     return { topDistance, leftDistance };
   };
 
@@ -212,7 +212,7 @@ function App() {
             </div> */}
           </div>
 
-          <div className="grid gap-2 grid-cols-1 lg:grid-cols-3">
+          <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}

@@ -66,14 +66,6 @@ function App() {
     computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady, opponentReady]);
 
-  useEffect(() => {
-    if (playerReady) {
-      document.body.style.overflowY = "scroll";
-    } else {
-      document.body.style.overflowY = "hidden";
-    }
-  }, [playerReady]);
-
   const calculateCellDistance = (start: any, ship: any) => {
     let topDistance, leftDistance;
     if (shipsOreintation[ship] === "horizontal") {

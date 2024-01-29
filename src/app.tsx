@@ -50,12 +50,12 @@ function App() {
   const calculateCellDistance = (start: any, ship: any) => {
     let topDistance, leftDistance;
     if (shipsOreintation[ship] === "horizontal") {
-      topDistance = `${Math.floor(start / 10) * 30 + 5}px`;
-      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 30 + 5}px`;
+      topDistance = `${Math.floor(start / 10) * 35 + 5}px`;
+      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 35 + 3}px`;
       return { topDistance, leftDistance };
     }
-    topDistance = `${Math.floor(start / 10) * 30 + 5}px`;
-    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 30 + 5}px`;
+    topDistance = `${Math.floor(start / 10) * 35 + 5}px`;
+    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 35 + 3}px`;
     return { topDistance, leftDistance };
   };
 

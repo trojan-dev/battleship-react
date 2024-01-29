@@ -28,14 +28,14 @@ function DraggableShip({
           data-ship={shipType}
           className={`border p-2 rounded-md bg-red-100 cursor-move  ${
             shipType === "BATTLESHIP"
-              ? "w-[145px]"
+              ? "w-[155px]"
               : shipType === "CARRIER"
-              ? "w-[115px]"
+              ? "w-[125px]"
               : shipType === "CRUISER"
-              ? "w-[85px]"
+              ? "w-[95px]"
               : shipType === "DESTROYER"
-              ? "w-[85px]"
-              : "w-[55px]"
+              ? "w-[95px]"
+              : "w-[65px]"
           }`}
           ref={setNodeRef}
           style={style}
@@ -66,14 +66,14 @@ function DraggableShip({
           data-ship={shipType}
           className={`cursor-move border p-2 rounded-md bg-red-100 ${
             shipType === "BATTLESHIP"
-              ? "h-[145px]"
+              ? "h-[155px]"
               : shipType === "CARRIER"
-              ? "h-[115px]"
+              ? "h-[125px]"
               : shipType === "CRUISER"
-              ? "h-[85px]"
+              ? "h-[95px]"
               : shipType === "DESTROYER"
-              ? "h-[85px]"
-              : "h-[55px]"
+              ? "h-[95px]"
+              : "h-[65px]"
           }`}
           ref={setNodeRef}
           style={style}

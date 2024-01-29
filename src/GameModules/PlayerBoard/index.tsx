@@ -35,7 +35,7 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="flex flex-col relative">
-      <div className="grid grid-cols-[repeat(10,30px)] auto-rows-[30px] relative">
+      <div className="grid grid-cols-[repeat(10,30px)] gap-[5px] auto-rows-[30px] relative">
         {[...Array(100).keys()].map((cell) => (
           <DroppableCell
             cellStatus={props.cellStatus}
@@ -104,7 +104,7 @@ function DroppableCell({
   return (
     <div
       ref={setNodeRef}
-      className="border border-white flex justify-center items-center relative z-2 p-2"
+      className="border rounded-sm border-white flex justify-center items-center relative z-2"
     >
       {cellStatus[id] && !placedShips.includes(id) ? (
         "X"

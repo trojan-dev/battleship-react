@@ -11,6 +11,18 @@ main {
   letter-spacing: 0.05rem;
 }
 
+body {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 1) 40%,
+    rgba(191, 191, 191, 1) 100%
+  );
+}
+
 div[data-ship] {
   touch-action: none;
+}
+
+svg {
+  fill: white;
 }

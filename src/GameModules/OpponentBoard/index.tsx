@@ -131,7 +131,7 @@ function OpponentBoard(props: any) {
   }, [sankShips]);
 
   return (
-    <div className="relative h-full m-auto flex flex-col">
+    <div className="relative h-full flex flex-col">
       <div
         className={`${
           !props.startGame ? "opacity-40" : ""
@@ -140,7 +140,7 @@ function OpponentBoard(props: any) {
         {[...Array(100).keys()].map((block: number | any) => (
           <div
             onClick={() => fireMissle(block)}
-            className={`border p-1 flex justify-center items-center ${
+            className={`border border-red-300 p-1 flex justify-center items-center ${
               props.opponentReady ? "pointer-events-none" : ""
             }`}
           >

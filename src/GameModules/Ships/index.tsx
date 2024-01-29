@@ -1,4 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
+import RotateIcon from "../../assets/RotateIcon";
 
 function DraggableShip({
   ship,
@@ -21,7 +22,7 @@ function DraggableShip({
     : undefined;
   if (isHorizontal[shipType]) {
     return (
-      <div className="flex items-center p-1">
+      <div className="flex items-center p-1 gap-1">
         <div
           id={shipType}
           data-ship={shipType}
@@ -52,14 +53,14 @@ function DraggableShip({
               }));
             }}
           >
-            Rotate
+            <RotateIcon />
           </button>
         ) : null}
       </div>
     );
   } else {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center gap-1">
         <div
           id={shipType}
           data-ship={shipType}
@@ -89,7 +90,7 @@ function DraggableShip({
               }));
             }}
           >
-            Rotate
+            <RotateIcon />
           </button>
         ) : null}
       </div>

@@ -34,57 +34,55 @@ function PlayerBoard(props: any) {
     SUBMARINE: true,
   });
   return (
-    <>
-      <div className="relative m-auto flex flex-col">
-        <div className="grid grid-cols-[repeat(10,30px)] auto-rows-[30px] relative">
-          {[...Array(100).keys()].map((cell) => (
-            <DroppableCell
-              cellStatus={props.cellStatus}
-              placedShips={props.placedShips}
-              playerShipsCoordinates={props.playerShipsCoordinates}
-              id={cell}
-            />
-          ))}
-        </div>
-        <div className={`flex flex-wrap max-w-[300px] gap-1 my-5`}>
-          <DraggableShip
-            isHorizontal={isHorizontal}
+    <div className="flex flex-col relative">
+      <div className="grid grid-cols-[repeat(10,30px)] auto-rows-[30px] relative">
+        {[...Array(100).keys()].map((cell) => (
+          <DroppableCell
+            cellStatus={props.cellStatus}
+            placedShips={props.placedShips}
             playerShipsCoordinates={props.playerShipsCoordinates}
-            setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={setIsHorizontal}
-            ship={SHIPS[0]}
+            id={cell}
           />
-          <DraggableShip
-            isHorizontal={isHorizontal}
-            playerShipsCoordinates={props.playerShipsCoordinates}
-            setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={setIsHorizontal}
-            ship={SHIPS[1]}
-          />
-          <DraggableShip
-            isHorizontal={isHorizontal}
-            playerShipsCoordinates={props.playerShipsCoordinates}
-            setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={setIsHorizontal}
-            ship={SHIPS[2]}
-          />
-          <DraggableShip
-            isHorizontal={isHorizontal}
-            playerShipsCoordinates={props.playerShipsCoordinates}
-            setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={setIsHorizontal}
-            ship={SHIPS[3]}
-          />
-          <DraggableShip
-            isHorizontal={isHorizontal}
-            playerShipsCoordinates={props.playerShipsCoordinates}
-            setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={setIsHorizontal}
-            ship={SHIPS[4]}
-          />
-        </div>
+        ))}
       </div>
-    </>
+      <div className={`flex flex-col max-w-[300px] gap-1 my-5`}>
+        <DraggableShip
+          isHorizontal={isHorizontal}
+          playerShipsCoordinates={props.playerShipsCoordinates}
+          setShipOrientation={props.setShipOrientation}
+          setIsHorizontal={setIsHorizontal}
+          ship={SHIPS[0]}
+        />
+        <DraggableShip
+          isHorizontal={isHorizontal}
+          playerShipsCoordinates={props.playerShipsCoordinates}
+          setShipOrientation={props.setShipOrientation}
+          setIsHorizontal={setIsHorizontal}
+          ship={SHIPS[1]}
+        />
+        <DraggableShip
+          isHorizontal={isHorizontal}
+          playerShipsCoordinates={props.playerShipsCoordinates}
+          setShipOrientation={props.setShipOrientation}
+          setIsHorizontal={setIsHorizontal}
+          ship={SHIPS[2]}
+        />
+        <DraggableShip
+          isHorizontal={isHorizontal}
+          playerShipsCoordinates={props.playerShipsCoordinates}
+          setShipOrientation={props.setShipOrientation}
+          setIsHorizontal={setIsHorizontal}
+          ship={SHIPS[3]}
+        />
+        <DraggableShip
+          isHorizontal={isHorizontal}
+          playerShipsCoordinates={props.playerShipsCoordinates}
+          setShipOrientation={props.setShipOrientation}
+          setIsHorizontal={setIsHorizontal}
+          ship={SHIPS[4]}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -106,7 +104,7 @@ function DroppableCell({
   return (
     <div
       ref={setNodeRef}
-      className="border border-white flex justify-center items-center relative z-2"
+      className="border border-white flex justify-center items-center relative z-2 p-2"
     >
       {cellStatus[id] && !placedShips.includes(id) ? (
         "X"

@@ -147,11 +147,17 @@ function App() {
       collisionDetection={rectIntersection}
       onDragEnd={handleShipDrop}
     >
-      <main className="container-fluid bg-black text-white p-3">
+      <main className="container-fluid text-white p-3">
         <section className="container mx-auto">
-          <h1 className="text-4xl text-center my-5">Sea Battle</h1>
+          <div className="my-5">
+            <h1 className="text-4xl ">Deploy your ships</h1>
+            <h2 className="text-white opacity-60">
+              drag to move and tap the rotate button to rotate.
+            </h2>
+            <p>after placing the ships, begin the assault!</p>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}

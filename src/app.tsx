@@ -14,7 +14,6 @@ function App() {
     DESTROYER: [],
     SUBMARINE: [],
   });
-  console.log(playerShipsCoordinates);
   const [shipsOreintation, setShipOrientation] = useState<any>({
     BATTLESHIP: "horizontal",
     CARRIER: "horizontal",
@@ -27,6 +26,12 @@ function App() {
     [...Array(100).keys()].map((cell) => false)
   );
 
+  function checkIfPlayerShipSank(ship: any) {
+    if (!playerShipsCoordinates[ship].length) {
+      alert(`Opponent sank your ${ship}`);
+    }
+  }
+
   useEffect(() => {
     function checkIfPlayerIsReady() {
       if (placedCoordinates.length >= 16) {
@@ -38,8 +43,22 @@ function App() {
 
   useEffect(() => {
     function computerFiresMissle(cell: number) {
+      const playerCoordinates = { ...playerShipsCoordinates };
       if (!playerReady && opponentReady) {
         setCellStatus((prev) => ({ ...prev, [cell]: true }));
+        if (placedCoordinates.includes(cell)) {
+          for (let ship in playerCoordinates) {
+            if (playerCoordinates[ship].includes(cell)) {
+              alert(`Opponent hit your ${ship}`);
+              let idx = playerCoordinates[ship].findIndex(
+                (el: any) => el === cell
+              );
+              playerCoordinates[ship].splice(idx, 1);
+              setPlayerShipsCoordinates(playerCoordinates);
+              checkIfPlayerShipSank(ship);
+            }
+          }
+        }
         setOpponentReady(false);
         setPlayerReady(true);
       }

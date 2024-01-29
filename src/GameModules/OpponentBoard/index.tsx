@@ -133,14 +133,15 @@ function OpponentBoard(props: any) {
   return (
     <div className="relative h-full flex flex-col">
       <div
+        style={{ cursor: "url(./assets/weapon.png), auto" }}
         className={`${
           !props.startGame ? "opacity-40" : ""
-        } grid grid-cols-[repeat(10,30px)] auto-rows-[30px] max-w-fit relative`}
+        } grid gap-[5px] grid-cols-[repeat(10,30px)] auto-rows-[30px] max-w-fit relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
             onClick={() => fireMissle(block)}
-            className={`border border-red-300 p-1 flex justify-center items-center ${
+            className={`border border-red-300 rounded-sm p-1 flex justify-center items-center ${
               props.opponentReady ? "pointer-events-none" : ""
             }`}
           >

@@ -7,7 +7,6 @@ function App() {
   const [playerReady, setPlayerReady] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
   const [startGame, setStartGame] = useState(false);
-  const [isHorizontal] = useState<boolean>(true);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
     BATTLESHIP: [],
     CARRIER: [],
@@ -16,6 +15,13 @@ function App() {
     SUBMARINE: [],
   });
   console.log(playerShipsCoordinates);
+  const [shipsOreintation, setShipOrientation] = useState<any>({
+    BATTLESHIP: "horizontal",
+    CARRIER: "horizontal",
+    CRUISER: "horizontal",
+    DESTROYER: "horizontal",
+    SUBMARINE: "horizontal",
+  });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [cellStatus, setCellStatus] = useState(
     [...Array(100).keys()].map((cell) => false)
@@ -33,32 +39,71 @@ function App() {
   useEffect(() => {
     function computerFiresMissle(cell: number) {
       if (!playerReady && opponentReady) {
-        setTimeout(() => {
-          setCellStatus((prev) => ({ ...prev, [cell]: true }));
-          setOpponentReady(false);
-          setPlayerReady(true);
-        }, 1200);
+        setCellStatus((prev) => ({ ...prev, [cell]: true }));
+        setOpponentReady(false);
+        setPlayerReady(true);
       }
     }
     computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady, opponentReady]);
 
-  const calculateCellDistance = (start: any, isHorizontal: any) => {
+  const calculateCellDistance = (start: any, ship: any) => {
     let topDistance, leftDistance;
-    if (isHorizontal) {
+    if (shipsOreintation[ship] === "horizontal") {
       topDistance = `${Math.floor(start / 10) * 30 + 5}px`;
-      leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 30 + 2}px`;
+      leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 30 + 5}px`;
       return { topDistance, leftDistance };
     }
-    topDistance = `${Math.floor(start / 10) * 30 + 2}px`;
+    topDistance = `${Math.floor(start / 10) * 30 + 5}px`;
     leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 30 + 5}px`;
     return { topDistance, leftDistance };
   };
 
+  const checkIfShipCollision = (
+    currentShipBlocks: Array<any>,
+    currentShip: any
+  ) => {
+    const mutatedSortedCollisionsArray = currentShipBlocks.map((el) => el.id);
+
+    // Condition for a ship that is already dragged;
+    if (playerShipsCoordinates[currentShip].length > 0) {
+      if (
+        playerShipsCoordinates[currentShip].every((el: any) =>
+          currentShipBlocks.includes(el)
+        )
+      ) {
+        return true;
+      } else {
+        // Condition for a dragged ship that can be moved across the board
+        for (let ship in playerShipsCoordinates) {
+          if (
+            ship !== currentShip &&
+            playerShipsCoordinates[ship].some((el: any) =>
+              mutatedSortedCollisionsArray.includes(el)
+            )
+          ) {
+            return true;
+          }
+        }
+        return false;
+      }
+    } else {
+      // Condition for a new ship that hasnt been dragged yet.
+      for (let ship in playerShipsCoordinates) {
+        if (
+          playerShipsCoordinates[ship].some((el: any) =>
+            mutatedSortedCollisionsArray.includes(el)
+          )
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
   const handleShipDrop = (event: any) => {
     const { active, collisions } = event;
-    console.log(event);
-
     const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
     if (collisions.length === active.data.current.length + 1) {
       sortedCollisions.pop();
@@ -67,15 +112,12 @@ function App() {
       return false;
     }
     const draggedElement = document.getElementById(active.id);
-    let shipStartIndex, shipEndIndex;
+    let shipStartIndex, shipEndIndex, ifCollision;
     if (draggedElement) {
       shipStartIndex = sortedCollisions[0].id;
       shipEndIndex = sortedCollisions[sortedCollisions.length - 1].id;
-
-      if (
-        placedCoordinates.includes(shipStartIndex) ||
-        placedCoordinates.includes(shipEndIndex)
-      ) {
+      ifCollision = checkIfShipCollision(sortedCollisions, active.id);
+      if (ifCollision) {
         return false;
       }
       setPlayerShipsCoordinates((prev: any) => ({
@@ -87,15 +129,10 @@ function App() {
         ...sortedCollisions.map((el: any) => el.id),
       ]);
       draggedElement.style.position = "absolute";
-      let coordinates = calculateCellDistance(shipStartIndex, isHorizontal);
+      let coordinates = calculateCellDistance(shipStartIndex, active.id);
       if (coordinates) {
-        if (isHorizontal) {
-          draggedElement.style.top = coordinates.topDistance;
-          draggedElement.style.left = coordinates.leftDistance;
-        } else {
-          draggedElement.style.top = coordinates.topDistance;
-          draggedElement.style.left = coordinates.leftDistance;
-        }
+        draggedElement.style.top = coordinates.topDistance;
+        draggedElement.style.left = coordinates.leftDistance;
       }
     }
   };
@@ -107,22 +144,13 @@ function App() {
     >
       <main className="container-fluid bg-black text-white p-3">
         <section className="container mx-auto">
-          <h1 className="text-4xl text-center my-3">Sea Battle</h1>
-          {!startGame ? (
-            <div className="flex justify-center my-2">
-              <button
-                className="border p-2 rounded-md"
-                disabled={!playerReady}
-                onClick={() => setStartGame(true)}
-              >
-                Play
-              </button>
-            </div>
-          ) : null}
-          <div className="grid gap-1 grid-cols-1">
+          <h1 className="text-4xl text-center my-20">Sea Battle</h1>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 items-start">
             <PlayerBoard
               placedShips={placedCoordinates}
-              isHorizontal={isHorizontal}
+              playerShipsCoordinates={playerShipsCoordinates}
+              setShipOrientation={setShipOrientation}
               cellStatus={cellStatus}
               setPlayerReady={setPlayerReady}
               setOpponentReady={setOpponentReady}
@@ -136,6 +164,17 @@ function App() {
               opponentReady={opponentReady}
             />
           </div>
+          {!startGame ? (
+            <div className="flex justify-center my-2">
+              <button
+                className="border basis-3/12 p-2 rounded-md"
+                disabled={!playerReady}
+                onClick={() => setStartGame(true)}
+              >
+                Play
+              </button>
+            </div>
+          ) : null}
         </section>
       </main>
     </DndContext>

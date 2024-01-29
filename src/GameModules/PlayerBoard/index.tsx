@@ -1,3 +1,4 @@
+import { useState, useEffect } from "preact/hooks";
 import { useDroppable } from "@dnd-kit/core";
 import DraggableShip from "../Ships";
 
@@ -16,7 +17,7 @@ const SHIPS = [
   },
   {
     shipType: "DESTROYER",
-    length: 2,
+    length: 3,
   },
   {
     shipType: "SUBMARINE",
@@ -24,18 +25,84 @@ const SHIPS = [
   },
 ];
 
+function PlayerBoard(props: any) {
+  const [isHorizontal, setIsHorizontal] = useState({
+    BATTLESHIP: true,
+    CARRIER: true,
+    CRUISER: true,
+    DESTROYER: true,
+    SUBMARINE: true,
+  });
+  return (
+    <>
+      <div className="relative m-auto flex flex-col">
+        <div className="grid grid-cols-[repeat(10,30px)] auto-rows-[30px] relative">
+          {[...Array(100).keys()].map((cell) => (
+            <DroppableCell
+              cellStatus={props.cellStatus}
+              placedShips={props.placedShips}
+              playerShipsCoordinates={props.playerShipsCoordinates}
+              id={cell}
+            />
+          ))}
+        </div>
+        <div className={`flex flex-col max-w-[300px] gap-5 my-5`}>
+          <DraggableShip
+            isHorizontal={isHorizontal}
+            playerShipsCoordinates={props.playerShipsCoordinates}
+            setShipOrientation={props.setShipOrientation}
+            setIsHorizontal={setIsHorizontal}
+            ship={SHIPS[0]}
+          />
+          <DraggableShip
+            isHorizontal={isHorizontal}
+            playerShipsCoordinates={props.playerShipsCoordinates}
+            setShipOrientation={props.setShipOrientation}
+            setIsHorizontal={setIsHorizontal}
+            ship={SHIPS[1]}
+          />
+          <DraggableShip
+            isHorizontal={isHorizontal}
+            playerShipsCoordinates={props.playerShipsCoordinates}
+            setShipOrientation={props.setShipOrientation}
+            setIsHorizontal={setIsHorizontal}
+            ship={SHIPS[2]}
+          />
+          <DraggableShip
+            isHorizontal={isHorizontal}
+            playerShipsCoordinates={props.playerShipsCoordinates}
+            setShipOrientation={props.setShipOrientation}
+            setIsHorizontal={setIsHorizontal}
+            ship={SHIPS[3]}
+          />
+          <DraggableShip
+            isHorizontal={isHorizontal}
+            playerShipsCoordinates={props.playerShipsCoordinates}
+            setShipOrientation={props.setShipOrientation}
+            setIsHorizontal={setIsHorizontal}
+            ship={SHIPS[4]}
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
 function DroppableCell({
   id,
   placedShips,
   cellStatus,
+  playerShipsCoordinates,
 }: {
   id: number;
   placedShips: any;
   cellStatus: any;
+  playerShipsCoordinates: any;
 }) {
   const { setNodeRef } = useDroppable({
     id,
   });
+
   return (
     <div
       ref={setNodeRef}
@@ -44,37 +111,11 @@ function DroppableCell({
       {cellStatus[id] && !placedShips.includes(id) ? (
         "X"
       ) : cellStatus[id] && placedShips.includes(id) ? (
-        <div className="w-5 h-5 rounded-full bg-red-600 relative z-10"></div>
+        <div className="w-3 h-3 rounded-full bg-red-600 relative z-10"></div>
       ) : (
         ""
       )}
     </div>
-  );
-}
-
-function PlayerBoard(props: any) {
-  return (
-    <>
-      <h2 className="text-center">Player</h2>
-      <div className="relative m-auto flex flex-col">
-        <div className="grid grid-cols-[repeat(10,30px)] auto-rows-[30px] relative">
-          {[...Array(100).keys()].map((cell) => (
-            <DroppableCell
-              cellStatus={props.cellStatus}
-              placedShips={props.placedShips}
-              id={cell}
-            />
-          ))}
-        </div>
-        <div className={`flex flex-wrap max-w-[300px] gap-1 my-5`}>
-          <DraggableShip isHorizontal={props.isHorizontal} ship={SHIPS[0]} />
-          <DraggableShip isHorizontal={props.isHorizontal} ship={SHIPS[1]} />
-          <DraggableShip isHorizontal={props.isHorizontal} ship={SHIPS[2]} />
-          <DraggableShip isHorizontal={props.isHorizontal} ship={SHIPS[3]} />
-          <DraggableShip isHorizontal={props.isHorizontal} ship={SHIPS[4]} />
-        </div>
-      </div>
-    </>
   );
 }
 

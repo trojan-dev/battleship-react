@@ -1,7 +1,22 @@
 import { useDraggable } from "@dnd-kit/core";
 import RotateIcon from "../../assets/RotateIcon";
 
-function DraggableShip({
+const SHIP_DIMENSIONS_HORIZONTAL: any = {
+  CARRIER: "w-[150px] ship",
+  BATTLESHIP: "w-[120px] ship",
+  CRUISER: "w-[90px] ship",
+  DESTROYER: "w-[90px] ship",
+  SUBMARINE: "w-[60px] submarine",
+};
+const SHIP_DIMENSIONS_VERTICAL: any = {
+  CARRIER: "h-[150px] vertical-ship",
+  BATTLESHIP: "h-[125px] vertical-ship",
+  CRUISER: "h-[95px] vertical-ship",
+  DESTROYER: "h-[95px] vertical-ship",
+  SUBMARINE: "h-[60px] submarine",
+};
+
+function ShipComponent({
   ship,
   playerShipsCoordinates,
   setShipOrientation,
@@ -20,32 +35,24 @@ function DraggableShip({
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
     : undefined;
+
   if (isHorizontal[shipType]) {
     return (
       <div className="flex items-center p-1 gap-1">
         <div
           id={shipType}
-          data-ship={shipType}
-          className={`border p-2 rounded-md bg-red-100 cursor-move  ${
-            shipType === "BATTLESHIP"
-              ? "w-[155px]"
-              : shipType === "CARRIER"
-              ? "w-[125px]"
-              : shipType === "CRUISER"
-              ? "w-[95px]"
-              : shipType === "DESTROYER"
-              ? "w-[95px]"
-              : "w-[65px]"
-          }`}
           ref={setNodeRef}
           style={style}
           {...listeners}
-        ></div>
+          data-ship={shipType}
+          className={`border p-1 rounded-md cursor-move  ${SHIP_DIMENSIONS_HORIZONTAL[shipType]}`}
+        >
+          <div className="bg-white w-[85%] rounded-lg h-[12px]"></div>
+        </div>
         {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button
             onClick={() => {
-              console.log("sad");
               setIsHorizontal((prev: any) => ({ ...prev, [shipType]: false }));
               setShipOrientation((prev: any) => ({
                 ...prev,
@@ -64,21 +71,13 @@ function DraggableShip({
         <div
           id={shipType}
           data-ship={shipType}
-          className={`cursor-move border p-2 rounded-md bg-red-100 ${
-            shipType === "BATTLESHIP"
-              ? "h-[155px]"
-              : shipType === "CARRIER"
-              ? "h-[125px]"
-              : shipType === "CRUISER"
-              ? "h-[95px]"
-              : shipType === "DESTROYER"
-              ? "h-[95px]"
-              : "h-[65px]"
-          }`}
+          className={`cursor-move border p-1 rounded-md ${SHIP_DIMENSIONS_VERTICAL[shipType]}`}
           ref={setNodeRef}
           style={style}
           {...listeners}
-        ></div>
+        >
+          <div className="bg-white h-[80%] rounded-lg w-[12px]"></div>
+        </div>
         {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button
@@ -86,7 +85,7 @@ function DraggableShip({
               setIsHorizontal((prev: any) => ({ ...prev, [shipType]: true }));
               setShipOrientation((prev: any) => ({
                 ...prev,
-                [shipType]: "vertical",
+                [shipType]: "horizontal",
               }));
             }}
           >
@@ -97,4 +96,4 @@ function DraggableShip({
     );
   }
 }
-export default DraggableShip;
+export default ShipComponent;

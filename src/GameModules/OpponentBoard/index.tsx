@@ -136,7 +136,7 @@ function OpponentBoard(props: any) {
         style={{ cursor: "url(./assets/weapon.png), auto" }}
         className={`${
           !props.startGame ? "opacity-40" : ""
-        } grid gap-[5px] grid-cols-[repeat(10,30px)] auto-rows-[30px] max-w-fit relative`}
+        } grid grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div

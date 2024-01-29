@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
-import PlayerBoard from "./GameModules/PlayerBoard";
+import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/OpponentBoard";
 
 function App() {
@@ -66,15 +66,23 @@ function App() {
     computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady, opponentReady]);
 
+  useEffect(() => {
+    if (playerReady) {
+      document.body.style.overflowY = "scroll";
+    } else {
+      document.body.style.overflowY = "hidden";
+    }
+  }, [playerReady]);
+
   const calculateCellDistance = (start: any, ship: any) => {
     let topDistance, leftDistance;
     if (shipsOreintation[ship] === "horizontal") {
-      topDistance = `${Math.floor(start / 10) * 35 + 5}px`;
-      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 35 + 3}px`;
+      topDistance = `${Math.floor(start / 10) * 30 + 4}px`;
+      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 30 + 3}px`;
       return { topDistance, leftDistance };
     }
-    topDistance = `${Math.floor(start / 10) * 35 + 5}px`;
-    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 35 + 3}px`;
+    topDistance = `${Math.floor(start / 10) * 30 + 4}px`;
+    leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 30 + 5}px`;
     return { topDistance, leftDistance };
   };
 
@@ -123,40 +131,41 @@ function App() {
 
   const handleShipDrop = (event: any) => {
     const { active, collisions } = event;
-    const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
-    if (collisions.length === active.data.current.length + 1) {
-      sortedCollisions.pop();
-    }
-    if (
-      collisions.length < active.data.current.length ||
-      collisions.length > active.data.current.length
-    ) {
-      return false;
-    }
-
-    const draggedElement = document.getElementById(active.id);
-    let shipStartIndex, shipEndIndex, ifCollision;
-    if (draggedElement) {
-      shipStartIndex = sortedCollisions[0].id;
-      shipEndIndex = sortedCollisions[sortedCollisions.length - 1].id;
-      ifCollision = checkIfShipCollision(sortedCollisions, active.id);
-      if (ifCollision) {
-        alert("122");
+    if (collisions) {
+      const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
+      if (collisions.length === active.data.current.length + 1) {
+        sortedCollisions.pop();
+      }
+      if (
+        collisions.length < active.data.current.length ||
+        collisions.length > active.data.current.length
+      ) {
         return false;
       }
-      setPlayerShipsCoordinates((prev: any) => ({
-        ...prev,
-        [active.id]: [...sortedCollisions.map((el: any) => el.id)],
-      }));
-      setPlacedCoordinates((prev: any) => [
-        ...prev,
-        ...sortedCollisions.map((el: any) => el.id),
-      ]);
-      draggedElement.style.position = "absolute";
-      let coordinates = calculateCellDistance(shipStartIndex, active.id);
-      if (coordinates) {
-        draggedElement.style.top = coordinates.topDistance;
-        draggedElement.style.left = coordinates.leftDistance;
+
+      const draggedElement = document.getElementById(active.id);
+      let shipStartIndex, shipEndIndex, ifCollision;
+      if (draggedElement) {
+        shipStartIndex = sortedCollisions[0].id;
+        shipEndIndex = sortedCollisions[sortedCollisions.length - 1].id;
+        ifCollision = checkIfShipCollision(sortedCollisions, active.id);
+        if (ifCollision) {
+          return false;
+        }
+        setPlayerShipsCoordinates((prev: any) => ({
+          ...prev,
+          [active.id]: [...sortedCollisions.map((el: any) => el.id)],
+        }));
+        setPlacedCoordinates((prev: any) => [
+          ...prev,
+          ...sortedCollisions.map((el: any) => el.id),
+        ]);
+        draggedElement.style.position = "absolute";
+        let coordinates = calculateCellDistance(shipStartIndex, active.id);
+        if (coordinates) {
+          draggedElement.style.top = coordinates.topDistance;
+          draggedElement.style.left = coordinates.leftDistance;
+        }
       }
     }
   };
@@ -168,15 +177,50 @@ function App() {
     >
       <main className="container-fluid text-white p-3">
         <section className="container mx-auto">
-          <div className="my-5">
-            <h1 className="text-4xl ">Deploy your ships</h1>
-            <h2 className="text-white opacity-60">
-              drag to move and tap the rotate button to rotate.
-            </h2>
-            <p>after placing the ships, begin the assault!</p>
+          <div className="flex flex-col md:flex-row my-3 gap-10">
+            <div>
+              <h1 className="text-4xl ">Deploy your ships</h1>
+              <h2 className="text-white opacity-60">
+                drag to move and tap the rotate button to rotate.
+              </h2>
+              <p>after placing the ships, begin the assault!</p>
+              {!startGame ? (
+                <div className="flex my-2">
+                  <button
+                    className="border basis-3/12 p-2 rounded-md"
+                    disabled={!playerReady}
+                    onClick={() => setStartGame(true)}
+                  >
+                    Play
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            {/* <div className="bg-transparent border p-2 rounded-md">
+              <h1 className="text-2xl mb-5 text-center">Gameplay Stats</h1>
+              <div className="grid grid-cols-2 items-center">
+                <div className="p-2 text-sm text-center">
+                  <h2>Player</h2>
+                  <h3>BATTLESHIP</h3>
+                  <h3>CARRIER</h3>
+                  <h3>CRUISER</h3>
+                  <h3>DESTROYER</h3>
+                  <h3>SUBMARINE</h3>
+                </div>
+                <div className="p-2 text-sm text-center">
+                  <h2>Opponent</h2>
+                  <h3>BATTLESHIP</h3>
+                  <h3>CARRIER</h3>
+                  <h3>CRUISER</h3>
+                  <h3>DESTROYER</h3>
+                  <h3>SUBMARINE</h3>
+                </div>
+              </div>
+            </div> */}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="grid gap-2 grid-cols-1 lg:grid-cols-3">
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}
@@ -194,17 +238,6 @@ function App() {
               opponentReady={opponentReady}
             />
           </div>
-          {!startGame ? (
-            <div className="flex justify-center my-2">
-              <button
-                className="border basis-3/12 p-2 rounded-md"
-                disabled={!playerReady}
-                onClick={() => setStartGame(true)}
-              >
-                Play
-              </button>
-            </div>
-          ) : null}
         </section>
       </main>
     </DndContext>

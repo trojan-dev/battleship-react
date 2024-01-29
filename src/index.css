@@ -27,3 +27,17 @@ div[data-ship] {
 svg {
   fill: white;
 }
+
+.ship {
+  clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
+  background-color: #40ffff;
+}
+
+.submarine {
+  background-color: #40ffff;
+}
+
+.vertical-ship {
+  clip-path: polygon(0% 0%, 100% 0, 100% 75%, 50% 100%, 0 75%);
+  background-color: #40ffff;
+}

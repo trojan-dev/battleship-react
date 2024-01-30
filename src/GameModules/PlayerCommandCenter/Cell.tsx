@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import Flame from "../../assets/Flame/Flame";
 function DroppableCell({
   id,
   placedShips,
@@ -19,9 +20,13 @@ function DroppableCell({
       className="border rounded-sm p-2 border-white flex justify-center items-center relative z-2"
     >
       {cellStatus[id] && !placedShips.includes(id) ? (
-        "X"
+        <div className="p-2 rounded-full bg-red-600 absolute missile-drop-opponent"></div>
       ) : cellStatus[id] && placedShips.includes(id) ? (
-        <div className="w-3 h-3 rounded-full bg-red-600 relative z-10"></div>
+        // <div className="w-3 h-3 rounded-full bg-red-600 relative z-10"></div>
+        <>
+          <div className="p-2 rounded-full absolute missile-drop-opponent"></div>
+          <Flame />
+        </>
       ) : (
         ""
       )}

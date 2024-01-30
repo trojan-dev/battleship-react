@@ -36,6 +36,8 @@ function ShipComponent({
       }
     : undefined;
 
+  console.log(playerShipsCoordinates[ship], length);
+
   if (isHorizontal[shipType]) {
     return (
       <div className="flex items-center p-1 gap-1">
@@ -45,7 +47,9 @@ function ShipComponent({
           style={style}
           {...listeners}
           data-ship={shipType}
-          className={`border p-1 rounded-md cursor-move  ${SHIP_DIMENSIONS_HORIZONTAL[shipType]}`}
+          className={`border
+            
+           p-1 rounded-md cursor-move  ${SHIP_DIMENSIONS_HORIZONTAL[shipType]}`}
         >
           <div className="bg-white w-[85%] rounded-lg h-[12px]"></div>
         </div>

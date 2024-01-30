@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/OpponentBoard";
@@ -43,25 +44,27 @@ function App() {
 
   useEffect(() => {
     function computerFiresMissle(cell: number) {
-      const playerCoordinates = { ...playerShipsCoordinates };
-      if (!playerReady && opponentReady) {
-        setCellStatus((prev) => ({ ...prev, [cell]: true }));
-        if (placedCoordinates.includes(cell)) {
-          for (let ship in playerCoordinates) {
-            if (playerCoordinates[ship].includes(cell)) {
-              alert(`Opponent hit your ${ship}`);
-              let idx = playerCoordinates[ship].findIndex(
-                (el: any) => el === cell
-              );
-              playerCoordinates[ship].splice(idx, 1);
-              setPlayerShipsCoordinates(playerCoordinates);
-              checkIfPlayerShipSank(ship);
+      setTimeout(() => {
+        const playerCoordinates = { ...playerShipsCoordinates };
+        if (!playerReady && opponentReady) {
+          setCellStatus((prev) => ({ ...prev, [cell]: true }));
+          if (placedCoordinates.includes(cell)) {
+            for (let ship in playerCoordinates) {
+              if (playerCoordinates[ship].includes(cell)) {
+                toast.success(`Your ${ship} has been hit!`);
+                let idx = playerCoordinates[ship].findIndex(
+                  (el: any) => el === cell
+                );
+                playerCoordinates[ship].splice(idx, 1);
+                setPlayerShipsCoordinates(playerCoordinates);
+                checkIfPlayerShipSank(ship);
+              }
             }
           }
+          setOpponentReady(false);
+          setPlayerReady(true);
         }
-        setOpponentReady(false);
-        setPlayerReady(true);
-      }
+      }, 1200);
     }
     computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady, opponentReady]);
@@ -168,6 +171,7 @@ function App() {
       onDragEnd={handleShipDrop}
     >
       <main className="container-fluid text-white p-3">
+        <Toaster />
         <section className="container mx-auto">
           <div className="flex flex-col md:flex-row my-3 gap-10">
             <div>

@@ -1,8 +1,11 @@
 .flame {
   animation: burnBabyBurn 0.4s linear infinite;
+  animation-delay: 1.4s;
   height: 1px;
   transform: scale(1.5) translate(-13px, -15px);
   width: 1px;
+  position: relative;
+  z-index: 22;
 }
 @keyframes burnBabyBurn {
   /* Flame 1 */

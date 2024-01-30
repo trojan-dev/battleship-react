@@ -12,12 +12,7 @@ main {
 }
 
 body {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 1) 40%,
-    rgba(191, 191, 191, 1) 100%
-  );
-  cursor: url("./assets/weapon.png"), auto;
+  background-color: black;
 }
 
 div[data-ship] {
@@ -40,4 +35,45 @@ svg {
 .vertical-ship {
   clip-path: polygon(0% 0%, 100% 0, 100% 75%, 50% 100%, 0 75%);
   background-color: #40ffff;
+}
+
+.missile-drop {
+  animation: drop-opponent 1.3s ease-in-out;
+  box-shadow: inset 5px 2px 2px gray;
+}
+.missile-drop-opponent {
+  animation: drop-player 1.3s ease-in-out;
+  box-shadow: inset 5px 2px 2px #f87171;
+}
+
+@keyframes drop-opponent {
+  0% {
+    width: 100px;
+    height: 100px;
+    transform: translateX(-200px);
+
+    border-radius: none;
+  }
+  100% {
+    width: 10px;
+    height: 10px;
+
+    transform: translateX(0);
+  }
+}
+@keyframes drop-player {
+  0% {
+    width: 100px;
+    height: 100px;
+    transform: translateX(200px);
+    opacity: 0.5;
+    border-radius: none;
+  }
+  100% {
+    width: 10px;
+    height: 10px;
+
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

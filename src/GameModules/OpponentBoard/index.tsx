@@ -1,5 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
+import toast from "react-hot-toast";
 import Flame from "../../assets/Flame/Flame";
+import "./style.css";
 const SHIPS = [
   {
     shipType: "BATTLESHIP",
@@ -97,7 +99,8 @@ function OpponentBoard(props: any) {
           shipCoordinatesArr[ship].length ===
           SHIPS[SHIPS.findIndex((el) => el.shipType === ship)].length
         ) {
-          alert(`You hit opponent's ${ship}. Keep going!`);
+          // alert(`You hit opponent's ${ship}. Keep going!`);
+          toast.success(`You hit ${ship}`);
           setCurrentHitShip(ship);
         }
         const newArr = shipCoordinatesArr[ship].filter(
@@ -116,7 +119,7 @@ function OpponentBoard(props: any) {
   useEffect(() => {
     if (currentHitShip) {
       if (!shipCoordinatesArr[currentHitShip].length) {
-        alert(`You sank ${currentHitShip}`);
+        toast.success(`You sank opponent's ${currentHitShip}`);
         const newShipCoordinates = { ...shipCoordinatesArr };
         delete newShipCoordinates[currentHitShip];
         setShipCoordinates(newShipCoordinates);
@@ -131,15 +134,12 @@ function OpponentBoard(props: any) {
     }
   }, [sankShips]);
 
-  console.log(shipCoordinatesArr, currentHitShip);
-
   return (
     <div className="relative h-full flex flex-col">
       <div
-        style={{ cursor: "url(./assets/weapon.png), auto" }}
         className={`${
           !props.startGame ? "opacity-40" : ""
-        } grid gap-2 grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
+        } grid board gap-2 grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
@@ -149,9 +149,12 @@ function OpponentBoard(props: any) {
             }`}
           >
             {cellStatus[block] && !allPlacedCoordinates.includes(block) ? (
-              "X"
+              <div className="p-2 rounded-full bg-white absolute missile-drop"></div>
             ) : cellStatus[block] && allPlacedCoordinates.includes(block) ? (
-              <Flame />
+              <>
+                <div className="p-2 rounded-full bg-white absolute missile-drop"></div>
+                <Flame />
+              </>
             ) : (
               ""
             )}

@@ -11,7 +11,8 @@
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
     "preact": "^10.19.3",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.21.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.7.0",

@@ -1,5 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
-import RotateIcon from "../../assets/RotateIcon";
+import RotateIcon from "../../../assets/RotateIcon";
 
 const SHIP_DIMENSIONS_HORIZONTAL: any = {
   CARRIER: "w-[195px] ship",

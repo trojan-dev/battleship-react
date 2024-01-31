@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import toast from "react-hot-toast";
-import Flame from "../../assets/Flame/Flame";
+import Flame from "../../../assets/Flame/Flame";
 import "./style.css";
 const SHIPS = [
   {

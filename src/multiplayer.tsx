@@ -1,10 +1,10 @@
 import { useState, useEffect } from "preact/hooks";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
-import PlayerBoard from "./GameModules/PlayerCommandCenter";
-import OpponentBoard from "./GameModules/OpponentBoard";
+import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
+import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 
-function App() {
+function Multiplayer() {
   const [playerReady, setPlayerReady] = useState(false);
   const [opponentReady, setOpponentReady] = useState(false);
   const [startGame, setStartGame] = useState(false);
@@ -179,30 +179,42 @@ function App() {
               <h2 className="text-white opacity-60">
                 drag to move and tap the rotate button to rotate.
               </h2>
-              <p>after placing the ships, begin the assault!</p>
+
               {!startGame ? (
-                <div className="flex my-2">
-                  <button
-                    className="border basis-3/12 p-2 rounded-md"
-                    disabled={!playerReady}
-                    onClick={() => setStartGame(true)}
-                  >
-                    Play
-                  </button>
-                </div>
+                <button
+                  className="border basis-3/12 p-2 rounded-md my-3"
+                  disabled={!playerReady}
+                  onClick={() => setStartGame(true)}
+                >
+                  Start Game
+                </button>
               ) : null}
             </div>
-
-            {/* <div className="bg-transparent border p-2 rounded-md">
+            <div className="bg-transparent border p-1 rounded-lg grow">
               <h1 className="text-2xl mb-5 text-center">Gameplay Stats</h1>
               <div className="grid grid-cols-2 items-center">
-                <div className="p-2 text-sm text-center">
-                  <h2>Player</h2>
-                  <h3>BATTLESHIP</h3>
-                  <h3>CARRIER</h3>
-                  <h3>CRUISER</h3>
-                  <h3>DESTROYER</h3>
-                  <h3>SUBMARINE</h3>
+                <div className="p-2 text-sm flex flex-col gap-1">
+                  <h2 className="text-3xl">You</h2>
+                  <div className="flex gap-2">
+                    <h3>CARRIER</h3>
+                    <progress max={100} value={60} />
+                  </div>
+                  <div className="flex gap-2">
+                    <h3>BATTLESHIP</h3>
+                    <progress max={100} value={60} />
+                  </div>
+                  <div className="flex gap-2">
+                    <h3>CRUISER</h3>
+                    <progress max={100} value={60} />
+                  </div>
+                  <div className="flex gap-2">
+                    <h3>DESTROYER</h3>
+                    <progress max={100} value={60} />
+                  </div>
+                  <div className="flex gap-2">
+                    <h3>SUBMARINE</h3>
+                    <progress max={100} value={60} />
+                  </div>
                 </div>
                 <div className="p-2 text-sm text-center">
                   <h2>Opponent</h2>
@@ -213,7 +225,7 @@ function App() {
                   <h3>SUBMARINE</h3>
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
 
           <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
@@ -226,13 +238,13 @@ function App() {
               setOpponentReady={setOpponentReady}
             />
 
-            <OpponentBoard
+            {/* <OpponentBoard
               startGame={startGame}
               setPlayerReady={setPlayerReady}
               setOpponentReady={setOpponentReady}
               playerReady={playerReady}
               opponentReady={opponentReady}
-            />
+            /> */}
           </div>
         </section>
       </main>
@@ -240,4 +252,4 @@ function App() {
   );
 }
 
-export default App;
+export default Multiplayer;

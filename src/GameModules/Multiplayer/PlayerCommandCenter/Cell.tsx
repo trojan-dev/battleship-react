@@ -1,5 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
-import Flame from "../../assets/Flame/Flame";
+import Flame from "../../../assets/Flame/Flame";
 function DroppableCell({
   id,
   placedShips,

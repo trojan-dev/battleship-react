@@ -1,13 +1,12 @@
 import { useState, useEffect } from "preact/hooks";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
+import { io } from "socket.io-client";
 import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 
 function Multiplayer() {
   const [playerReady, setPlayerReady] = useState(false);
-  const [opponentReady, setOpponentReady] = useState(false);
-  const [startGame, setStartGame] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
     BATTLESHIP: [],
     CARRIER: [],
@@ -15,125 +14,66 @@ function Multiplayer() {
     DESTROYER: [],
     SUBMARINE: [],
   });
-  const [shipsOreintation, setShipOrientation] = useState<any>({
-    BATTLESHIP: "horizontal",
-    CARRIER: "horizontal",
-    CRUISER: "horizontal",
-    DESTROYER: "horizontal",
-    SUBMARINE: "horizontal",
-  });
-  const [shipsHealth, setShipsHealth] = useState<any>({
+  const [shipsHealth] = useState<any>({
     BATTLESHIP: 100,
     CARRIER: 100,
     CRUISER: 100,
     DESTROYER: 100,
     SUBMARINE: 100,
   });
-  const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
+  const [placedCoordinates, setPlacedCoordinates] = useState<Array<number>>([]);
   const [cellStatus, setCellStatus] = useState(
     [...Array(100).keys()].map(() => false)
   );
-  const [currentPlayerShipHit, setCurrentPlayerShipHit] = useState<any>({
-    ship: null,
-    length: null,
-    firstHit: null,
-    secondHit: null,
-    possibleHits: [],
-    trackedShip: [],
-  });
+  const [userSocketInstance, setUserSocketInstance] = useState<any>(null);
 
-  function checkIfPlayerShipSank(ship: any) {
-    if (!playerShipsCoordinates[ship].length) {
-      setCurrentPlayerShipHit({ ship: null, hit: [] });
-      toast.success(`Opponent sank your ${ship}`);
-    }
-  }
+  const [opponentReady, setOpponentReady] = useState(false);
+  const [opponentPlacedShips, setOpponentPlacedShips] = useState(null);
+  const [opponentCoordinates, setOpponentCoordinates] = useState([]);
+
+  const [startGame, setStartGame] = useState(false);
+
+  const [playerTurn, setPlayerTurn] = useState(true);
+  const [opponentTurn, setOpponentTurn] = useState(false);
 
   useEffect(() => {
-    function checkIfPlayerIsReady() {
-      if (placedCoordinates.length === 17) {
-        setPlayerReady(true);
-      }
-    }
-    checkIfPlayerIsReady();
-  }, [placedCoordinates]);
-
-  useEffect(() => {
-    function computerFiresMissle(cell: number) {
-      setTimeout(() => {
-        const playerCoordinates = { ...playerShipsCoordinates };
-        if (!playerReady && opponentReady) {
-          setCellStatus((prev) => ({ ...prev, [cell]: true }));
-          if (placedCoordinates.includes(cell)) {
-            for (let ship in playerCoordinates) {
-              if (playerCoordinates[ship].includes(cell)) {
-                toast.success(`Your ${ship} has been hit!`);
-                let idx = playerCoordinates[ship].findIndex(
-                  (el: any) => el === cell
-                );
-                playerCoordinates[ship].splice(idx, 1);
-                setPlayerShipsCoordinates(playerCoordinates);
-                checkIfPlayerShipSank(ship);
-                setShipsHealth((prev: any) => ({
-                  ...prev,
-                  [ship]: prev[ship] - 25,
-                }));
-                if (!currentPlayerShipHit.firstHit) {
-                  setCurrentPlayerShipHit((prev: any) => ({
-                    ...prev,
-                    ship: ship,
-                    firstHit: cell,
-                  }));
-                }
-                if (
-                  !currentPlayerShipHit.secondHit &&
-                  currentPlayerShipHit.firstHit
-                ) {
-                  setCurrentPlayerShipHit((prev: any) => ({
-                    ...prev,
-                    ship: ship,
-                    secondHit: cell,
-                  }));
-                }
-              }
-            }
-          }
-          setOpponentReady(false);
-          setPlayerReady(true);
+    const socket = io(`https://battleship-server-socket.onrender.com`);
+    socket.on("connect", () => {
+      setUserSocketInstance(socket);
+      toast.success(
+        `You have connected to the server with socket ${socket.id}`,
+        {
+          duration: 2000,
         }
-      }, 1200);
-    }
-    // if (
-    //   currentPlayerShipHit.ship &&
-    //   !currentPlayerShipHit.possibleHits.length
-    // ) {
-    //    If there is already a ship hit, calculate the possible values from there...
-    //   const hit = trackPossibleShipLocationsAndReturnARandomSlot();
-    //   computerFiresMissle(hit);
-    //   return;
-    // }
-    // if (
-    //   currentPlayerShipHit.ship &&
-    //   currentPlayerShipHit.possibleHits.length &&
-    //   !currentPlayerShipHit.secondHit
-    // ) {
-    //   If there is already a ship hit and possible values are calculated
-    //   const hit =
-    //     currentPlayerShipHit.possibleHits[
-    //       Math.floor(Math.random() * currentPlayerShipHit.possibleHits.length)
-    //     ];
-    //   setCurrentPlayerShipHit((prev: any) => ({
-    //     ...prev,
-    //     possibleHits: prev.possibleHits.filter((el: any) => el !== hit),
-    //   }));
-    //   computerFiresMissle(hit);
-    //   return;
-    // }
+      );
+    });
 
-    // if (currentPlayerShipHit.secondHit) {
-    //    Implement the diff logic
-    // }
-    computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
+    return () => socket.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (userSocketInstance) {
+      userSocketInstance.on("receive-opponent-status", (message: any) => {
+        const { playerName, coordinates, shipsPlacement } = message;
+        console.log(`Player ${playerName} is ready.`);
+        setOpponentPlacedShips(shipsPlacement);
+        setOpponentCoordinates(coordinates);
+        setOpponentReady(true);
+      });
+      userSocketInstance.on("send-cell-info", (message: any) => {
+        setCellStatus((prev) => ({ ...prev, [message]: true }));
+      });
+      userSocketInstance.on("chance", (message: any) => {
+        setPlayerTurn(false);
+        setOpponentTurn(true);
+      });
+    }
+  }, [userSocketInstance]);
+
+  useEffect(() => {
+    if (playerReady && opponentReady) {
+      setStartGame(true);
+    }
   }, [playerReady, opponentReady]);
 
   const calculateCellDistance = (start: any) => {
@@ -237,23 +177,6 @@ function Multiplayer() {
     }
   };
 
-  // const trackPossibleShipLocationsAndReturnARandomSlot = () => {
-  //   let possibleMoves: Array<number> = [
-  //     currentPlayerShipHit.firstHit + 1,
-  //     currentPlayerShipHit.firstHit - 10,
-  //     currentPlayerShipHit.firstHit + 10,
-  //     currentPlayerShipHit.firstHit - 1,
-  //   ];
-  //   const validMoves = possibleMoves.filter((move) => move > 0 && move < 99);
-  //   const randomValidMove =
-  //     validMoves[Math.floor(Math.random() * validMoves.length)];
-  //   setCurrentPlayerShipHit((prev: any) => ({
-  //     ...prev,
-  //     possibleHits: validMoves.filter((el) => el !== randomValidMove),
-  //   }));
-  //   return randomValidMove;
-  // };
-
   return (
     <DndContext
       collisionDetection={rectIntersection}
@@ -269,19 +192,31 @@ function Multiplayer() {
                 drag to move and tap the rotate button to rotate.
               </h2>
 
-              {!startGame ? (
-                <div className="flex my-2">
+              <div className="flex gap-2 my-2">
+                {!playerReady ? (
                   <button
-                    className={`border basis-3/12 p-2 rounded-md ${
-                      !playerReady ? "opacity-40" : "opacity-100"
-                    }`}
-                    disabled={!playerReady}
-                    onClick={() => setStartGame(true)}
+                    className={`border basis-3/12 p-2 rounded-md`}
+                    onClick={() => {
+                      if (placedCoordinates.length === 17) {
+                        userSocketInstance.emit(
+                          "player-ready",
+                          JSON.stringify(
+                            localStorage.getItem("battleship-player")
+                          ),
+                          playerShipsCoordinates,
+                          placedCoordinates,
+                          userSocketInstance.id
+                        );
+                        setPlayerReady(true);
+                      } else {
+                        toast.error(`Please place all your ships first!`);
+                      }
+                    }}
                   >
-                    Play
+                    Confirm
                   </button>
-                </div>
-              ) : null}
+                ) : null}
+              </div>
             </div>
           </div>
 
@@ -289,10 +224,7 @@ function Multiplayer() {
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}
-              setShipOrientation={setShipOrientation}
               cellStatus={cellStatus}
-              setPlayerReady={setPlayerReady}
-              setOpponentReady={setOpponentReady}
               shipsHealth={shipsHealth}
               startGame={startGame}
               playerReady={playerReady}
@@ -301,10 +233,15 @@ function Multiplayer() {
 
             <OpponentBoard
               startGame={startGame}
-              setPlayerReady={setPlayerReady}
-              setOpponentReady={setOpponentReady}
+              // setPlayerReady={setPlayerReady}
+              // setOpponentReady={setOpponentReady}
               playerReady={playerReady}
               opponentReady={opponentReady}
+              opponentPlacedShips={opponentPlacedShips}
+              opponentCoordinates={opponentCoordinates}
+              socket={userSocketInstance}
+              playerTurn={playerTurn}
+              opponentTurn={opponentTurn}
             />
           </div>
         </section>

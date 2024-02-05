@@ -5,11 +5,15 @@ function DroppableCell({
   placedShips,
   cellStatus,
   playerShipsCoordinates,
+  playerTurn,
+  opponentTurn,
 }: {
   id: number;
   placedShips: any;
   cellStatus: any;
   playerShipsCoordinates: any;
+  playerTurn: any;
+  opponentTurn: any;
 }) {
   const { setNodeRef } = useDroppable({
     id,

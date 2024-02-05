@@ -32,50 +32,32 @@ const SHIPS = [
 
 function OpponentBoard(props: any) {
   const [shipCoordinatesArr, setShipCoordinates] = useState<any>({});
-  const [allPlacedCoordinates, setAllPlacedCoordinates] = useState<any>([]);
   const [sankShips, setSankShips] = useState<any>([]);
   const [currentHitShip, setCurrentHitShip] = useState<any>(null);
   const [cellStatus, setCellStatus] = useState<any>(
     [...Array(100).keys()].map(() => false)
   );
 
-  function generateOpponentShips() {
-    const placement: any = {
-      BATTLESHIP: [0, 1, 2, 3, 4],
-      CARRIER: [31, 32, 33, 34],
-      CRUISER: [25, 26, 27],
-      DESTROYER: [55, 65, 75],
-      SUBMARINE: [98, 99],
-    };
-    setShipCoordinates(placement);
-    setAllPlacedCoordinates(Object.values(placement).flat(Infinity));
-  }
-
   function fireMissle(cell: number) {
+    props.socket.emit("fire-missile", cell);
     setCellStatus((prev: any) => ({ ...prev, [cell]: true }));
-    for (let ship in shipCoordinatesArr) {
-      if (shipCoordinatesArr[ship].includes(cell)) {
+    for (let ship in props.opponentPlacedShips) {
+      if (props.opponentPlacedShips[ship].includes(cell)) {
         if (
-          shipCoordinatesArr[ship].length ===
+          props.opponentPlacedShips[ship].length ===
           SHIPS[SHIPS.findIndex((el) => el.shipType === ship)].length
         ) {
-          // alert(`You hit opponent's ${ship}. Keep going!`);
           toast.success(`You hit ${ship}`);
           setCurrentHitShip(ship);
         }
-        const newArr = shipCoordinatesArr[ship].filter(
-          (el: any) => el !== cell
-        );
-        setShipCoordinates((prev: any) => ({ ...prev, [ship]: newArr }));
+        // const newArr = props.opponentPlacedShips[ship].filter(
+        //   (el: any) => el !== cell
+        // );
+        // setShipCoordinates((prev: any) => ({ ...prev, [ship]: newArr }));
       }
     }
-    props.setPlayerReady(false);
-    props.setOpponentReady(true);
+    props.socket.emit("whose-turn", "opponent");
   }
-
-  useEffect(() => {
-    generateOpponentShips();
-  }, []);
 
   useEffect(() => {
     if (currentHitShip) {
@@ -92,31 +74,29 @@ function OpponentBoard(props: any) {
 
   useEffect(() => {
     if (sankShips.length === 5) {
-      alert("you won!");
+      toast.success("You won!");
+      window.location.reload();
     }
   }, [sankShips]);
 
   return (
     <div className="relative h-full flex flex-col">
       <div
-        className={`${
-          !props.startGame
-            ? "opacity-40 pointer-events-none"
-            : "pointer-events-auto"
-        } grid gap-1 board grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
+        className={`grid gap-1 board grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
             onClick={() => fireMissle(block)}
             className={`bg-[#988646] rounded-sm p-1 flex justify-center items-center ${
-              props.opponentReady
+              !props.startGame && props.opponentTurn
                 ? "pointer-events-none opacity-60"
                 : "pointer-events-auto"
             }`}
           >
-            {cellStatus[block] && !allPlacedCoordinates.includes(block) ? (
+            {cellStatus[block] && !props.opponentCoordinates.includes(block) ? (
               <span className="text-2xl text-black font-extrabold">X</span>
-            ) : cellStatus[block] && allPlacedCoordinates.includes(block) ? (
+            ) : cellStatus[block] &&
+              props.opponentCoordinates.includes(block) ? (
               <>
                 {/* <div className="p-2 rounded-full bg-white absolute missile-drop"></div> */}
                 <Flame />

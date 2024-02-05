@@ -3,6 +3,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
+import PlayerShips from "./GameModules/Singleplayer/PlayerCommandCenter/PlayerShips";
 
 function SinglePlayer() {
   const [playerReady, setPlayerReady] = useState(false);
@@ -31,18 +32,27 @@ function SinglePlayer() {
   });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [cellStatus, setCellStatus] = useState(
-    [...Array(100).keys()].map((cell) => false)
+    [...Array(100).keys()].map(() => false)
   );
+  const [currentPlayerShipHit, setCurrentPlayerShipHit] = useState<any>({
+    ship: null,
+    length: null,
+    firstHit: null,
+    secondHit: null,
+    possibleHits: [],
+    trackedShip: [],
+  });
 
   function checkIfPlayerShipSank(ship: any) {
     if (!playerShipsCoordinates[ship].length) {
-      alert(`Opponent sank your ${ship}`);
+      setCurrentPlayerShipHit({ ship: null, hit: [] });
+      toast.success(`Opponent sank your ${ship}`);
     }
   }
 
   useEffect(() => {
     function checkIfPlayerIsReady() {
-      if (placedCoordinates.length >= 16) {
+      if (placedCoordinates.length === 17) {
         setPlayerReady(true);
       }
     }
@@ -69,6 +79,23 @@ function SinglePlayer() {
                   ...prev,
                   [ship]: prev[ship] - 25,
                 }));
+                if (!currentPlayerShipHit.firstHit) {
+                  setCurrentPlayerShipHit((prev: any) => ({
+                    ...prev,
+                    ship: ship,
+                    firstHit: cell,
+                  }));
+                }
+                if (
+                  !currentPlayerShipHit.secondHit &&
+                  currentPlayerShipHit.firstHit
+                ) {
+                  setCurrentPlayerShipHit((prev: any) => ({
+                    ...prev,
+                    ship: ship,
+                    secondHit: cell,
+                  }));
+                }
               }
             }
           }
@@ -77,19 +104,49 @@ function SinglePlayer() {
         }
       }, 1200);
     }
+    // if (
+    //   currentPlayerShipHit.ship &&
+    //   !currentPlayerShipHit.possibleHits.length
+    // ) {
+    //    If there is already a ship hit, calculate the possible values from there...
+    //   const hit = trackPossibleShipLocationsAndReturnARandomSlot();
+    //   computerFiresMissle(hit);
+    //   return;
+    // }
+    // if (
+    //   currentPlayerShipHit.ship &&
+    //   currentPlayerShipHit.possibleHits.length &&
+    //   !currentPlayerShipHit.secondHit
+    // ) {
+    //   If there is already a ship hit and possible values are calculated
+    //   const hit =
+    //     currentPlayerShipHit.possibleHits[
+    //       Math.floor(Math.random() * currentPlayerShipHit.possibleHits.length)
+    //     ];
+    //   setCurrentPlayerShipHit((prev: any) => ({
+    //     ...prev,
+    //     possibleHits: prev.possibleHits.filter((el: any) => el !== hit),
+    //   }));
+    //   computerFiresMissle(hit);
+    //   return;
+    // }
+
+    // if (currentPlayerShipHit.secondHit) {
+    //    Implement the diff logic
+    // }
     computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady, opponentReady]);
 
-  const calculateCellDistance = (start: any, ship: any) => {
+  const calculateCellDistance = (start: any) => {
     let topDistance, leftDistance;
-    if (shipsOreintation[ship] === "horizontal") {
-      topDistance = `${Math.floor(start / 10) * 43 + 5}px`;
-      leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 43 + 5}px`;
-      return { topDistance, leftDistance };
-    }
-    topDistance = `${Math.floor(start / 10) * 43 + 5}px`;
-    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 43 + 5}px`;
+    // if (shipsOreintation[ship] === "horizontal") {
+    topDistance = `${Math.floor(start / 10) * 40 + 2}px`;
+    leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 40 + 3}px`;
     return { topDistance, leftDistance };
+    // }
+    // topDistance = `${Math.floor(start / 10) * 40 + 3}px`;
+    // leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 40 + 3}px`;
+    // return { topDistance, leftDistance };
   };
 
   const checkIfShipCollision = (
@@ -139,21 +196,26 @@ function SinglePlayer() {
     const { active, collisions } = event;
     if (collisions) {
       const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
-      if (collisions.length === active.data.current.length + 1) {
+      if (sortedCollisions.length === active.data.current.length + 1) {
         sortedCollisions.pop();
       }
-      if (
-        collisions.length < active.data.current.length ||
-        collisions.length > active.data.current.length
-      ) {
+      if (sortedCollisions.length < active.data.current.length) {
         return false;
       }
 
+      if (sortedCollisions.length > active.data.current.length) {
+        let differenceInShipLengthAndCollisions =
+          sortedCollisions.length - active.data.current.length;
+        sortedCollisions.splice(
+          active.data.current.length,
+          differenceInShipLengthAndCollisions
+        );
+      }
+
       const draggedElement = document.getElementById(active.id);
-      let shipStartIndex, shipEndIndex, ifCollision;
+      let shipStartIndex, ifCollision;
       if (draggedElement) {
         shipStartIndex = sortedCollisions[0].id;
-        shipEndIndex = sortedCollisions[sortedCollisions.length - 1].id;
         ifCollision = checkIfShipCollision(sortedCollisions, active.id);
         if (ifCollision) {
           return false;
@@ -167,7 +229,7 @@ function SinglePlayer() {
           ...sortedCollisions.map((el: any) => el.id),
         ]);
         draggedElement.style.position = "absolute";
-        let coordinates = calculateCellDistance(shipStartIndex, active.id);
+        let coordinates = calculateCellDistance(shipStartIndex);
         if (coordinates) {
           draggedElement.style.top = coordinates.topDistance;
           draggedElement.style.left = coordinates.leftDistance;
@@ -175,6 +237,23 @@ function SinglePlayer() {
       }
     }
   };
+
+  // const trackPossibleShipLocationsAndReturnARandomSlot = () => {
+  //   let possibleMoves: Array<number> = [
+  //     currentPlayerShipHit.firstHit + 1,
+  //     currentPlayerShipHit.firstHit - 10,
+  //     currentPlayerShipHit.firstHit + 10,
+  //     currentPlayerShipHit.firstHit - 1,
+  //   ];
+  //   const validMoves = possibleMoves.filter((move) => move > 0 && move < 99);
+  //   const randomValidMove =
+  //     validMoves[Math.floor(Math.random() * validMoves.length)];
+  //   setCurrentPlayerShipHit((prev: any) => ({
+  //     ...prev,
+  //     possibleHits: validMoves.filter((el) => el !== randomValidMove),
+  //   }));
+  //   return randomValidMove;
+  // };
 
   return (
     <DndContext
@@ -190,11 +269,13 @@ function SinglePlayer() {
               <h2 className="text-white opacity-60">
                 drag to move and tap the rotate button to rotate.
               </h2>
-              <p>after placing the ships, begin the assault!</p>
+
               {!startGame ? (
                 <div className="flex my-2">
                   <button
-                    className="border basis-3/12 p-2 rounded-md"
+                    className={`border basis-3/12 p-2 rounded-md ${
+                      !playerReady ? "opacity-40" : "opacity-100"
+                    }`}
                     disabled={!playerReady}
                     onClick={() => setStartGame(true)}
                   >
@@ -214,6 +295,9 @@ function SinglePlayer() {
               setPlayerReady={setPlayerReady}
               setOpponentReady={setOpponentReady}
               shipsHealth={shipsHealth}
+              startGame={startGame}
+              playerReady={playerReady}
+              opponentReady={opponentReady}
             />
 
             <OpponentBoard

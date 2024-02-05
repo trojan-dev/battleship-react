@@ -43,37 +43,40 @@ svg {
 }
 .missile-drop-opponent {
   animation: drop-player 1.3s ease-in-out;
-  box-shadow: inset 5px 2px 2px #f87171;
+  box-shadow: inset 5px 2px 2px #8076b7;
 }
 
 @keyframes drop-opponent {
   0% {
-    width: 100px;
-    height: 100px;
+    transform: scale(2);
     transform: translateX(-200px);
-
-    border-radius: none;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
   }
   100% {
     width: 10px;
     height: 10px;
-
+    opacity: 1;
+    transform: scale(1);
     transform: translateX(0);
   }
 }
 @keyframes drop-player {
   0% {
-    width: 100px;
-    height: 100px;
+    transform: scale(2);
     transform: translateX(200px);
-    opacity: 0.5;
-    border-radius: none;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
   }
   100% {
     width: 10px;
     height: 10px;
-
-    transform: translateX(0);
     opacity: 1;
+    transform: scale(1);
+    transform: translateX(0);
   }
 }

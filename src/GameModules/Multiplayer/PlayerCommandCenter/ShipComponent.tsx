@@ -19,7 +19,6 @@ const SHIP_DIMENSIONS_VERTICAL: any = {
 function ShipComponent({
   ship,
   playerShipsCoordinates,
-  setShipOrientation,
   isHorizontal,
   setIsHorizontal,
   startGame,
@@ -38,14 +37,10 @@ function ShipComponent({
       }
     : undefined;
 
-  const rotateShip = (rotation: string, isHorizontal: boolean) => {
+  const rotateShip = (isHorizontal: boolean) => {
     setIsHorizontal((prev: any) => ({
       ...prev,
       [shipType]: isHorizontal,
-    }));
-    setShipOrientation((prev: any) => ({
-      ...prev,
-      [shipType]: rotation,
     }));
   };
 
@@ -64,7 +59,7 @@ function ShipComponent({
         </div>
         {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip("vertical", false)}>
+          <button onClick={() => rotateShip(false)}>
             <RotateIcon />
           </button>
         ) : null}
@@ -85,7 +80,7 @@ function ShipComponent({
         </div>
         {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip("horizontal", true)}>
+          <button onClick={() => rotateShip(true)}>
             <RotateIcon />
           </button>
         ) : null}

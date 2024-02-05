@@ -48,6 +48,8 @@ function PlayerBoard(props: any) {
               placedShips={props.placedShips}
               playerShipsCoordinates={props.playerShipsCoordinates}
               id={cell}
+              playerTurn={props.playerTurn}
+              opponentTurn={props.opponentTurn}
             />
           ))}
         </div>
@@ -56,7 +58,6 @@ function PlayerBoard(props: any) {
             <ShipComponent
               isHorizontal={isHorizontal}
               playerShipsCoordinates={props.playerShipsCoordinates}
-              setShipOrientation={props.setShipOrientation}
               setIsHorizontal={setIsHorizontal}
               ship={ship}
               startGame={props.startGame}

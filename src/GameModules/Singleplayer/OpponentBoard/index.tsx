@@ -92,7 +92,8 @@ function OpponentBoard(props: any) {
 
   useEffect(() => {
     if (sankShips.length === 5) {
-      alert("you won!");
+      toast.success("You won!");
+      window.location.reload();
     }
   }, [sankShips]);
 

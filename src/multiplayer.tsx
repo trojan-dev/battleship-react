@@ -37,7 +37,7 @@ function Multiplayer() {
   const [opponentTurn, setOpponentTurn] = useState(false);
 
   useEffect(() => {
-    const socket = io("http://localhost:3000");
+    const socket = io(`https://battleship-server-socket.onrender.com`);
     socket.on("connect", () => {
       setUserSocketInstance(socket);
       toast.success(

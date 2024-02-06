@@ -56,7 +56,7 @@ function OpponentBoard(props: any) {
         // setShipCoordinates((prev: any) => ({ ...prev, [ship]: newArr }));
       }
     }
-    props.socket.emit("whose-turn", "opponent");
+    props.socket.emit("turn-change", props.socket.id);
   }
 
   useEffect(() => {
@@ -86,9 +86,15 @@ function OpponentBoard(props: any) {
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
-            onClick={() => fireMissle(block)}
+            onClick={() => {
+              if (props.playerTurn) {
+                fireMissle(block);
+              } else {
+                return;
+              }
+            }}
             className={`bg-[#988646] rounded-sm p-1 flex justify-center items-center ${
-              !props.startGame && props.opponentTurn
+              !props.startGame
                 ? "pointer-events-none opacity-60"
                 : "pointer-events-auto"
             }`}

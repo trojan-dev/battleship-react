@@ -30,6 +30,7 @@ function Multiplayer() {
   const [opponentReady, setOpponentReady] = useState(false);
   const [opponentPlacedShips, setOpponentPlacedShips] = useState(null);
   const [opponentCoordinates, setOpponentCoordinates] = useState([]);
+  const [opponentName, setOpponentName] = useState("");
 
   const [startGame, setStartGame] = useState(false);
 
@@ -55,7 +56,7 @@ function Multiplayer() {
     if (userSocketInstance) {
       userSocketInstance.on("receive-opponent-status", (message: any) => {
         const { playerName, coordinates, shipsPlacement } = message;
-        console.log(`Player ${playerName} is ready.`);
+        setOpponentName(playerName);
         setOpponentPlacedShips(shipsPlacement);
         setOpponentCoordinates(coordinates);
         setOpponentReady(true);
@@ -63,9 +64,14 @@ function Multiplayer() {
       userSocketInstance.on("send-cell-info", (message: any) => {
         setCellStatus((prev) => ({ ...prev, [message]: true }));
       });
-      userSocketInstance.on("chance", (message: any) => {
-        setPlayerTurn(false);
-        setOpponentTurn(true);
+      userSocketInstance.on("chance", (id: any) => {
+        if (id === userSocketInstance.id) {
+          setPlayerTurn(false);
+          setOpponentTurn(true);
+        } else {
+          setPlayerTurn(true);
+          setOpponentTurn(false);
+        }
       });
     }
   }, [userSocketInstance]);
@@ -221,28 +227,34 @@ function Multiplayer() {
           </div>
 
           <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
-            <PlayerBoard
-              placedShips={placedCoordinates}
-              playerShipsCoordinates={playerShipsCoordinates}
-              cellStatus={cellStatus}
-              shipsHealth={shipsHealth}
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-            />
+            <div>
+              <h1>{localStorage.getItem("battleship-player")}</h1>
+              <PlayerBoard
+                placedShips={placedCoordinates}
+                playerShipsCoordinates={playerShipsCoordinates}
+                cellStatus={cellStatus}
+                shipsHealth={shipsHealth}
+                startGame={startGame}
+                playerReady={playerReady}
+                opponentReady={opponentReady}
+              />
+            </div>
 
-            <OpponentBoard
-              startGame={startGame}
-              // setPlayerReady={setPlayerReady}
-              // setOpponentReady={setOpponentReady}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              opponentPlacedShips={opponentPlacedShips}
-              opponentCoordinates={opponentCoordinates}
-              socket={userSocketInstance}
-              playerTurn={playerTurn}
-              opponentTurn={opponentTurn}
-            />
+            <div>
+              <h1>{opponentName}</h1>
+              <OpponentBoard
+                startGame={startGame}
+                // setPlayerReady={setPlayerReady}
+                // setOpponentReady={setOpponentReady}
+                playerReady={playerReady}
+                opponentReady={opponentReady}
+                opponentPlacedShips={opponentPlacedShips}
+                opponentCoordinates={opponentCoordinates}
+                socket={userSocketInstance}
+                playerTurn={playerTurn}
+                opponentTurn={opponentTurn}
+              />
+            </div>
           </div>
         </section>
       </main>

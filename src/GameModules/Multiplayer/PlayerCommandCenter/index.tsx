@@ -39,7 +39,7 @@ function PlayerBoard(props: any) {
       <div className="flex flex-col relative max-w-[390px] max-h-[390px]">
         <div
           className={`${
-            props.playerReady ? "opacity-50" : ""
+            !props.startGame ? "opacity-50" : "opacity-100"
           } grid gap-1 grid-cols-[repeat(10,35px)] auto-rows-[35px]`}
         >
           {[...Array(100).keys()].map((cell) => (

@@ -39,8 +39,8 @@ function OpponentBoard(props: any) {
   );
 
   function fireMissle(cell: number) {
-    props.socket.emit("fire-missile", cell);
     setCellStatus((prev: any) => ({ ...prev, [cell]: true }));
+    props.socket.emit("fire-missile", cell);
     for (let ship in props.opponentPlacedShips) {
       if (props.opponentPlacedShips[ship].includes(cell)) {
         if (
@@ -50,10 +50,15 @@ function OpponentBoard(props: any) {
           toast.success(`You hit ${ship}`);
           setCurrentHitShip(ship);
         }
-        // const newArr = props.opponentPlacedShips[ship].filter(
-        //   (el: any) => el !== cell
-        // );
-        // setShipCoordinates((prev: any) => ({ ...prev, [ship]: newArr }));
+        const newOpponentShipsPlacement = { ...props.opponentPlacedShips };
+        const newArr = newOpponentShipsPlacement[ship].filter(
+          (el: any) => el !== cell
+        );
+        props.setOpponentPlacedShips((prev: any) => ({
+          ...prev,
+          [ship]: newArr,
+        }));
+        props.socket.emit("opponent-ship-hit", newOpponentShipsPlacement);
       }
     }
   }

@@ -15,4 +15,8 @@ io.on('connection', socket => {
     socket.on('turn-change', userId => {
         io.emit('chance', userId);
     })
+    socket.on('opponent-ship-hit', newOpponentShipPlacement => {
+        console.log(newOpponentShipPlacement);
+        socket.broadcast.emit('ship-hit', newOpponentShipPlacement);
+    })
 })

@@ -244,6 +244,7 @@ function Multiplayer() {
                 socket={userSocketInstance}
                 playerTurn={playerTurn}
                 opponentTurn={opponentTurn}
+                setOpponentPlacedShips={setOpponentPlacedShips}
               />
             </div>
           </div>

@@ -64,15 +64,6 @@ function Multiplayer() {
       userSocketInstance.on("send-cell-info", (message: any) => {
         setCellStatus((prev) => ({ ...prev, [message]: true }));
       });
-      userSocketInstance.on("chance", (id: any) => {
-        if (id === userSocketInstance.id) {
-          setPlayerTurn(false);
-          setOpponentTurn(true);
-        } else {
-          setPlayerTurn(true);
-          setOpponentTurn(false);
-        }
-      });
     }
   }, [userSocketInstance]);
 
@@ -85,8 +76,8 @@ function Multiplayer() {
   const calculateCellDistance = (start: any) => {
     let topDistance, leftDistance;
     // if (shipsOreintation[ship] === "horizontal") {
-    topDistance = `${Math.floor(start / 10) * 40 + 2}px`;
-    leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 40 + 3}px`;
+    topDistance = `${Math.floor(start / 10) * 39 + 6}px`;
+    leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 39 + 4}px`;
     return { topDistance, leftDistance };
     // }
     // topDistance = `${Math.floor(start / 10) * 40 + 3}px`;

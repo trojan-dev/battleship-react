@@ -56,7 +56,6 @@ function OpponentBoard(props: any) {
         // setShipCoordinates((prev: any) => ({ ...prev, [ship]: newArr }));
       }
     }
-    props.socket.emit("whose-turn", "opponent");
   }
 
   useEffect(() => {
@@ -88,7 +87,7 @@ function OpponentBoard(props: any) {
           <div
             onClick={() => fireMissle(block)}
             className={`bg-[#988646] rounded-sm p-1 flex justify-center items-center ${
-              !props.startGame && props.opponentTurn
+              !props.startGame
                 ? "pointer-events-none opacity-60"
                 : "pointer-events-auto"
             }`}

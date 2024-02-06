@@ -77,7 +77,7 @@ function Multiplayer() {
     let topDistance, leftDistance;
     // if (shipsOreintation[ship] === "horizontal") {
     topDistance = `${Math.floor(start / 10) * 39 + 6}px`;
-    leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 39 + 4}px`;
+    leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 39 + 6}px`;
     return { topDistance, leftDistance };
     // }
     // topDistance = `${Math.floor(start / 10) * 40 + 3}px`;
@@ -219,7 +219,7 @@ function Multiplayer() {
 
           <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
             <div>
-              <h1>{localStorage.getItem("battleship-player")}</h1>
+              {/* <h1>{localStorage.getItem("battleship-player")}</h1> */}
               <PlayerBoard
                 placedShips={placedCoordinates}
                 playerShipsCoordinates={playerShipsCoordinates}
@@ -232,7 +232,7 @@ function Multiplayer() {
             </div>
 
             <div>
-              <h1>{opponentName}</h1>
+              {/* <h1>{opponentName}</h1> */}
               <OpponentBoard
                 startGame={startGame}
                 // setPlayerReady={setPlayerReady}

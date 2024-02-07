@@ -2,112 +2,93 @@ import { useEffect, useState } from "preact/hooks";
 import toast from "react-hot-toast";
 import Flame from "../../../assets/Flame/Flame";
 import "./style.css";
-const SHIPS = [
-  {
-    shipType: "BATTLESHIP",
-    length: 5,
-    color: "red-600",
-  },
-  {
-    shipType: "CARRIER",
-    length: 4,
-    color: "blue-600",
-  },
-  {
-    shipType: "CRUISER",
-    length: 3,
-    color: "white-600",
-  },
-  {
-    shipType: "DESTROYER",
-    length: 3,
-    color: "yellow-600",
-  },
-  {
-    shipType: "SUBMARINE",
-    length: 2,
-    color: "green-600",
-  },
-];
 
 function OpponentBoard(props: any) {
-  const [shipCoordinatesArr, setShipCoordinates] = useState<any>({});
-  const [sankShips, setSankShips] = useState<any>([]);
-  const [currentHitShip, setCurrentHitShip] = useState<any>(null);
-  const [cellStatus, setCellStatus] = useState<any>(
-    [...Array(100).keys()].map(() => false)
+  const [opponentSunkShips, setOpponentSunkShips] = useState<any>([]);
+
+  // Opponent's ship cell status
+  const [opponentCellStatus, setOpponentCellStatus] = useState<any>(
+    [...Array(100).keys()].map(() => "EMPTY")
   );
 
-  function fireMissle(cell: number) {
-    setCellStatus((prev: any) => ({ ...prev, [cell]: true }));
-    props.socket.emit("fire-missile", cell);
-    for (let ship in props.opponentPlacedShips) {
-      if (props.opponentPlacedShips[ship].includes(cell)) {
-        if (
-          props.opponentPlacedShips[ship].length ===
-          SHIPS[SHIPS.findIndex((el) => el.shipType === ship)].length
-        ) {
-          toast.success(`You hit ${ship}`);
-          setCurrentHitShip(ship);
-        }
-        const newOpponentShipsPlacement = { ...props.opponentPlacedShips };
-        const newArr = newOpponentShipsPlacement[ship].filter(
-          (el: any) => el !== cell
-        );
-        props.setOpponentPlacedShips((prev: any) => ({
-          ...prev,
-          [ship]: newArr,
-        }));
-        props.socket.emit("opponent-ship-hit", newOpponentShipsPlacement);
+  const checkIfOpponentShipSank = (ship: string, opponentShips: any) => {
+    if (!opponentShips[ship].length) {
+      toast.success(`Opponent's ${ship} has been sunk. Bravo!`, {
+        duration: 1500,
+      });
+      setOpponentSunkShips((prev: any) => [...prev, ship]);
+    }
+  };
+
+  useEffect(() => {
+    if (opponentSunkShips.length === 5) {
+      toast.success(`You are victorious!`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
+    }
+  }, [opponentSunkShips]);
+
+  function checkWhichShipGotHit(currentCoordinates: any, cell: any): string {
+    for (let ship in currentCoordinates) {
+      if (currentCoordinates[ship].includes(cell)) {
+        return ship;
       }
     }
+    return "";
   }
 
-  useEffect(() => {
-    if (currentHitShip) {
-      if (!shipCoordinatesArr[currentHitShip].length) {
-        toast.success(`You sank opponent's ${currentHitShip}`);
-        const newShipCoordinates = { ...shipCoordinatesArr };
-        delete newShipCoordinates[currentHitShip];
-        setShipCoordinates(newShipCoordinates);
-        setSankShips((prev: any) => [...prev, currentHitShip]);
-        setCurrentHitShip(null);
-      }
+  function fireMissle(cell: number) {
+    const currentOpponentCoordinates = Object.values(
+      props.opponentPlacedShips
+    ).flat(1);
+    if (currentOpponentCoordinates.includes(cell)) {
+      // Find which ship got hit
+      const hitShip = checkWhichShipGotHit(props.opponentPlacedShips, cell);
+      // Update opponent's board status locally using state
+      setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "HIT" }));
+      // Convey the missile strike to opponent and send them updated ship placements
+      const newOpponentShipsPlacement = { ...props.opponentPlacedShips };
+      const newArr = newOpponentShipsPlacement[hitShip].filter(
+        (el: any) => el !== cell
+      );
+      newOpponentShipsPlacement[hitShip] = newArr;
+      props.setOpponentPlacedShips(newOpponentShipsPlacement);
+      checkIfOpponentShipSank(hitShip, newOpponentShipsPlacement);
+      toast.success(`Opponent's ${hitShip} has been hit. Good job!`, {
+        duration: 1500,
+      });
+      props.socket.emit("fire-missile", cell, "HIT", newOpponentShipsPlacement);
+    } else {
+      setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
+      props.socket.emit(
+        "fire-missile",
+        cell,
+        "MISS",
+        props.opponentPlacedShips
+      );
     }
-  }, [shipCoordinatesArr]);
-
-  useEffect(() => {
-    if (sankShips.length === 5) {
-      toast.success("You won!");
-      window.location.reload();
-    }
-  }, [sankShips]);
+  }
 
   return (
     <div className="relative h-full flex flex-col">
       <div
-        className={`grid gap-1 board grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative`}
+        className={`grid gap-1 board grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative ${
+          !props.startGame
+            ? "opacity-40 pointer-events-none"
+            : "pointer-events-auto"
+        }`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
             onClick={() => fireMissle(block)}
             className={`bg-[#988646] rounded-sm p-1 flex justify-center items-center ${
-              !props.startGame
-                ? "pointer-events-none opacity-60"
-                : "pointer-events-auto"
+              !props.playerTurn ? "opacity-80" : "opacity-100"
             }`}
           >
-            {cellStatus[block] && !props.opponentCoordinates.includes(block) ? (
-              <span className="text-2xl text-black font-extrabold">X</span>
-            ) : cellStatus[block] &&
-              props.opponentCoordinates.includes(block) ? (
-              <>
-                {/* <div className="p-2 rounded-full bg-white absolute missile-drop"></div> */}
-                <Flame />
-              </>
-            ) : (
-              ""
-            )}
+            {opponentCellStatus[block] === "EMPTY" ? "" : null}
+            {opponentCellStatus[block] === "MISS" ? "O" : null}
+            {opponentCellStatus[block] === "HIT" ? <Flame /> : null}
           </div>
         ))}
       </div>

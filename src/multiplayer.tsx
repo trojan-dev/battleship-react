@@ -5,7 +5,12 @@ import { io } from "socket.io-client";
 import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 
+const TOTAL_COORDINATES = 17;
+
 function Multiplayer() {
+  const [userSocketInstance, setUserSocketInstance] = useState<any>(null);
+
+  /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
     BATTLESHIP: [],
@@ -14,31 +19,29 @@ function Multiplayer() {
     DESTROYER: [],
     SUBMARINE: [],
   });
-  const [shipsHealth] = useState<any>({
-    BATTLESHIP: 100,
-    CARRIER: 100,
-    CRUISER: 100,
-    DESTROYER: 100,
-    SUBMARINE: 100,
-  });
-  const [placedCoordinates, setPlacedCoordinates] = useState<Array<number>>([]);
-  const [cellStatus, setCellStatus] = useState(
-    [...Array(100).keys()].map(() => false)
+  const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
+  const [playerCellStatus, setPlayerCellStatus] = useState(
+    [...Array(100).keys()].map(() => "EMPTY")
   );
-  const [userSocketInstance, setUserSocketInstance] = useState<any>(null);
 
+  /* Current opponent info */
   const [opponentReady, setOpponentReady] = useState(false);
-  const [opponentPlacedShips, setOpponentPlacedShips] = useState(null);
+  const [opponentPlacedShips, setOpponentPlacedShips] = useState<any>({});
   const [opponentCoordinates, setOpponentCoordinates] = useState([]);
-  const [opponentName, setOpponentName] = useState("");
 
+  /* Start game */
   const [startGame, setStartGame] = useState(false);
 
-  const [playerTurn, setPlayerTurn] = useState(true);
-  const [opponentTurn, setOpponentTurn] = useState(false);
+  useEffect(() => {
+    const allPlacedCoordinates = Object.values(playerShipsCoordinates).flat(1);
+    setPlacedCoordinates(allPlacedCoordinates);
+  }, [playerShipsCoordinates]);
 
   useEffect(() => {
-    const socket = io(`https://battleship-server-socket.onrender.com`);
+    const socket =
+      import.meta.env.MODE === "development"
+        ? io(`http://localhost:3000`)
+        : io(`https://battleship-server-socket.onrender.com`);
     socket.on("connect", () => {
       setUserSocketInstance(socket);
       toast.success(
@@ -49,20 +52,24 @@ function Multiplayer() {
       );
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
     if (userSocketInstance) {
       userSocketInstance.on("receive-opponent-status", (message: any) => {
-        const { playerName, coordinates, shipsPlacement } = message;
-        setOpponentName(playerName);
+        const { coordinates, shipsPlacement } = message;
         setOpponentPlacedShips(shipsPlacement);
         setOpponentCoordinates(coordinates);
         setOpponentReady(true);
       });
       userSocketInstance.on("send-cell-info", (message: any) => {
-        setCellStatus((prev) => ({ ...prev, [message]: true }));
+        const { cell, strike, opponentShips } = message;
+        // Update player's board situation after opponent hit
+        setPlayerCellStatus((prev) => ({ ...prev, [cell]: strike }));
+        setPlayerShipsCoordinates(opponentShips);
       });
     }
   }, [userSocketInstance]);
@@ -73,18 +80,24 @@ function Multiplayer() {
     }
   }, [playerReady, opponentReady]);
 
+  useEffect(() => {
+    if (startGame && !Object.values(playerShipsCoordinates).flat().length) {
+      toast.error(`You lost!`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
+    }
+  }, [playerShipsCoordinates]);
+
+  // Check the actual position of the ship wrt to the board
   const calculateCellDistance = (start: any) => {
     let topDistance, leftDistance;
-    // if (shipsOreintation[ship] === "horizontal") {
     topDistance = `${Math.floor(start / 10) * 39 + 6}px`;
     leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 39 + 6}px`;
     return { topDistance, leftDistance };
-    // }
-    // topDistance = `${Math.floor(start / 10) * 40 + 3}px`;
-    // leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 40 + 3}px`;
-    // return { topDistance, leftDistance };
   };
 
+  // Check if ships are overlapping with each other while placement
   const checkIfShipCollision = (
     currentShipBlocks: Array<any>,
     currentShip: any
@@ -128,6 +141,7 @@ function Multiplayer() {
     }
   };
 
+  // Run this when the ship is dragged on the board by the player
   const handleShipDrop = (event: any) => {
     const { active, collisions } = event;
     if (collisions) {
@@ -174,6 +188,22 @@ function Multiplayer() {
     }
   };
 
+  // Run this after player has confirmed their ships
+  const handlePlayerReadyScenario = () => {
+    if (
+      Object.values(playerShipsCoordinates).flat(1).length === TOTAL_COORDINATES
+    ) {
+      userSocketInstance.emit(
+        "player-ready",
+        playerShipsCoordinates,
+        placedCoordinates
+      );
+      setPlayerReady(true);
+    } else {
+      toast.error(`Please place all your ships first!`);
+    }
+  };
+
   return (
     <DndContext
       collisionDetection={rectIntersection}
@@ -193,22 +223,7 @@ function Multiplayer() {
                 {!playerReady ? (
                   <button
                     className={`border basis-3/12 p-2 rounded-md`}
-                    onClick={() => {
-                      if (placedCoordinates.length === 17) {
-                        userSocketInstance.emit(
-                          "player-ready",
-                          JSON.stringify(
-                            localStorage.getItem("battleship-player")
-                          ),
-                          playerShipsCoordinates,
-                          placedCoordinates,
-                          userSocketInstance.id
-                        );
-                        setPlayerReady(true);
-                      } else {
-                        toast.error(`Please place all your ships first!`);
-                      }
-                    }}
+                    onClick={() => handlePlayerReadyScenario()}
                   >
                     Confirm
                   </button>
@@ -219,12 +234,10 @@ function Multiplayer() {
 
           <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
             <div>
-              {/* <h1>{localStorage.getItem("battleship-player")}</h1> */}
               <PlayerBoard
                 placedShips={placedCoordinates}
                 playerShipsCoordinates={playerShipsCoordinates}
-                cellStatus={cellStatus}
-                shipsHealth={shipsHealth}
+                cellStatus={playerCellStatus}
                 startGame={startGame}
                 playerReady={playerReady}
                 opponentReady={opponentReady}
@@ -232,18 +245,13 @@ function Multiplayer() {
             </div>
 
             <div>
-              {/* <h1>{opponentName}</h1> */}
               <OpponentBoard
+                socket={userSocketInstance}
                 startGame={startGame}
-                // setPlayerReady={setPlayerReady}
-                // setOpponentReady={setOpponentReady}
                 playerReady={playerReady}
                 opponentReady={opponentReady}
                 opponentPlacedShips={opponentPlacedShips}
                 opponentCoordinates={opponentCoordinates}
-                socket={userSocketInstance}
-                playerTurn={playerTurn}
-                opponentTurn={opponentTurn}
                 setOpponentPlacedShips={setOpponentPlacedShips}
               />
             </div>

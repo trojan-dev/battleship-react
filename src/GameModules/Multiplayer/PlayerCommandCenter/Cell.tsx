@@ -1,20 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import Flame from "../../../assets/Flame/Flame";
-function DroppableCell({
-  id,
-  placedShips,
-  cellStatus,
-  playerShipsCoordinates,
-  playerTurn,
-  opponentTurn,
-}: {
-  id: number;
-  placedShips: any;
-  cellStatus: any;
-  playerShipsCoordinates: any;
-  playerTurn: any;
-  opponentTurn: any;
-}) {
+function DroppableCell({ id, placedShips, cellStatus }: any) {
   const { setNodeRef } = useDroppable({
     id,
   });
@@ -24,18 +10,9 @@ function DroppableCell({
       ref={setNodeRef}
       className="rounded-sm p-1 bg-[#303F48] flex justify-center items-center relative z-2"
     >
-      {cellStatus[id] && !placedShips.includes(id) ? (
-        // <div className="p-2 rounded-full bg-blue-300 absolute missile-drop-opponent"></div>
-        <span className="text-2xl text-black font-extrabold">X</span>
-      ) : cellStatus[id] && placedShips.includes(id) ? (
-        // <div className="w-3 h-3 rounded-full bg-red-600 relative z-10"></div>
-        <>
-          {/* <div className="p-2 rounded-full absolute missile-drop-opponent"></div> */}
-          <Flame />
-        </>
-      ) : (
-        ""
-      )}
+      {cellStatus[id] === "EMPTY" ? "" : null}
+      {cellStatus[id] === "MISS" ? "O" : null}
+      {cellStatus[id] === "HIT" ? <Flame /> : null}
     </div>
   );
 }

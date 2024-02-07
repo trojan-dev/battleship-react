@@ -55,14 +55,14 @@ function ShipComponent({
           data-ship={shipType}
           className={`border flex items-center gap-2 p-1 rounded-md cursor-move  ${SHIP_DIMENSIONS_HORIZONTAL[shipType]}`}
         >
-          <div className="bg-[#4A98A0] w-[80%] rounded-lg h-[12px]"></div>
+          <div className="bg-[#4A98A0] w-[80%] rounded-lg h-[14px]"></div>
         </div>
-        {active?.id !== shipType &&
+        {/* {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(false)}>
             <RotateIcon />
           </button>
-        ) : null}
+        ) : null} */}
       </div>
     );
   } else {
@@ -76,14 +76,14 @@ function ShipComponent({
           style={style}
           {...listeners}
         >
-          <div className="bg-[#4A98A0] h-[80%] rounded-lg w-[12px]"></div>
+          <div className="bg-[#4A98A0] h-[80%] rounded-lg w-[14px]"></div>
         </div>
-        {active?.id !== shipType &&
+        {/* {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(true)}>
             <RotateIcon />
           </button>
-        ) : null}
+        ) : null} */}
       </div>
     );
   }

@@ -76,8 +76,6 @@ function OpponentBoard(props: any) {
     props.setOpponentReady(true);
   }
 
-  console.log(props.playerReady);
-
   return (
     <div className="relative h-full flex flex-col">
       <div

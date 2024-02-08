@@ -1,37 +1,19 @@
 import { useDroppable } from "@dnd-kit/core";
-import Flame from "../../../assets/Flame/Flame";
-function DroppableCell({
-  id,
-  placedShips,
-  cellStatus,
-  playerShipsCoordinates,
-}: {
-  id: number;
-  placedShips: any;
-  cellStatus: any;
-  playerShipsCoordinates: any;
-}) {
+import BoardCell from "../../../assets/Cell";
+import CellMiss from "../../../assets/CellMiss";
+import Bombed from "../../../assets/Bombed";
+function DroppableCell({ id, playerCellStatus, startGame }: any) {
   const { setNodeRef } = useDroppable({
     id,
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      className="rounded-sm p-1 bg-[#303F48] flex justify-center items-center relative z-2"
-    >
-      {cellStatus[id] && !placedShips.includes(id) ? (
-        // <div className="p-2 rounded-full bg-blue-300 absolute missile-drop-opponent"></div>
-        <span className="text-2xl text-black font-extrabold">X</span>
-      ) : cellStatus[id] && placedShips.includes(id) ? (
-        // <div className="w-3 h-3 rounded-full bg-red-600 relative z-10"></div>
-        <>
-          {/* <div className="p-2 rounded-full absolute missile-drop-opponent"></div> */}
-          <Flame />
-        </>
-      ) : (
-        ""
-      )}
+    <div className="flex justify-center items-center" ref={setNodeRef}>
+      <BoardCell startGame={startGame}>
+        {playerCellStatus[id] === "EMPTY" ? "" : null}
+        {playerCellStatus[id] === "MISS" ? <CellMiss /> : null}
+        {playerCellStatus[id] === "HIT" ? <Bombed /> : null}
+      </BoardCell>
     </div>
   );
 }

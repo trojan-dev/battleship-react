@@ -1,0 +1,76 @@
+function CellMiss() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="41"
+      height="41"
+      viewBox="0 0 41 41"
+      fill="none"
+    >
+      <g style="mix-blend-mode:screen" filter="url(#filter0_f_162_7387)">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M21.699 25.2639C20.9179 24.4828 19.6516 24.4828 18.8705 25.2639L12.6083 31.5261C11.8273 32.3071 10.561 32.3071 9.77991 31.5261L8.92771 30.6738C8.14666 29.8928 8.14666 28.6265 8.9277 27.8454L15.1899 21.5832C15.9709 20.8022 15.9709 19.5359 15.1899 18.7548L8.92771 12.4926C8.14666 11.7116 8.14666 10.4452 8.92771 9.66419L9.77992 8.81198C10.561 8.03093 11.8273 8.03093 12.6083 8.81198L18.8705 15.0742C19.6516 15.8552 20.9179 15.8552 21.699 15.0742L27.9611 8.81198C28.7422 8.03093 30.0085 8.03093 30.7896 8.81198L31.6418 9.66419C32.4228 10.4452 32.4228 11.7116 31.6418 12.4926L25.3796 18.7548C24.5985 19.5359 24.5985 20.8022 25.3796 21.5832L31.6418 27.8454C32.4228 28.6265 32.4228 29.8928 31.6418 30.6738L30.7896 31.526C30.0085 32.3071 28.7422 32.3071 27.9611 31.526L21.699 25.2639Z"
+          fill="url(#paint0_radial_162_7387)"
+          fill-opacity="0.6"
+        />
+      </g>
+      <g style="mix-blend-mode:screen">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M21.699 25.2639C20.9179 24.4828 19.6516 24.4828 18.8705 25.2639L12.6083 31.5261C11.8273 32.3071 10.561 32.3071 9.77991 31.5261L8.92771 30.6738C8.14666 29.8928 8.14666 28.6265 8.9277 27.8454L15.1899 21.5832C15.9709 20.8022 15.9709 19.5359 15.1899 18.7548L8.92771 12.4926C8.14666 11.7116 8.14666 10.4452 8.92771 9.66419L9.77992 8.81198C10.561 8.03093 11.8273 8.03093 12.6083 8.81198L18.8705 15.0742C19.6516 15.8552 20.9179 15.8552 21.699 15.0742L27.9611 8.81198C28.7422 8.03093 30.0085 8.03093 30.7896 8.81198L31.6418 9.66419C32.4228 10.4452 32.4228 11.7116 31.6418 12.4926L25.3796 18.7548C24.5985 19.5359 24.5985 20.8022 25.3796 21.5832L31.6418 27.8454C32.4228 28.6265 32.4228 29.8928 31.6418 30.6738L30.7896 31.526C30.0085 32.3071 28.7422 32.3071 27.9611 31.526L21.699 25.2639Z"
+          fill="url(#paint1_radial_162_7387)"
+        />
+      </g>
+      <defs>
+        <filter
+          id="filter0_f_162_7387"
+          x="0.341919"
+          y="0.226196"
+          width="39.8856"
+          height="39.8856"
+          filterUnits="userSpaceOnUse"
+          color-interpolation-filters="sRGB"
+        >
+          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feGaussianBlur
+            stdDeviation="4"
+            result="effect1_foregroundBlur_162_7387"
+          />
+        </filter>
+        <radialGradient
+          id="paint0_radial_162_7387"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(14.2315 15.3919) rotate(43.5166) scale(25.5832 25.9595)"
+        >
+          <stop stop-color="white" />
+          <stop offset="1" stop-color="#BFBFBF" />
+        </radialGradient>
+        <radialGradient
+          id="paint1_radial_162_7387"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(14.2315 15.3919) rotate(43.5166) scale(25.5832 25.9595)"
+        >
+          <stop stop-color="white" />
+          <stop offset="1" stop-color="#BFBFBF" />
+        </radialGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export default CellMiss;

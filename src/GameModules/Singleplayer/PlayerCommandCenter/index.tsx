@@ -12,42 +12,18 @@ function PlayerBoard(props: any) {
     SUBMARINE: true,
   });
   return (
-    <div className="mb-20">
-      {/* <div className="p-2 text-sm flex flex-col gap-1 mb-5">
-        <h2 className="text-xl">Fleet's Status</h2>
-        <div className="flex flex-col">
-          <h3>CARRIER</h3>
-          <progress max={100} value={props.shipsHealth["CARRIER"]} />
-        </div>
-        <div className="flex flex-col">
-          <h3>BATTLESHIP</h3>
-          <progress max={100} value={props.shipsHealth["BATTLESHIP"]} />
-        </div>
-        <div className="flex flex-col">
-          <h3>CRUISER</h3>
-          <progress max={100} value={props.shipsHealth["CRUISER"]} />
-        </div>
-        <div className="flex flex-col">
-          <h3>DESTROYER</h3>
-          <progress max={100} value={props.shipsHealth["DESTROYER"]} />
-        </div>
-        <div className="flex flex-col">
-          <h3>SUBMARINE</h3>
-          <progress max={100} value={props.shipsHealth["SUBMARINE"]} />
-        </div>
-      </div> */}
-      <div className="flex flex-col relative max-w-[390px] max-h-[390px]">
+    <div>
+      <div className="flex flex-col relative">
         <div
-          className={`${
-            props.playerReady ? "opacity-50" : ""
-          } grid gap-1 grid-cols-[repeat(10,35px)] auto-rows-[35px]`}
+          className={`grid gap-1 grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
         >
           {[...Array(100).keys()].map((cell) => (
             <DroppableCell
-              cellStatus={props.cellStatus}
+              playerCellStatus={props.playerCellStatus}
               placedShips={props.placedShips}
               playerShipsCoordinates={props.playerShipsCoordinates}
               id={cell}
+              startGame={props.startGame}
             />
           ))}
         </div>
@@ -61,7 +37,6 @@ function PlayerBoard(props: any) {
               ship={ship}
               startGame={props.startGame}
             />
-            // <CarrierPiece  />
           ))}
         </div>
       </div>

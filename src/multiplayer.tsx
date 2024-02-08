@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 
-const TOTAL_COORDINATES = 17;
+const TOTAL_COORDINATES = 16;
 
 function Multiplayer() {
   const [userSocketInstance, setUserSocketInstance] = useState<any>(null);
@@ -92,8 +92,8 @@ function Multiplayer() {
   // Check the actual position of the ship wrt to the board
   const calculateCellDistance = (start: any) => {
     let topDistance, leftDistance;
-    topDistance = `${Math.floor(start / 10) * 39 + 6}px`;
-    leftDistance = start % 10 === 0 ? `6px` : `${(start % 10) * 39 + 6}px`;
+    topDistance = `${Math.floor(start / 10) * 45 + 2}px`;
+    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 45 + 5}px`;
     return { topDistance, leftDistance };
   };
 
@@ -156,10 +156,13 @@ function Multiplayer() {
       if (sortedCollisions.length > active.data.current.length) {
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
+
         sortedCollisions.splice(
           active.data.current.length,
           differenceInShipLengthAndCollisions
         );
+
+        console.log(sortedCollisions);
       }
 
       const draggedElement = document.getElementById(active.id);

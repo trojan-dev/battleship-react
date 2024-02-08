@@ -10,8 +10,10 @@ function HomePage() {
       <label htmlFor="player" className="mt-10 mb-5">
         Enter your name
       </label>
+
       <input
         className="text-black p-2"
+        required
         type="text"
         name=""
         id="player"
@@ -29,7 +31,7 @@ function HomePage() {
         >
           Practice
         </button>
-        <button
+        {/* <button
           onClick={() => {
             localStorage.setItem("battleship-player", playerName);
             navigate("/multiplayer");
@@ -38,7 +40,7 @@ function HomePage() {
           className="border basis-2/12 p-2 rounded-md hover:opacity-80"
         >
           1V1
-        </button>
+        </button> */}
       </div>
     </div>
   );

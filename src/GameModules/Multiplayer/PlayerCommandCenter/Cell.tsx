@@ -1,18 +1,19 @@
 import { useDroppable } from "@dnd-kit/core";
-import Flame from "../../../assets/Flame/Flame";
-function DroppableCell({ id, placedShips, cellStatus }: any) {
+import BoardCell from "../../../assets/Cell";
+import CellMiss from "../../../assets/CellMiss";
+import Bombed from "../../../assets/Bombed";
+function DroppableCell({ id, cellStatus }: any) {
   const { setNodeRef } = useDroppable({
     id,
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      className="rounded-sm p-1 bg-[#303F48] flex justify-center items-center relative z-2"
-    >
-      {cellStatus[id] === "EMPTY" ? "" : null}
-      {cellStatus[id] === "MISS" ? "O" : null}
-      {cellStatus[id] === "HIT" ? <Flame /> : null}
+    <div className="flex justify-center items-center" ref={setNodeRef}>
+      <BoardCell>
+        {cellStatus[id] === "EMPTY" ? "" : null}
+        {cellStatus[id] === "MISS" ? <CellMiss /> : null}
+        {cellStatus[id] === "HIT" ? <Bombed /> : null}
+      </BoardCell>
     </div>
   );
 }

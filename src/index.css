@@ -16,7 +16,8 @@ body {
 }
 
 img[data-ship],
-div[data-ship] {
+div[data-ship],
+svg {
   touch-action: none;
 }
 

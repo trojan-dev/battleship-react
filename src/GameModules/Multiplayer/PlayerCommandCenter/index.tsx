@@ -13,12 +13,8 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="mb-20">
-      <div className="flex flex-col relative max-w-[390px] max-h-[390px]">
-        <div
-          className={`${
-            !props.startGame ? "opacity-50 pointer-events-none" : "opacity-100"
-          } grid gap-1 grid-cols-[repeat(10,35px)] auto-rows-[35px]`}
-        >
+      <div className="flex flex-col relative">
+        <div className={`grid grid-cols-[repeat(10,45px)] auto-rows-[45px]`}>
           {[...Array(100).keys()].map((cell) => (
             <DroppableCell
               cellStatus={props.cellStatus}

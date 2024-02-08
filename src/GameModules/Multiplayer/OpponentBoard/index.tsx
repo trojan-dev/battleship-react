@@ -1,7 +1,9 @@
 import { useEffect, useState } from "preact/hooks";
 import toast from "react-hot-toast";
-import Flame from "../../../assets/Flame/Flame";
+import BoardCell from "../../../assets/Cell";
 import "./style.css";
+import Bombed from "../../../assets/Bombed";
+import CellMiss from "../../../assets/CellMiss";
 
 function OpponentBoard(props: any) {
   const [opponentSunkShips, setOpponentSunkShips] = useState<any>([]);
@@ -74,21 +76,24 @@ function OpponentBoard(props: any) {
     <div className="relative h-full flex flex-col">
       <div
         className={`grid gap-1 board grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative ${
-          !props.startGame
-            ? "opacity-40 pointer-events-none"
-            : "pointer-events-auto"
+          !props.startGame ? "pointer-events-none" : "pointer-events-auto"
         }`}
       >
+        {!props.startGame ? (
+          <p className="absolute top-[50%] left-[50%] -translate-x-2/4 -translate-y-2/4">
+            Waiting for opponent to place their ships...
+          </p>
+        ) : null}
         {[...Array(100).keys()].map((block: number | any) => (
           <div
             onClick={() => fireMissle(block)}
-            className={`bg-[#988646] rounded-sm p-1 flex justify-center items-center ${
-              !props.playerTurn ? "opacity-80" : "opacity-100"
-            }`}
+            className="flex justify-center items-center"
           >
-            {opponentCellStatus[block] === "EMPTY" ? "" : null}
-            {opponentCellStatus[block] === "MISS" ? "O" : null}
-            {opponentCellStatus[block] === "HIT" ? <Flame /> : null}
+            <BoardCell>
+              {opponentCellStatus[block] === "EMPTY" ? "" : null}
+              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
+              {opponentCellStatus[block] === "HIT" ? <Bombed /> : null}
+            </BoardCell>
           </div>
         ))}
       </div>

@@ -22,7 +22,7 @@ div[data-ship] {
 
 svg {
   fill: white;
-  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .ship {

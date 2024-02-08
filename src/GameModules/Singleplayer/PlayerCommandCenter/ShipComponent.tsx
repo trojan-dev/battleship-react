@@ -7,8 +7,7 @@ function ShipComponent({
   isHorizontal,
   setIsHorizontal,
 }: any) {
-  const { shipType, length, hComponent, vComponent, hDimensions, vDimensions } =
-    ship;
+  const { shipType, length, H, V } = ship;
   const { active, listeners, setNodeRef, transform } = useDraggable({
     id: shipType,
     data: {
@@ -31,17 +30,13 @@ function ShipComponent({
   if (isHorizontal[shipType]) {
     return (
       <div className="flex items-center gap-1">
-        <div
-          id={shipType}
+        <H
           ref={setNodeRef}
+          id={shipType}
+          data-ship={shipType}
           style={style}
           {...listeners}
-          className={hDimensions}
-          data-ship={shipType}
-        >
-          <img src={hComponent} alt="" />
-        </div>
-
+        />
         {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(false)}>
@@ -53,16 +48,13 @@ function ShipComponent({
   } else {
     return (
       <div className="flex gap-2 items-center">
-        <div
-          id={shipType}
+        <V
           ref={setNodeRef}
+          id={shipType}
+          data-ship={shipType}
           style={style}
           {...listeners}
-          className={vDimensions}
-          data-ship={shipType}
-        >
-          <img src={vComponent} alt="" />
-        </div>
+        />
         {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(true)}>

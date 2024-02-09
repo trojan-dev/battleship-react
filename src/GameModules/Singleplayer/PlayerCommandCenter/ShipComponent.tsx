@@ -36,13 +36,14 @@ function ShipComponent({
           data-ship={shipType}
           style={style}
           {...listeners}
+          onTouchEnd={() => rotateShip(false)}
         />
-        {active?.id !== shipType &&
+        {/* {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(false)}>
             <RotateIcon />
           </button>
-        ) : null}
+        ) : null} */}
       </div>
     );
   } else {
@@ -54,13 +55,14 @@ function ShipComponent({
           data-ship={shipType}
           style={style}
           {...listeners}
+          onTouchEnd={() => rotateShip(true)}
         />
-        {active?.id !== shipType &&
+        {/* {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(true)}>
             <RotateIcon />
           </button>
-        ) : null}
+        ) : null} */}
       </div>
     );
   }

@@ -77,7 +77,7 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="relative h-full flex flex-col">
+    <div className="relative h-full flex flex-col items-center">
       <div
         className={`${
           !props.startGame ? "pointer-events-none" : "pointer-events-auto"
@@ -91,9 +91,9 @@ function OpponentBoard(props: any) {
             }`}
           >
             <BoardCell>
-              {opponentCellStatus[block] === "EMPTY" ? "" : null}
-              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
-              {opponentCellStatus[block] === "HIT" ? <Bombed /> : null}
+              {opponentCellStatus[block] === "EMPTY" ? "" : ""}
+              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : ""}
+              {opponentCellStatus[block] === "HIT" ? <Bombed /> : ""}
             </BoardCell>
           </div>
         ))}

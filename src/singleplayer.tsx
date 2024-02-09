@@ -66,8 +66,8 @@ function SinglePlayer() {
   // Check the actual position of the ship wrt to the board
   const calculateCellDistance = (start: any) => {
     let topDistance, leftDistance;
-    topDistance = `${Math.floor(start / 10) * 42 - 18}px`;
-    leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 42}px`;
+    topDistance = `${Math.floor(start / 10) * 42 - 16}px`;
+    leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 42 - 6}px`;
     return { topDistance, leftDistance };
   };
 
@@ -181,27 +181,25 @@ function SinglePlayer() {
       <main className="container-fluid text-white p-3">
         <Toaster />
         <section className="container mx-auto">
-          <div className="flex flex-col md:flex-row my-5 gap-10">
-            <div>
-              <h1 className="text-4xl ">Deploy your ships</h1>
-              <h2 className="text-white opacity-60">
-                drag to move and tap the rotate button to rotate.
-              </h2>
+          <div className="flex flex-col items-center my-5 gap-2">
+            <h1 className="text-4xl ">Deploy your ships</h1>
+            <h2 className="text-white opacity-60">
+              drag to move and tap the rotate button to rotate.
+            </h2>
 
-              <div className="flex gap-2 my-2">
-                {!startGame ? (
-                  <button
-                    className={`border basis-3/12 p-2 rounded-md`}
-                    onClick={() => handlePlayerReadyScenario()}
-                  >
-                    Play
-                  </button>
-                ) : null}
-              </div>
+            <div className="flex justify-center w-[50%] gap-2 my-2">
+              {!startGame ? (
+                <button
+                  className={`border basis-3/12 p-2 rounded-md w-full`}
+                  onClick={() => handlePlayerReadyScenario()}
+                >
+                  Play
+                </button>
+              ) : null}
             </div>
           </div>
 
-          <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
+          <div className="grid items-center gap-5 grid-cols-1 lg:grid-cols-2">
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}

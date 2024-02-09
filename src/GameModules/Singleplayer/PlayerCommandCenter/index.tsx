@@ -59,8 +59,8 @@ function PlayerBoard(props: any) {
     SUBMARINE: true,
   });
   return (
-    <div>
-      <div className="flex flex-col relative">
+    <div className="flex flex-col items-center">
+      <section className="relative">
         <div
           className={`grid gap-0.5 grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
         >
@@ -74,7 +74,7 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`flex flex-wrap max-w-[400px] gap-1 my-5`}>
+        <div className={`flex flex-wrap max-w-[400px] gap-3.5 mt-5`}>
           {PlayerShips.map((ship) => (
             <ShipComponent
               isHorizontal={isHorizontal}
@@ -86,7 +86,7 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

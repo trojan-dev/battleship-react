@@ -6,6 +6,8 @@ function ShipComponent({
   playerShipsCoordinates,
   isHorizontal,
   setIsHorizontal,
+  playerShipsOrientation,
+  setPlayerShipsOrientation,
 }: any) {
   const { shipType, length, H, V } = ship;
   const { active, listeners, setNodeRef, transform } = useDraggable({
@@ -24,6 +26,10 @@ function ShipComponent({
     setIsHorizontal((prev: any) => ({
       ...prev,
       [shipType]: isHorizontal,
+    }));
+    setPlayerShipsOrientation((prev: any) => ({
+      ...prev,
+      [shipType]: isHorizontal ? "H" : "V",
     }));
   };
 

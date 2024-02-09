@@ -16,6 +16,13 @@ function SinglePlayer() {
     DESTROYER: [],
     SUBMARINE: [],
   });
+  const [playerShipsOrientation, setPlayerShipsOrientation] = useState<any>({
+    BATTLESHIP: "H",
+    CARRIER: "H",
+    CRUISER: "H",
+    DESTROYER: "H",
+    SUBMARINE: "H",
+  });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [playerCellStatus, setPlayerCellStatus] = useState<Array<any>>(
     [...Array(100).keys()].map(() => "EMPTY")
@@ -64,10 +71,15 @@ function SinglePlayer() {
   }, [playerReady]);
 
   // Check the actual position of the ship wrt to the board
-  const calculateCellDistance = (start: any) => {
+  const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
-    topDistance = `${Math.floor(start / 10) * 42 - 16}px`;
-    leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 42 - 6}px`;
+    if (playerShipsOrientation[shipType] === "H") {
+      topDistance = `${Math.floor(start / 10) * 35 - 20}px`;
+      leftDistance = start % 10 === 0 ? `4px` : `${(start % 10) * 35}px`;
+      return { topDistance, leftDistance };
+    }
+    topDistance = `${Math.floor(start / 10) * 35}px`;
+    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 35 + 6}px`;
     return { topDistance, leftDistance };
   };
 
@@ -126,7 +138,19 @@ function SinglePlayer() {
         return false;
       }
 
-      if (sortedCollisions.length > active.data.current.length) {
+      if (
+        sortedCollisions.length > active.data.current.length &&
+        playerShipsOrientation[active.id] === "H"
+      ) {
+        let differenceInShipLengthAndCollisions =
+          sortedCollisions.length - active.data.current.length;
+        sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
+      }
+
+      if (
+        sortedCollisions.length > active.data.current.length &&
+        playerShipsOrientation[active.id] === "V"
+      ) {
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
         sortedCollisions.splice(
@@ -152,7 +176,7 @@ function SinglePlayer() {
           ...sortedCollisions.map((el: any) => el.id),
         ]);
         draggedElement.style.position = "absolute";
-        let coordinates = calculateCellDistance(shipStartIndex);
+        let coordinates = calculateCellDistance(shipStartIndex, active.id);
         if (coordinates) {
           draggedElement.style.top = coordinates.topDistance;
           draggedElement.style.left = coordinates.leftDistance;
@@ -184,52 +208,53 @@ function SinglePlayer() {
     >
       <main className="container-fluid text-white p-3">
         <Toaster />
-        <section className="container mx-auto">
-          <div className="flex flex-col items-center my-5 gap-2">
-            <h1 className="text-4xl ">Deploy your ships</h1>
-            <h2 className="text-white opacity-60">
-              drag to move and tap the rotate button to rotate.
-            </h2>
 
-            <div className="flex justify-center w-[50%] gap-2 my-2">
-              {!startGame ? (
-                <button
-                  className={`border basis-3/12 p-2 rounded-md w-full`}
-                  onClick={() => handlePlayerReadyScenario()}
-                >
-                  Play
-                </button>
-              ) : null}
+        <div className="flex flex-col items-center my-5 gap-2">
+          <h1 className="text-4xl ">Deploy your ships</h1>
+          <h2 className="text-white opacity-60">
+            drag to move and tap the rotate button to rotate.
+          </h2>
+
+          <div className="flex justify-center w-[50%] gap-2 my-2">
+            {!startGame ? (
               <button
-                className={`border border-red basis-3/12 p-2 rounded-md w-full`}
-                onClick={() => handleExit()}
+                className={`border basis-3/12 p-2 rounded-md w-full`}
+                onClick={() => handlePlayerReadyScenario()}
               >
-                Exit
+                Play
               </button>
-            </div>
+            ) : null}
+            <button
+              className={`border border-red basis-3/12 p-2 rounded-md w-full`}
+              onClick={() => handleExit()}
+            >
+              Exit
+            </button>
           </div>
+        </div>
 
-          <div className="grid items-center gap-5 grid-cols-1 lg:grid-cols-2">
-            <PlayerBoard
-              placedShips={placedCoordinates}
-              playerShipsCoordinates={playerShipsCoordinates}
-              playerCellStatus={playerCellStatus}
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              setPlayerReady={setPlayerReady}
-              setOpponentReady={setOpponentReady}
-            />
+        <div className="grid items-center gap-5 grid-cols-1 lg:grid-cols-2">
+          <PlayerBoard
+            placedShips={placedCoordinates}
+            playerShipsCoordinates={playerShipsCoordinates}
+            playerCellStatus={playerCellStatus}
+            startGame={startGame}
+            playerReady={playerReady}
+            opponentReady={opponentReady}
+            setPlayerReady={setPlayerReady}
+            setOpponentReady={setOpponentReady}
+            playerShipsOrientation={playerShipsOrientation}
+            setPlayerShipsOrientation={setPlayerShipsOrientation}
+          />
 
-            <OpponentBoard
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              setPlayerReady={setPlayerReady}
-              setOpponentReady={setOpponentReady}
-            />
-          </div>
-        </section>
+          <OpponentBoard
+            startGame={startGame}
+            playerReady={playerReady}
+            opponentReady={opponentReady}
+            setPlayerReady={setPlayerReady}
+            setOpponentReady={setOpponentReady}
+          />
+        </div>
       </main>
     </DndContext>
   );

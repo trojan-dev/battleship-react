@@ -2,9 +2,9 @@ import { forwardRef } from "preact/compat";
 const Truck5H = forwardRef((props, ref) => {
   return (
     <svg
-      width="206"
+      width="175"
       height="55"
-      viewBox="0 0 206 55"
+      viewBox="0 0 190 55"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       ref={ref}
@@ -344,9 +344,9 @@ const Truck5H = forwardRef((props, ref) => {
 const Truck5V = forwardRef((props, ref) => {
   return (
     <svg
-      width="50"
-      height="220"
-      viewBox="0 0 50 220"
+      width="30"
+      height="70"
+      viewBox="0 0 35 90"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       ref={ref}

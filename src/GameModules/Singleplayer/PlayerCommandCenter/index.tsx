@@ -60,10 +60,8 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="flex flex-col items-center">
-      <section className="relative">
-        <div
-          className={`grid gap-0.5 grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
-        >
+      <section className="relative flex flex-col items-center">
+        <div className={`grid grid-cols-[repeat(10,35px)] auto-rows-[35px]`}>
           {[...Array(100).keys()].map((cell) => (
             <DroppableCell
               playerCellStatus={props.playerCellStatus}
@@ -74,7 +72,7 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`flex flex-wrap max-w-[400px] gap-3.5 mt-5`}>
+        <div className={`flex flex-wrap max-w-[350px] gap-3.5 mt-5`}>
           {PlayerShips.map((ship) => (
             <ShipComponent
               isHorizontal={isHorizontal}
@@ -83,6 +81,8 @@ function PlayerBoard(props: any) {
               setIsHorizontal={setIsHorizontal}
               ship={ship}
               startGame={props.startGame}
+              playerShipsOrientation={props.playerShipsOrientation}
+              setPlayerShipsOrientation={props.setPlayerShipsOrientation}
             />
           ))}
         </div>

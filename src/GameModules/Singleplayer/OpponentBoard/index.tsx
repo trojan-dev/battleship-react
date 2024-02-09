@@ -81,7 +81,7 @@ function OpponentBoard(props: any) {
       <div
         className={`${
           !props.startGame ? "pointer-events-none" : "pointer-events-auto"
-        } grid gap-1 board grid-cols-[repeat(10,40px)] auto-rows-[40px] relative`}
+        } grid gap-0.5 board grid-cols-[repeat(10,40px)] auto-rows-[40px] relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div

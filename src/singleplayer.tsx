@@ -66,8 +66,8 @@ function SinglePlayer() {
   // Check the actual position of the ship wrt to the board
   const calculateCellDistance = (start: any) => {
     let topDistance, leftDistance;
-    topDistance = `${Math.floor(start / 10) * 44}px`;
-    leftDistance = start % 10 === 0 ? `4px` : `${(start % 10) * 44 + 4}px`;
+    topDistance = `${Math.floor(start / 10) * 42 - 18}px`;
+    leftDistance = start % 10 === 0 ? `2px` : `${(start % 10) * 42}px`;
     return { topDistance, leftDistance };
   };
 

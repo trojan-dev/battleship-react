@@ -62,7 +62,7 @@ function PlayerBoard(props: any) {
     <div>
       <div className="flex flex-col relative">
         <div
-          className={`grid gap-1 grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
+          className={`grid gap-0.5 grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
         >
           {[...Array(100).keys()].map((cell) => (
             <DroppableCell

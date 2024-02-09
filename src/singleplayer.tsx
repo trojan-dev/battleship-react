@@ -174,9 +174,7 @@ function SinglePlayer() {
   };
 
   const handleExit = () => {
-    const url = new URL(window.location);
-    url.searchParams.set("exit", "true");
-    window.history.pushState(null, "", url.toString());
+    window.location.href = window.location.href = "?exit=true";
   };
 
   return (

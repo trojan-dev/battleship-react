@@ -173,6 +173,12 @@ function SinglePlayer() {
     }
   };
 
+  const handleExit = () => {
+    const url = new URL(window.location);
+    url.searchParams.set("exit", "true");
+    window.history.pushState(null, "", url.toString());
+  };
+
   return (
     <DndContext
       collisionDetection={rectIntersection}
@@ -196,6 +202,12 @@ function SinglePlayer() {
                   Play
                 </button>
               ) : null}
+              <button
+                className={`border border-red basis-3/12 p-2 rounded-md w-full`}
+                onClick={() => handleExit()}
+              >
+                Exit
+              </button>
             </div>
           </div>
 

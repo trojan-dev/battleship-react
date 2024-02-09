@@ -36,33 +36,31 @@ function ShipComponent({
           data-ship={shipType}
           style={style}
           {...listeners}
-          onTouchEnd={() => rotateShip(false)}
         />
-        {/* {active?.id !== shipType &&
+        {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(false)}>
             <RotateIcon />
           </button>
-        ) : null} */}
+        ) : null}
       </div>
     );
   } else {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-1">
         <V
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
           style={style}
           {...listeners}
-          onTouchEnd={() => rotateShip(true)}
         />
-        {/* {active?.id !== shipType &&
+        {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(true)}>
             <RotateIcon />
           </button>
-        ) : null} */}
+        ) : null}
       </div>
     );
   }

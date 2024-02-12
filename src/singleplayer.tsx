@@ -1,12 +1,18 @@
 import { useState, useEffect } from "preact/hooks";
 import { Toaster, toast } from "react-hot-toast";
+import { decode } from "js-base64";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 
+const searchParams = new URLSearchParams(window.location.search).get("data");
+console.log(decode);
+
 const TOTAL_COORDINATES = 16;
+const BASE_CELL_SIZE = 40;
 
 function SinglePlayer() {
+  const [gamePayload, setGamePayload] = useState<{} | null>({});
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -35,11 +41,20 @@ function SinglePlayer() {
 
   const [startGame, setStartGame] = useState(false);
 
+  useEffect(() => {
+    if (searchParams) {
+      const decoded = JSON.parse(atob(searchParams));
+      setGamePayload(decoded);
+    }
+  }, []);
+
   function checkIfPlayerShipSank(ship: any) {
     if (!playerShipsCoordinates[ship].length) {
       toast.success(`Opponent sank your ${ship}`);
     }
   }
+
+  console.log(gamePayload?.players);
 
   useEffect(() => {
     function computerFiresMissle(cell: number) {
@@ -74,12 +89,14 @@ function SinglePlayer() {
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
     if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${Math.floor(start / 10) * 35 - 20}px`;
-      leftDistance = start % 10 === 0 ? `4px` : `${(start % 10) * 35}px`;
+      topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE - 5}px`;
+      leftDistance =
+        start % 10 === 0 ? `5px` : `${(start % 10) * BASE_CELL_SIZE - 10}px`;
       return { topDistance, leftDistance };
     }
-    topDistance = `${Math.floor(start / 10) * 35}px`;
-    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 35 + 6}px`;
+    topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE}px`;
+    leftDistance =
+      start % 10 === 0 ? `0px` : `${(start % 10) * BASE_CELL_SIZE}px`;
     return { topDistance, leftDistance };
   };
 
@@ -129,8 +146,9 @@ function SinglePlayer() {
 
   const handleShipDrop = (event: any) => {
     const { active, collisions } = event;
+    console.log(collisions);
     if (collisions) {
-      const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
+      let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
       if (sortedCollisions.length === active.data.current.length + 1) {
         sortedCollisions.pop();
       }
@@ -151,11 +169,14 @@ function SinglePlayer() {
         sortedCollisions.length > active.data.current.length &&
         playerShipsOrientation[active.id] === "V"
       ) {
-        let differenceInShipLengthAndCollisions =
-          sortedCollisions.length - active.data.current.length;
-        sortedCollisions.splice(
-          active.data.current.length,
-          differenceInShipLengthAndCollisions
+        // let differenceInShipLengthAndCollisions =
+        //   sortedCollisions.length - active.data.current.length;
+        // sortedCollisions.splice(
+        //   active.data.current.length,
+        //   differenceInShipLengthAndCollisions
+        // );
+        sortedCollisions = sortedCollisions.filter(
+          (_: number, index: number) => index % 2 !== 0
         );
       }
 
@@ -253,6 +274,7 @@ function SinglePlayer() {
             opponentReady={opponentReady}
             setPlayerReady={setPlayerReady}
             setOpponentReady={setOpponentReady}
+            gamePayload={gamePayload}
           />
         </div>
       </main>

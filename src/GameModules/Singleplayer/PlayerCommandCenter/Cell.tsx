@@ -3,12 +3,17 @@ import BoardCell from "../../../assets/Cell";
 import CellMiss from "../../../assets/CellMiss";
 import Bombed from "../../../assets/Bombed";
 function DroppableCell({ id, playerCellStatus, startGame }: any) {
-  const { setNodeRef } = useDroppable({
+  const { isOver, setNodeRef } = useDroppable({
     id,
   });
 
   return (
-    <div className="flex justify-center items-center" ref={setNodeRef}>
+    <div
+      className={`flex justify-center items-center ${
+        isOver ? "bg-red-500" : ""
+      }`}
+      ref={setNodeRef}
+    >
       <BoardCell startGame={startGame}>
         {playerCellStatus[id] === "EMPTY" ? "" : null}
         {playerCellStatus[id] === "MISS" ? <CellMiss /> : null}

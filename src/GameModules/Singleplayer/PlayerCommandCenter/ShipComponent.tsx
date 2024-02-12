@@ -9,7 +9,7 @@ function ShipComponent({
   playerShipsOrientation,
   setPlayerShipsOrientation,
 }: any) {
-  const { shipType, length, H, V } = ship;
+  const { shipType, length, H, V, hDimensions, vDimensions } = ship;
   const { active, listeners, setNodeRef, transform } = useDraggable({
     id: shipType,
     data: {
@@ -41,14 +41,15 @@ function ShipComponent({
           id={shipType}
           data-ship={shipType}
           style={style}
+          dimensions={hDimensions}
           {...listeners}
         />
-        {active?.id !== shipType &&
+        {/* {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
           <button onClick={() => rotateShip(false)}>
             <RotateIcon />
           </button>
-        ) : null}
+        ) : null} */}
       </div>
     );
   } else {
@@ -59,6 +60,7 @@ function ShipComponent({
           id={shipType}
           data-ship={shipType}
           style={style}
+          dimensions={vDimensions}
           {...listeners}
         />
         {active?.id !== shipType &&

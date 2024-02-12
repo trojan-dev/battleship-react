@@ -8,9 +8,9 @@ function BoardCell({
   const style = startGame ? { zIndex: "22", position: "relative" } : {};
   return (
     <svg
-      width="42"
-      height="42"
-      viewBox="0 0 43 42"
+      width="100%"
+      height="100%"
+      viewBox="0 0 45 45"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={style}

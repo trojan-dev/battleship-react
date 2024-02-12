@@ -1,11 +1,15 @@
 import { useEffect, useState } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./style.css";
 import Bombed from "../../../assets/Bombed";
 import BoardCell from "../../../assets/Cell";
 import CellMiss from "../../../assets/CellMiss";
 
+const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
+
 function OpponentBoard(props: any) {
+  const navigate = useNavigate();
   const [shipCoordinatesArr, setShipCoordinates] = useState<any>({});
   const [allPlacedCoordinates, setAllPlacedCoordinates] = useState<any>([]);
   const [sankShips, setSankShips] = useState<any>([]);
@@ -35,8 +39,49 @@ function OpponentBoard(props: any) {
   useEffect(() => {
     if (sankShips.length === 5) {
       toast.success("You won!");
+      if (props.gamePayload) {
+        const newPayload = {
+          ...props.gamePayload,
+          status: "completed",
+          gameUrl: window.location.host,
+          result: [
+            {
+              userID: props.gamePayload?.players[0]?._id,
+              endResult: "winner",
+            },
+          ],
+          players: [props.gamePayload.players[0]],
+        };
+        sendEndGameStats(newPayload);
+        // window.location.href = window.location.href = `?exit=true&data=${btoa(
+        //   JSON.stringify(newPayload)
+        // )}`;
+        navigate(
+          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+        );
+        window.location.reload();
+      }
     }
   }, [sankShips]);
+
+  async function sendEndGameStats(payload: Response) {
+    try {
+      const response = await fetch(
+        `http://65.2.34.81:3000/sdk/conclude/${DUMMY_ROOM_ID}`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const output = await response.json();
+      return output;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   function generateOpponentShips() {
     const placement: any = {

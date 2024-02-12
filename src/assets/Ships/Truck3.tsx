@@ -1,10 +1,12 @@
 import { forwardRef } from "preact/compat";
-const Truck3H = forwardRef((props, ref) => {
+const Truck3H = forwardRef((props: any, ref) => {
   return (
     <svg
-      width="100"
-      height="55"
-      viewBox="0 0 109 55"
+      width={props.dimensions.width}
+      height={props.dimensions.height}
+      viewBox={`0 3 ${props.dimensions.width + 25} ${
+        props.dimensions.height + 10
+      }`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       ref={ref}
@@ -204,12 +206,14 @@ const Truck3H = forwardRef((props, ref) => {
   );
 });
 
-const Truck3V = forwardRef((props, ref) => {
+const Truck3V = forwardRef((props: any, ref) => {
   return (
     <svg
-      width="35"
-      height="105"
-      viewBox="0 0 50 150"
+      width={props.dimensions.width}
+      height={props.dimensions.height}
+      viewBox={`0 3 ${props.dimensions.width + 10} ${
+        props.dimensions.height + 10
+      }`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       ref={ref}

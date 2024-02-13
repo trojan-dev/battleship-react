@@ -1,5 +1,5 @@
 import { forwardRef } from "preact/compat";
-const Truck3H = forwardRef((props: any, ref) => {
+const Truck4H = forwardRef((props: any, ref) => {
   return (
     <svg
       width={props.dimensions.width}
@@ -206,7 +206,7 @@ const Truck3H = forwardRef((props: any, ref) => {
   );
 });
 
-const Truck3V = forwardRef((props: any, ref) => {
+const Truck4V = forwardRef((props: any, ref) => {
   return (
     <svg
       width={props.dimensions.width}
@@ -463,4 +463,4 @@ const Truck3V = forwardRef((props: any, ref) => {
   );
 });
 
-export { Truck3H, Truck3V };
+export { Truck4H, Truck4V };

@@ -12,7 +12,11 @@ main {
 }
 
 body {
-  background-color: black;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(207, 133, 26, 1) 100%
+  );
 }
 
 img[data-ship],

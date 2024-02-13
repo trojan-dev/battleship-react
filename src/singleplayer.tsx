@@ -1,17 +1,15 @@
 import { useState, useEffect } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import { decode } from "js-base64";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
-
-const searchParams = new URLSearchParams(window.location.search).get("data");
-console.log(decode);
 
 const TOTAL_COORDINATES = 16;
 const BASE_CELL_SIZE = 40;
 
 function SinglePlayer() {
+  const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<{} | null>({});
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
@@ -40,8 +38,12 @@ function SinglePlayer() {
   // const [opponentCoordinates, setOpponentCoordinates] = useState([]);
 
   const [startGame, setStartGame] = useState(false);
+  const [botShipsPlacement, setBotShipsPlacement] = useState(false);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search).get(
+      "data"
+    );
     if (searchParams) {
       const decoded = JSON.parse(atob(searchParams));
       setGamePayload(decoded);
@@ -53,8 +55,6 @@ function SinglePlayer() {
       toast.success(`Opponent sank your ${ship}`);
     }
   }
-
-  console.log(gamePayload?.players);
 
   useEffect(() => {
     function computerFiresMissle(cell: number) {
@@ -91,12 +91,12 @@ function SinglePlayer() {
     if (playerShipsOrientation[shipType] === "H") {
       topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE - 5}px`;
       leftDistance =
-        start % 10 === 0 ? `5px` : `${(start % 10) * BASE_CELL_SIZE - 10}px`;
+        start % 10 === 0 ? `3px` : `${(start % 10) * BASE_CELL_SIZE + 2}px`;
       return { topDistance, leftDistance };
     }
     topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE}px`;
     leftDistance =
-      start % 10 === 0 ? `0px` : `${(start % 10) * BASE_CELL_SIZE}px`;
+      start % 10 === 0 ? `0px` : `${(start % 10) * BASE_CELL_SIZE + 2}px`;
     return { topDistance, leftDistance };
   };
 
@@ -146,12 +146,10 @@ function SinglePlayer() {
 
   const handleShipDrop = (event: any) => {
     const { active, collisions } = event;
-    console.log(collisions);
     if (collisions) {
       let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
-      if (sortedCollisions.length === active.data.current.length + 1) {
-        sortedCollisions.pop();
-      }
+
+      /* In case the user is trying to drag outside the boundaries */
       if (sortedCollisions.length < active.data.current.length) {
         return false;
       }
@@ -162,6 +160,7 @@ function SinglePlayer() {
       ) {
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
+
         sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
       }
 
@@ -169,15 +168,9 @@ function SinglePlayer() {
         sortedCollisions.length > active.data.current.length &&
         playerShipsOrientation[active.id] === "V"
       ) {
-        // let differenceInShipLengthAndCollisions =
-        //   sortedCollisions.length - active.data.current.length;
-        // sortedCollisions.splice(
-        //   active.data.current.length,
-        //   differenceInShipLengthAndCollisions
-        // );
-        sortedCollisions = sortedCollisions.filter(
-          (_: number, index: number) => index % 2 !== 0
-        );
+        let differenceInShipLengthAndCollisions =
+          sortedCollisions.length - active.data.current.length;
+        sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
       }
 
       const draggedElement = document.getElementById(active.id);
@@ -211,16 +204,23 @@ function SinglePlayer() {
     if (
       Object.values(playerShipsCoordinates).flat(1).length === TOTAL_COORDINATES
     ) {
-      setPlayerReady(true);
-      setStartGame(true);
+      setBotShipsPlacement(true);
+      setTimeout(() => {
+        setPlayerReady(true);
+        setStartGame(true);
+        setBotShipsPlacement(false);
+      }, 4000);
     } else {
       toast.error(`Please place all your ships first!`);
     }
   };
 
   const handleExit = () => {
-    window.location.href = window.location.href = "?exit=true";
+    navigate(`/singleplayer?exit=true`);
+    window.location.reload();
   };
+
+  const handleRandomShipPlacement = () => {};
 
   return (
     <DndContext
@@ -230,28 +230,33 @@ function SinglePlayer() {
       <main className="container-fluid text-white p-3">
         <Toaster />
 
-        <div className="flex flex-col items-center my-5 gap-2">
-          <h1 className="text-4xl ">Deploy your ships</h1>
-          <h2 className="text-white opacity-60">
-            drag to move and tap the rotate button to rotate.
-          </h2>
+        {!startGame ? (
+          <div className="flex flex-col items-center my-5 gap-2">
+            <>
+              <h1 className="text-4xl ">Deploy your ships</h1>
+              <h2 className="text-white opacity-60">
+                drag to move and tap the rotate button to rotate.
+              </h2>
+            </>
+          </div>
+        ) : null}
 
-          <div className="flex justify-center w-[50%] gap-2 my-2">
-            {!startGame ? (
-              <button
-                className={`border basis-3/12 p-2 rounded-md w-full`}
-                onClick={() => handlePlayerReadyScenario()}
-              >
-                Play
-              </button>
-            ) : null}
+        <div className="flex justify-center gap-2 my-5">
+          {!startGame ? (
             <button
-              className={`border border-red basis-3/12 p-2 rounded-md w-full`}
+              className={`border basis-3/12 p-2 rounded-md w-full`}
+              onClick={() => handlePlayerReadyScenario()}
+            >
+              Play
+            </button>
+          ) : (
+            <button
+              className={`bg-white text-black w-[200px] p-2 rounded-md w-full`}
               onClick={() => handleExit()}
             >
               Exit
             </button>
-          </div>
+          )}
         </div>
 
         <div className="grid items-center gap-5 grid-cols-1 lg:grid-cols-2">
@@ -268,14 +273,21 @@ function SinglePlayer() {
             setPlayerShipsOrientation={setPlayerShipsOrientation}
           />
 
-          <OpponentBoard
-            startGame={startGame}
-            playerReady={playerReady}
-            opponentReady={opponentReady}
-            setPlayerReady={setPlayerReady}
-            setOpponentReady={setOpponentReady}
-            gamePayload={gamePayload}
-          />
+          {startGame ? (
+            <OpponentBoard
+              startGame={startGame}
+              playerReady={playerReady}
+              opponentReady={opponentReady}
+              setPlayerReady={setPlayerReady}
+              setOpponentReady={setOpponentReady}
+              gamePayload={gamePayload}
+            />
+          ) : null}
+          {botShipsPlacement ? (
+            <h1 className="text-white flex justify-center items-center h-[200px] text-2xl animate-pulse">
+              Bot is placing their ships. Prepare for battle
+            </h1>
+          ) : null}
         </div>
       </main>
     </DndContext>

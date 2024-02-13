@@ -40,6 +40,7 @@ function OpponentBoard(props: any) {
     if (sankShips.length === 5) {
       toast.success("You won!");
       if (props.gamePayload) {
+        const { mode } = props.gamePayload;
         const newPayload = {
           ...props.gamePayload,
           status: "completed",
@@ -52,10 +53,9 @@ function OpponentBoard(props: any) {
           ],
           players: [props.gamePayload.players[0]],
         };
-        sendEndGameStats(newPayload);
-        // window.location.href = window.location.href = `?exit=true&data=${btoa(
-        //   JSON.stringify(newPayload)
-        // )}`;
+        if (mode !== "0") {
+          sendEndGameStats(newPayload);
+        }
         navigate(
           `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
         );
@@ -126,7 +126,7 @@ function OpponentBoard(props: any) {
       <div
         className={`${
           !props.startGame ? "pointer-events-none" : "pointer-events-auto"
-        } grid board grid-cols-[repeat(10,35px)] auto-rows-[35px] relative`}
+        } grid board grid-cols-[repeat(10,40px)] relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div

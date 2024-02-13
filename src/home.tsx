@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 function HomePage() {
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(window.location.search).get("data");
-  if (!searchParams && !import.meta.env.DEV) {
+  if (!searchParams) {
     return (
       <p className="text-white align-center">
         Something went wrong loading the game.

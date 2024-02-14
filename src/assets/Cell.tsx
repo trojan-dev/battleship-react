@@ -1,17 +1,24 @@
 function BoardCell({
   startGame,
   children,
+  boardType,
 }: {
   startGame: boolean;
   children: React.ReactNode;
+  boardType: string;
 }) {
-  const style = startGame ? { zIndex: "22", position: "relative" } : {};
+  const style = startGame
+    ? {
+        zIndex: "22",
+        position: "relative",
+      }
+    : {};
   return (
     <svg
       width="100%"
       height="100%"
       viewBox="0 0 45 45"
-      fill="none"
+      fill="#FFFF00"
       xmlns="http://www.w3.org/2000/svg"
       style={style}
     >
@@ -35,7 +42,7 @@ function BoardCell({
           gradientTransform="translate(10.4113 12.4936) rotate(43.1221) scale(44.9318 45.5558)"
         >
           <stop stop-color="white" />
-          <stop offset="1" stop-color="#BFBFBF" />
+          <stop offset="1" stop-color={`#BFBFBF`} />
         </radialGradient>
       </defs>
       <foreignObject x="0" y="0" width="100%" height="100%">

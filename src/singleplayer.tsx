@@ -11,7 +11,7 @@ const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
 function SinglePlayer() {
   const navigate = useNavigate();
-  const [gamePayload, setGamePayload] = useState<{} | null>(null);
+  const [gamePayload, setGamePayload] = useState<any>(null);
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -108,17 +108,11 @@ function SinglePlayer() {
           sendEndGameStats(newPayload);
         }
         navigate(
-          `/results?exit=true&data=${btoa(
-            JSON.stringify(newPayload)
-          )}&isWinner=false&playerScore=${currentScore.player}&botScore=${
-            currentScore.bot
-          }`
+          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
         );
         window.location.reload();
       } else {
-        navigate(
-          `/results?isWinner=false&playerScore=${currentScore.player}&botScore=${currentScore.bot}`
-        );
+        navigate(`/singleplayer?exit=true`);
       }
     }
   }, [playerShipsCoordinates, startGame]);
@@ -290,19 +284,11 @@ function SinglePlayer() {
     >
       <main className="container-fluid text-white p-3">
         <Toaster />
-        {startGame && !botShipsPlacement ? (
-          <button
-            className={`mb-3 bg-white text-black w-[100px] rounded-md`}
-            onClick={() => handleExit()}
-          >
-            Exit
-          </button>
-        ) : null}
 
         {!startGame && !botShipsPlacement ? (
-          <div className="flex flex-col items-center my-5 gap-2">
+          <div className="flex flex-col items-center my-3 gap-1">
             <>
-              <h1 className="text-4xl ">Deploy your trucks</h1>
+              <h1 className="text-2xl">Deploy your trucks</h1>
               <h2 className="text-white opacity-60">
                 drag to move and tap the rotate arrow to rotate.
               </h2>
@@ -319,6 +305,14 @@ function SinglePlayer() {
               Play
             </button>
           </div>
+        ) : null}
+        {startGame && !botShipsPlacement ? (
+          <button
+            className={`bg-red-500 mb-2 text-white w-[100px] rounded-md`}
+            onClick={() => handleExit()}
+          >
+            Exit
+          </button>
         ) : null}
 
         <div className="grid items-center grid-cols-1 lg:grid-cols-2">

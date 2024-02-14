@@ -9,7 +9,7 @@ function DroppableCell({ id, cellStatus }: any) {
 
   return (
     <div className="flex justify-center items-center" ref={setNodeRef}>
-      <BoardCell>
+      <BoardCell boardType="player">
         {cellStatus[id] === "EMPTY" ? "" : null}
         {cellStatus[id] === "MISS" ? <CellMiss /> : null}
         {cellStatus[id] === "HIT" ? <Bombed /> : null}

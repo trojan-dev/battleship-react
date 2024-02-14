@@ -25,7 +25,7 @@ function PlayerBoard(props: any) {
       <section className="relative flex flex-col items-center">
         <div
           className={`${
-            props.playerReady ? "opacity-60" : ""
+            props.playerReady ? "opacity-30" : ""
           } grid grid-cols-[repeat(10,30px)] auto-rows-[30px]`}
         >
           {[...Array(100).keys()].map((cell) => (
@@ -38,18 +38,20 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`flex flex-wrap gap-1 max-w-[300px] mt-5`}>
+        <div className={`grid gap-2 grid-cols-2 max-w-[320px] mt-5`}>
           {PlayerShips.map((ship) => (
-            <ShipComponent
-              isHorizontal={isHorizontal}
-              playerShipsCoordinates={props.playerShipsCoordinates}
-              setShipOrientation={props.setShipOrientation}
-              setIsHorizontal={setIsHorizontal}
-              ship={ship}
-              startGame={props.startGame}
-              playerShipsOrientation={props.playerShipsOrientation}
-              setPlayerShipsOrientation={props.setPlayerShipsOrientation}
-            />
+            <div className={`${props.startGame ? "opacity-30" : ""}`}>
+              <ShipComponent
+                isHorizontal={isHorizontal}
+                playerShipsCoordinates={props.playerShipsCoordinates}
+                setShipOrientation={props.setShipOrientation}
+                setIsHorizontal={setIsHorizontal}
+                ship={ship}
+                startGame={props.startGame}
+                playerShipsOrientation={props.playerShipsOrientation}
+                setPlayerShipsOrientation={props.setPlayerShipsOrientation}
+              />
+            </div>
           ))}
         </div>
       </section>

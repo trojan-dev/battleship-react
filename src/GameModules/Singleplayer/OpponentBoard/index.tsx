@@ -62,17 +62,11 @@ function OpponentBoard(props: any) {
           sendEndGameStats(newPayload);
         }
         navigate(
-          `/results?exit=true&data=${btoa(
-            JSON.stringify(newPayload)
-          )}&isWinner=true&playerScore=${props.currentScore.player}&botScore=${
-            props.currentScore.bot
-          }`
+          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
         );
-        // window.location.reload();
+        window.location.reload();
       } else {
-        navigate(
-          `/results?isWinner=true&playerScore=${props.currentScore.player}&botScore=${props.currentScore.bot}`
-        );
+        navigate(`/singleplayer/?exit=true`);
       }
     }
   }, [sankShips]);
@@ -150,7 +144,7 @@ function OpponentBoard(props: any) {
                 : "pointer-events-none opacity-60"
             }`}
           >
-            <BoardCell>
+            <BoardCell boardType="opponent">
               {opponentCellStatus[block] === "EMPTY" ? "" : ""}
               {opponentCellStatus[block] === "MISS" ? <CellMiss /> : ""}
               {opponentCellStatus[block] === "HIT" ? <Bombed /> : ""}

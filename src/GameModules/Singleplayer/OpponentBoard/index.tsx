@@ -139,7 +139,7 @@ function OpponentBoard(props: any) {
       <div
         className={`${
           !props.startGame ? "pointer-events-none" : "pointer-events-auto"
-        } grid board grid-cols-[repeat(10,40px)] relative`}
+        } grid board grid-cols-[repeat(10,30px)] relative`}
       >
         {[...Array(100).keys()].map((block: number | any) => (
           <div
@@ -158,12 +158,12 @@ function OpponentBoard(props: any) {
           </div>
         ))}
       </div>
-      {props.startGame ? (
+      {/* {props.startGame ? (
         <div className="flex justify-end w-full gap-3 items-center mt-1">
           <img width={40} src={BotFace} alt="" />
           <span className="text-white text-xl">{props.currentScore.bot}</span>
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }

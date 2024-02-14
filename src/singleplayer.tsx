@@ -6,7 +6,7 @@ import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 
 const TOTAL_COORDINATES = 16;
-const BASE_CELL_SIZE = 40;
+const BASE_CELL_SIZE = 30;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
 function SinglePlayer() {
@@ -290,6 +290,14 @@ function SinglePlayer() {
     >
       <main className="container-fluid text-white p-3">
         <Toaster />
+        {startGame && !botShipsPlacement ? (
+          <button
+            className={`my-5 bg-white text-black w-[100px] rounded-md`}
+            onClick={() => handleExit()}
+          >
+            Exit
+          </button>
+        ) : null}
 
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col items-center my-5 gap-2">
@@ -346,16 +354,6 @@ function SinglePlayer() {
             </h1>
           ) : null}
         </div>
-        {startGame && !botShipsPlacement ? (
-          <div className="flex justify-start">
-            <button
-              className={`mt-5 bg-white text-black w-[200px] p-2 rounded-md w-full`}
-              onClick={() => handleExit()}
-            >
-              Exit
-            </button>
-          </div>
-        ) : null}
       </main>
     </DndContext>
   );

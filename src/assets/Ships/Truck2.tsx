@@ -4,9 +4,7 @@ const Truck2H = forwardRef((props: any, ref) => {
     <svg
       width={props.dimensions.width}
       height={props.dimensions.height}
-      viewBox={`0 3 ${props.dimensions.width + 25} ${
-        props.dimensions.height + 10
-      }`}
+      viewBox={`0 3 ${props.dimensions.viewBoxW} ${props.dimensions.viewBoxH}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       ref={ref}
@@ -188,14 +186,12 @@ const Truck2H = forwardRef((props: any, ref) => {
   );
 });
 
-const Truck2V = forwardRef((props, ref) => {
+const Truck2V = forwardRef((props: any, ref) => {
   return (
     <svg
       width={props.dimensions.width}
       height={props.dimensions.height}
-      viewBox={`0 3 ${props.dimensions.width + 10} ${
-        props.dimensions.height + 10
-      }`}
+      viewBox={`0 3 ${props.dimensions.viewBoxW} ${props.dimensions.viewBoxH}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       ref={ref}

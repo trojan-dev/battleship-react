@@ -16,6 +16,7 @@ function ShipComponent({
     data: {
       length,
     },
+    disabled: startGame,
   });
   const style = transform
     ? {

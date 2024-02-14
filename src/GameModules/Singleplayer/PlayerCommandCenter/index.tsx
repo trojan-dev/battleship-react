@@ -14,19 +14,19 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="flex flex-col items-center">
-      {props.startGame ? (
+      {/* {props.startGame ? (
         <div className="flex w-full gap-3 items-center my-3">
           <img width={40} src={PlayerFace} alt="" />
           <span className="text-white text-xl">
             {props.currentScore.player}
           </span>
         </div>
-      ) : null}
+      ) : null} */}
       <section className="relative flex flex-col items-center">
         <div
           className={`${
             props.playerReady ? "opacity-60" : ""
-          } grid grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
+          } grid grid-cols-[repeat(10,30px)] auto-rows-[30px]`}
         >
           {[...Array(100).keys()].map((cell) => (
             <DroppableCell
@@ -38,7 +38,7 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`flex flex-wrap max-w-[400px] gap-2 mt-5`}>
+        <div className={`flex flex-wrap max-w-[300px] mt-5`}>
           {PlayerShips.map((ship) => (
             <ShipComponent
               isHorizontal={isHorizontal}

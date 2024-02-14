@@ -100,6 +100,7 @@ function SinglePlayer() {
             {
               userID: gamePayload?.players[0]?._id,
               endResult: "loser",
+              score: currentScore.player,
             },
           ],
           players: [gamePayload.players[0]],
@@ -305,6 +306,12 @@ function SinglePlayer() {
               onClick={() => handlePlayerReadyScenario()}
             >
               Play
+            </button>
+            <button
+              className={`bg-red-500 text-white w-[100px] rounded-md`}
+              onClick={() => handleExit()}
+            >
+              Exit
             </button>
           </div>
         ) : null}

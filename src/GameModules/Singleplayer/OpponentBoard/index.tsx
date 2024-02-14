@@ -5,7 +5,6 @@ import "./style.css";
 import Bombed from "../../../assets/Bombed";
 import BoardCell from "../../../assets/Cell";
 import CellMiss from "../../../assets/CellMiss";
-import BotFace from "../../../assets/BotFace.svg";
 
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
@@ -54,6 +53,7 @@ function OpponentBoard(props: any) {
             {
               userID: props.gamePayload?.players[0]?._id,
               endResult: "winner",
+              score: 5,
             },
           ],
           players: [props.gamePayload.players[0]],

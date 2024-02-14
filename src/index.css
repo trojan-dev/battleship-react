@@ -18,6 +18,7 @@ body {
     rgba(0, 0, 0, 1) 23%,
     rgba(37, 60, 73, 1) 85%
   );
+  background-repeat: no-repeat;
 }
 
 img[data-ship],

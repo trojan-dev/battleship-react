@@ -286,11 +286,13 @@ function SinglePlayer() {
         <Toaster />
 
         {!startGame && !botShipsPlacement ? (
-          <div className="flex flex-col items-center my-3 gap-1">
+          <div className="flex flex-col my-1 gap-0.5">
             <>
-              <h1 className="text-2xl">Deploy your trucks</h1>
-              <h2 className="text-white opacity-60">
-                drag to move and tap the rotate arrow to rotate.
+              <h1 className="text-2xl">
+                Deploy <br /> your trucks
+              </h1>
+              <h2 className="text-white text-sm opacity-60">
+                drag to move and tap to rotate
               </h2>
             </>
           </div>

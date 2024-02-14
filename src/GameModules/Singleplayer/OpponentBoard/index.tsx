@@ -5,6 +5,7 @@ import "./style.css";
 import Bombed from "../../../assets/Bombed";
 import BoardCell from "../../../assets/Cell";
 import CellMiss from "../../../assets/CellMiss";
+import BotFace from "../../../assets/BotFace.svg";
 
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
@@ -32,6 +33,10 @@ function OpponentBoard(props: any) {
         setShipCoordinates(newShipCoordinates);
         setSankShips((prev: any) => [...prev, currentHitShip]);
         setCurrentHitShip(null);
+        props.setCurrentScore((prev: any) => ({
+          ...prev,
+          player: prev.player + 1,
+        }));
       }
     }
   }, [shipCoordinatesArr]);
@@ -53,13 +58,21 @@ function OpponentBoard(props: any) {
           ],
           players: [props.gamePayload.players[0]],
         };
-        if (mode !== "0") {
+        if (mode !== 0) {
           sendEndGameStats(newPayload);
         }
         navigate(
-          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+          `/results?exit=true&data=${btoa(
+            JSON.stringify(newPayload)
+          )}&isWinner=true&playerScore=${props.currentScore.player}&botScore=${
+            props.currentScore.bot
+          }`
         );
-        window.location.reload();
+        // window.location.reload();
+      } else {
+        navigate(
+          `/results?isWinner=true&playerScore=${props.currentScore.player}&botScore=${props.currentScore.bot}`
+        );
       }
     }
   }, [sankShips]);
@@ -122,7 +135,7 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="relative h-full flex flex-col items-center">
+    <div className="relative h-full flex flex-col items-center transition-opacity delay-500">
       <div
         className={`${
           !props.startGame ? "pointer-events-none" : "pointer-events-auto"
@@ -132,7 +145,9 @@ function OpponentBoard(props: any) {
           <div
             onClick={() => fireMissle(block)}
             className={`flex justify-center items-center ${
-              props.playerReady ? "pointer-events-auto" : "pointer-events-none"
+              props.playerReady
+                ? "pointer-events-auto"
+                : "pointer-events-none opacity-60"
             }`}
           >
             <BoardCell>
@@ -143,6 +158,12 @@ function OpponentBoard(props: any) {
           </div>
         ))}
       </div>
+      {props.startGame ? (
+        <div className="flex justify-end w-full gap-3 items-center mt-1">
+          <img width={40} src={BotFace} alt="" />
+          <span className="text-white text-xl">{props.currentScore.bot}</span>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -7,10 +7,11 @@ import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 
 const TOTAL_COORDINATES = 16;
 const BASE_CELL_SIZE = 40;
+const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
 function SinglePlayer() {
   const navigate = useNavigate();
-  const [gamePayload, setGamePayload] = useState<{} | null>({});
+  const [gamePayload, setGamePayload] = useState<{} | null>(null);
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -39,6 +40,10 @@ function SinglePlayer() {
 
   const [startGame, setStartGame] = useState(false);
   const [botShipsPlacement, setBotShipsPlacement] = useState(false);
+  const [currentScore, setCurrentScore] = useState<any>({
+    player: 0,
+    bot: 0,
+  });
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
@@ -49,12 +54,6 @@ function SinglePlayer() {
       setGamePayload(decoded);
     }
   }, []);
-
-  function checkIfPlayerShipSank(ship: any) {
-    if (!playerShipsCoordinates[ship].length) {
-      toast.success(`Opponent sank your ${ship}`);
-    }
-  }
 
   useEffect(() => {
     function computerFiresMissle(cell: number) {
@@ -80,11 +79,75 @@ function SinglePlayer() {
           setOpponentReady(false);
           setPlayerReady(true);
         }
-      }, 1000);
+      }, 2000);
     }
     computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady]);
 
+  useEffect(() => {
+    if (
+      startGame &&
+      Object.values(playerShipsCoordinates).flat(1).length === 0
+    ) {
+      toast.success(`Bot won!`);
+      if (gamePayload) {
+        const { mode } = gamePayload;
+        const newPayload = {
+          ...gamePayload,
+          status: "completed",
+          gameUrl: window.location.host,
+          result: [
+            {
+              userID: gamePayload?.players[0]?._id,
+              endResult: "loser",
+            },
+          ],
+          players: [gamePayload.players[0]],
+        };
+        if (mode !== "0") {
+          sendEndGameStats(newPayload);
+        }
+        navigate(
+          `/results?exit=true&data=${btoa(
+            JSON.stringify(newPayload)
+          )}&isWinner=false&playerScore=${currentScore.player}&botScore=${
+            currentScore.bot
+          }`
+        );
+        window.location.reload();
+      } else {
+        navigate(
+          `/results?isWinner=false&playerScore=${currentScore.player}&botScore=${currentScore.bot}`
+        );
+      }
+    }
+  }, [playerShipsCoordinates, startGame]);
+
+  function checkIfPlayerShipSank(ship: any) {
+    if (!playerShipsCoordinates[ship].length) {
+      toast.success(`Opponent sank your ${ship}`);
+      setCurrentScore((prev: any) => ({ ...prev, bot: prev.bot + 1 }));
+    }
+  }
+
+  async function sendEndGameStats(payload: Response) {
+    try {
+      const response = await fetch(
+        `http://65.2.34.81:3000/sdk/conclude/${DUMMY_ROOM_ID}`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const output = await response.json();
+      return output;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   // Check the actual position of the ship wrt to the board
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
@@ -220,8 +283,6 @@ function SinglePlayer() {
     window.location.reload();
   };
 
-  const handleRandomShipPlacement = () => {};
-
   return (
     <DndContext
       collisionDetection={rectIntersection}
@@ -230,36 +291,29 @@ function SinglePlayer() {
       <main className="container-fluid text-white p-3">
         <Toaster />
 
-        {!startGame ? (
+        {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col items-center my-5 gap-2">
             <>
-              <h1 className="text-4xl ">Deploy your ships</h1>
+              <h1 className="text-4xl ">Deploy your trucks</h1>
               <h2 className="text-white opacity-60">
-                drag to move and tap the rotate button to rotate.
+                drag to move and tap the rotate arrow to rotate.
               </h2>
             </>
           </div>
         ) : null}
 
-        <div className="flex justify-center gap-2 my-5">
-          {!startGame ? (
+        {!startGame && !botShipsPlacement ? (
+          <div className="flex justify-center gap-2 my-5">
             <button
               className={`border basis-3/12 p-2 rounded-md w-full`}
               onClick={() => handlePlayerReadyScenario()}
             >
               Play
             </button>
-          ) : (
-            <button
-              className={`bg-white text-black w-[200px] p-2 rounded-md w-full`}
-              onClick={() => handleExit()}
-            >
-              Exit
-            </button>
-          )}
-        </div>
+          </div>
+        ) : null}
 
-        <div className="grid items-center gap-5 grid-cols-1 lg:grid-cols-2">
+        <div className="grid items-center grid-cols-1 lg:grid-cols-2">
           <PlayerBoard
             placedShips={placedCoordinates}
             playerShipsCoordinates={playerShipsCoordinates}
@@ -271,6 +325,7 @@ function SinglePlayer() {
             setOpponentReady={setOpponentReady}
             playerShipsOrientation={playerShipsOrientation}
             setPlayerShipsOrientation={setPlayerShipsOrientation}
+            currentScore={currentScore}
           />
 
           {startGame ? (
@@ -281,14 +336,26 @@ function SinglePlayer() {
               setPlayerReady={setPlayerReady}
               setOpponentReady={setOpponentReady}
               gamePayload={gamePayload}
+              currentScore={currentScore}
+              setCurrentScore={setCurrentScore}
             />
           ) : null}
           {botShipsPlacement ? (
-            <h1 className="text-white flex justify-center items-center h-[200px] text-2xl animate-pulse">
-              Bot is placing their ships. Prepare for battle
+            <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-xl animate-pulse">
+              Bot is placing their trucks
             </h1>
           ) : null}
         </div>
+        {startGame && !botShipsPlacement ? (
+          <div className="flex justify-start">
+            <button
+              className={`mt-5 bg-white text-black w-[200px] p-2 rounded-md w-full`}
+              onClick={() => handleExit()}
+            >
+              Exit
+            </button>
+          </div>
+        ) : null}
       </main>
     </DndContext>
   );

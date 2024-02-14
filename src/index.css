@@ -13,8 +13,8 @@ main {
 
 body {
   background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 1) 50%,
+    180deg,
+    rgba(0, 0, 0, 1) 70%,
     rgba(207, 133, 26, 1) 100%
   );
 }

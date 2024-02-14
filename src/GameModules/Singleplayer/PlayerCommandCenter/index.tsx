@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import DroppableCell from "./Cell";
 import ShipComponent from "./ShipComponent";
 import PlayerShips from "../../../assets/PlayerShips";
+import PlayerFace from "../../../assets/PlayerFace.svg";
 
 function PlayerBoard(props: any) {
   const [isHorizontal, setIsHorizontal] = useState({
@@ -13,8 +14,20 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="flex flex-col items-center">
+      {props.startGame ? (
+        <div className="flex w-full gap-3 items-center my-3">
+          <img width={40} src={PlayerFace} alt="" />
+          <span className="text-white text-xl">
+            {props.currentScore.player}
+          </span>
+        </div>
+      ) : null}
       <section className="relative flex flex-col items-center">
-        <div className={`grid grid-cols-[repeat(10,40px)] auto-rows-[40px]`}>
+        <div
+          className={`${
+            props.playerReady ? "opacity-60" : ""
+          } grid grid-cols-[repeat(10,40px)] auto-rows-[40px]`}
+        >
           {[...Array(100).keys()].map((cell) => (
             <DroppableCell
               playerCellStatus={props.playerCellStatus}

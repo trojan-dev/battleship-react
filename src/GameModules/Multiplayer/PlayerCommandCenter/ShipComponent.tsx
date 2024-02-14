@@ -6,13 +6,17 @@ function ShipComponent({
   playerShipsCoordinates,
   isHorizontal,
   setIsHorizontal,
+  playerShipsOrientation,
+  setPlayerShipsOrientation,
+  startGame,
 }: any) {
-  const { shipType, length, H, V } = ship;
+  const { shipType, length, H, V, hDimensions, vDimensions } = ship;
   const { active, listeners, setNodeRef, transform } = useDraggable({
     id: shipType,
     data: {
       length,
     },
+    disabled: startGame,
   });
   const style = transform
     ? {
@@ -25,6 +29,10 @@ function ShipComponent({
       ...prev,
       [shipType]: isHorizontal,
     }));
+    setPlayerShipsOrientation((prev: any) => ({
+      ...prev,
+      [shipType]: isHorizontal ? "H" : "V",
+    }));
   };
 
   if (isHorizontal[shipType]) {
@@ -35,6 +43,8 @@ function ShipComponent({
           id={shipType}
           data-ship={shipType}
           style={style}
+          dimensions={hDimensions}
+          startGame={startGame}
           {...listeners}
         />
         {active?.id !== shipType &&
@@ -47,12 +57,14 @@ function ShipComponent({
     );
   } else {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-1">
         <V
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
           style={style}
+          dimensions={vDimensions}
+          startGame={startGame}
           {...listeners}
         />
         {active?.id !== shipType &&

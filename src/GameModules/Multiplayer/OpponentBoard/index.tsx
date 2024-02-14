@@ -75,12 +75,12 @@ function OpponentBoard(props: any) {
   return (
     <div className="relative h-full flex flex-col">
       <div
-        className={`grid gap-1 board grid-cols-[repeat(10,35px)] auto-rows-[35px] max-w-fit relative ${
+        className={`grid board grid-cols-[repeat(10,30px)] relative ${
           !props.startGame ? "pointer-events-none" : "pointer-events-auto"
         }`}
       >
         {!props.startGame ? (
-          <p className="absolute top-[50%] left-[50%] -translate-x-2/4 -translate-y-2/4">
+          <p className="text-sm absolute top-[50%] left-[50%] -translate-y-2/4">
             Waiting for opponent to place their ships...
           </p>
         ) : null}

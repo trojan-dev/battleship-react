@@ -146,9 +146,7 @@ function Multiplayer() {
     const { active, collisions } = event;
     if (collisions) {
       const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
-      if (sortedCollisions.length === active.data.current.length + 1) {
-        sortedCollisions.pop();
-      }
+
       if (sortedCollisions.length < active.data.current.length) {
         return false;
       }
@@ -236,28 +234,24 @@ function Multiplayer() {
           </div>
 
           <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
-            <div>
-              <PlayerBoard
-                placedShips={placedCoordinates}
-                playerShipsCoordinates={playerShipsCoordinates}
-                cellStatus={playerCellStatus}
-                startGame={startGame}
-                playerReady={playerReady}
-                opponentReady={opponentReady}
-              />
-            </div>
+            <PlayerBoard
+              placedShips={placedCoordinates}
+              playerShipsCoordinates={playerShipsCoordinates}
+              playerCellStatus={playerCellStatus}
+              startGame={startGame}
+              playerReady={playerReady}
+              opponentReady={opponentReady}
+            />
 
-            <div>
-              <OpponentBoard
-                socket={userSocketInstance}
-                startGame={startGame}
-                playerReady={playerReady}
-                opponentReady={opponentReady}
-                opponentPlacedShips={opponentPlacedShips}
-                opponentCoordinates={opponentCoordinates}
-                setOpponentPlacedShips={setOpponentPlacedShips}
-              />
-            </div>
+            <OpponentBoard
+              socket={userSocketInstance}
+              startGame={startGame}
+              playerReady={playerReady}
+              opponentReady={opponentReady}
+              opponentPlacedShips={opponentPlacedShips}
+              opponentCoordinates={opponentCoordinates}
+              setOpponentPlacedShips={setOpponentPlacedShips}
+            />
           </div>
         </section>
       </main>

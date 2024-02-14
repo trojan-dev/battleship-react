@@ -2,17 +2,22 @@ import { useDroppable } from "@dnd-kit/core";
 import BoardCell from "../../../assets/Cell";
 import CellMiss from "../../../assets/CellMiss";
 import Bombed from "../../../assets/Bombed";
-function DroppableCell({ id, cellStatus }: any) {
-  const { setNodeRef } = useDroppable({
+function DroppableCell({ id, playerCellStatus, startGame }: any) {
+  const { setNodeRef, over } = useDroppable({
     id,
   });
 
   return (
-    <div className="flex justify-center items-center" ref={setNodeRef}>
-      <BoardCell boardType="player">
-        {cellStatus[id] === "EMPTY" ? "" : null}
-        {cellStatus[id] === "MISS" ? <CellMiss /> : null}
-        {cellStatus[id] === "HIT" ? <Bombed /> : null}
+    <div
+      className={`flex justify-center items-center ${
+        over?.id === id ? "bg-red-500" : ""
+      }`}
+      ref={setNodeRef}
+    >
+      <BoardCell startGame={startGame}>
+        {playerCellStatus[id] === "EMPTY" ? "" : null}
+        {playerCellStatus[id] === "MISS" ? <CellMiss /> : null}
+        {playerCellStatus[id] === "HIT" ? <Bombed /> : null}
       </BoardCell>
     </div>
   );

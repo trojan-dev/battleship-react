@@ -292,7 +292,7 @@ function SinglePlayer() {
         <Toaster />
         {startGame && !botShipsPlacement ? (
           <button
-            className={`my-5 bg-white text-black w-[100px] rounded-md`}
+            className={`mb-3 bg-white text-black w-[100px] rounded-md`}
             onClick={() => handleExit()}
           >
             Exit

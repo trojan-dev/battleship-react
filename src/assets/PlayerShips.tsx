@@ -12,7 +12,7 @@ const PlayerShips = [
     hDimensions: {
       width: BASE_CELL_SIZE * 5,
       height: BASE_CELL_SIZE,
-      viewBoxW: BASE_CELL_SIZE * 5 + 50,
+      viewBoxW: BASE_CELL_SIZE * 5 + 80,
       viewBoxH: BASE_CELL_SIZE + 20,
     },
     vDimensions: {
@@ -30,7 +30,7 @@ const PlayerShips = [
     hDimensions: {
       width: BASE_CELL_SIZE * 3,
       height: BASE_CELL_SIZE,
-      viewBoxW: BASE_CELL_SIZE * 3 + 25,
+      viewBoxW: BASE_CELL_SIZE * 3 + 45,
       viewBoxH: BASE_CELL_SIZE + 20,
     },
     vDimensions: {
@@ -48,7 +48,7 @@ const PlayerShips = [
     hDimensions: {
       width: BASE_CELL_SIZE * 3,
       height: BASE_CELL_SIZE,
-      viewBoxW: BASE_CELL_SIZE * 3 + 25,
+      viewBoxW: BASE_CELL_SIZE * 3 + 45,
       viewBoxH: BASE_CELL_SIZE + 20,
     },
     vDimensions: {
@@ -66,7 +66,7 @@ const PlayerShips = [
     hDimensions: {
       width: BASE_CELL_SIZE * 3,
       height: BASE_CELL_SIZE,
-      viewBoxW: BASE_CELL_SIZE * 3 + 25,
+      viewBoxW: BASE_CELL_SIZE * 3 + 45,
       viewBoxH: BASE_CELL_SIZE + 20,
     },
     vDimensions: {
@@ -84,7 +84,7 @@ const PlayerShips = [
     hDimensions: {
       width: BASE_CELL_SIZE * 2,
       height: BASE_CELL_SIZE,
-      viewBoxW: BASE_CELL_SIZE * 2 + 25,
+      viewBoxW: BASE_CELL_SIZE * 2 + 45,
       viewBoxH: BASE_CELL_SIZE + 20,
     },
     vDimensions: {

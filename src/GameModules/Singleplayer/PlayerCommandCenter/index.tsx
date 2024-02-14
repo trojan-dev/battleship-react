@@ -38,7 +38,7 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`flex flex-wrap max-w-[300px] mt-5`}>
+        <div className={`flex flex-wrap gap-1 max-w-[300px] mt-5`}>
           {PlayerShips.map((ship) => (
             <ShipComponent
               isHorizontal={isHorizontal}

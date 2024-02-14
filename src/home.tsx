@@ -26,8 +26,8 @@ function HomePage() {
   }
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="flex flex-col gap-3">
+    <div className="min-h-screen flex justify-center items-center">
+      <div className="flex flex-col gap-1 items-center">
         <TailSpin
           visible={true}
           height="80"
@@ -36,7 +36,8 @@ function HomePage() {
           ariaLabel="tail-spin-loading"
           radius="3"
         />
-        <h2 className="text-white text-xl">Loading</h2>
+        <h2 className="text-white text-xl">Battlecity</h2>
+        <h2 className="text-white text-md">Loading</h2>
       </div>
     </div>
   );

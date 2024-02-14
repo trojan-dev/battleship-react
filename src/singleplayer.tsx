@@ -299,7 +299,7 @@ function SinglePlayer() {
         {!startGame && !botShipsPlacement ? (
           <div className="flex justify-center gap-2 my-5">
             <button
-              className={`border basis-3/12 p-2 rounded-md w-full`}
+              className={`border basis-3/12 rounded-md`}
               onClick={() => handlePlayerReadyScenario()}
             >
               Play
@@ -307,12 +307,14 @@ function SinglePlayer() {
           </div>
         ) : null}
         {startGame && !botShipsPlacement ? (
-          <button
-            className={`bg-red-500 mb-2 text-white w-[100px] rounded-md`}
-            onClick={() => handleExit()}
-          >
-            Exit
-          </button>
+          <div className="flex justify-end">
+            <button
+              className={`bg-red-500 mb-2 text-white w-[100px] rounded-md`}
+              onClick={() => handleExit()}
+            >
+              Exit
+            </button>
+          </div>
         ) : null}
 
         <div className="grid items-center grid-cols-1 lg:grid-cols-2">

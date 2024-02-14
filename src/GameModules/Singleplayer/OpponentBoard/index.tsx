@@ -141,7 +141,7 @@ function OpponentBoard(props: any) {
             className={`flex justify-center items-center ${
               props.playerReady
                 ? "pointer-events-auto"
-                : "pointer-events-none opacity-60"
+                : "pointer-events-none opacity-40"
             }`}
           >
             <BoardCell boardType="opponent">
@@ -152,12 +152,6 @@ function OpponentBoard(props: any) {
           </div>
         ))}
       </div>
-      {/* {props.startGame ? (
-        <div className="flex justify-end w-full gap-3 items-center mt-1">
-          <img width={40} src={BotFace} alt="" />
-          <span className="text-white text-xl">{props.currentScore.bot}</span>
-        </div>
-      ) : null} */}
     </div>
   );
 }

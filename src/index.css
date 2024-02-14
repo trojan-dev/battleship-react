@@ -14,8 +14,9 @@ main {
 body {
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 1) 70%,
-    rgba(207, 133, 26, 1) 100%
+    rgba(168, 144, 59, 1) 3%,
+    rgba(0, 0, 0, 1) 23%,
+    rgba(37, 60, 73, 1) 85%
   );
 }
 

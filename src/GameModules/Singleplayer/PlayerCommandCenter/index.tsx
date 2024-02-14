@@ -3,6 +3,7 @@ import DroppableCell from "./Cell";
 import ShipComponent from "./ShipComponent";
 import PlayerShips from "../../../assets/PlayerShips";
 import PlayerFace from "../../../assets/PlayerFace.svg";
+import BotFace from "../../../assets/BotFace.svg";
 
 function PlayerBoard(props: any) {
   const [isHorizontal, setIsHorizontal] = useState({
@@ -14,14 +15,21 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="flex flex-col items-center">
-      {/* {props.startGame ? (
-        <div className="flex w-full gap-3 items-center my-3">
-          <img width={40} src={PlayerFace} alt="" />
-          <span className="text-white text-xl">
-            {props.currentScore.player}
-          </span>
+      {props.startGame ? (
+        <div className="flex justify-between w-full gap-3 items-center">
+          <div className="flex gap-2">
+            <img width={20} src={PlayerFace} alt="" />
+            <span className="text-white text-md">
+              {props.currentScore.player}
+            </span>
+          </div>
+
+          <div className="flex gap-2">
+            <img width={20} src={BotFace} alt="" />
+            <span className="text-white text-md">{props.currentScore.bot}</span>
+          </div>
         </div>
-      ) : null} */}
+      ) : null}
       <section className="relative flex flex-col items-center">
         <div
           className={`${
@@ -38,7 +46,12 @@ function PlayerBoard(props: any) {
             />
           ))}
         </div>
-        <div className={`grid gap-2 grid-cols-2 max-w-[320px] mt-5`}>
+
+        <div
+          className={`grid gap-2 grid-cols-2 max-w-[320px] ${
+            !props.startGame ? "mt-5" : "mt-0"
+          }`}
+        >
           {PlayerShips.map((ship) => (
             <div className={`${props.startGame ? "opacity-30" : ""}`}>
               <ShipComponent

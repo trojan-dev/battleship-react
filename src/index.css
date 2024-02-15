@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Gridular";
+  src: url("./assets/Gridular_Regular.woff2");
+}
+
 html,
 body,
 #root,
@@ -12,11 +17,18 @@ main {
 }
 
 body {
-  background: linear-gradient(
+  /* background: linear-gradient(
     180deg,
-    rgba(168, 144, 59, 1) 3%,
-    rgba(0, 0, 0, 1) 23%,
+    rgba(168, 144, 59, 1) 2%,
+    rgba(0, 0, 0, 1) 45%,
     rgba(37, 60, 73, 1) 85%
+  ); */
+
+  background-image: -webkit-linear-gradient(
+    bottom,
+    rgb(150, 134, 70),
+    rgba(0, 0, 0, 1),
+    rgba(37, 60, 73, 1)
   );
   background-repeat: no-repeat;
 }
@@ -88,4 +100,8 @@ svg {
     transform: scale(1);
     transform: translateX(0);
   }
+}
+
+.funky-font {
+  font-family: "Gridular";
 }

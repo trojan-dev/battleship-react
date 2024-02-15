@@ -274,8 +274,13 @@ function SinglePlayer() {
   };
 
   const handleExit = () => {
-    navigate(`/singleplayer?exit=true`);
-    window.location.reload();
+    const exitPrompt = confirm("Are you sure you want to exit the game?");
+    if (exitPrompt === true) {
+      navigate(`/singleplayer?exit=true`);
+      window.location.reload();
+    } else {
+      return false;
+    }
   };
 
   return (
@@ -289,7 +294,7 @@ function SinglePlayer() {
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col my-1 gap-0.5">
             <>
-              <h1 className="text-2xl">
+              <h1 className="text-4xl funky-font">
                 Deploy <br /> your trucks
               </h1>
               <h2 className="text-white text-sm opacity-60">
@@ -308,7 +313,7 @@ function SinglePlayer() {
               Play
             </button>
             <button
-              className={`bg-red-500 text-white w-[100px] rounded-md`}
+              className={`bg-red-500 basis-3/12 text-white rounded-md`}
               onClick={() => handleExit()}
             >
               Exit

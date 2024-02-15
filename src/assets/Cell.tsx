@@ -29,7 +29,7 @@ function BoardCell({
           height="41.6452"
           rx="7.28792"
           fill="url(#paint0_radial_161_5800)"
-          fill-opacity="0.1"
+          fill-opacity="0.28"
         />
       </g>
       <defs>

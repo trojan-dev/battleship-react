@@ -20,20 +20,22 @@ function PlayerBoard(props: any) {
           <div className="flex gap-2">
             <img width={20} src={PlayerFace} alt="" />
             <span className="text-white text-md">
-              {props.currentScore.player}
+              {props.currentScore?.player}
             </span>
           </div>
 
           <div className="flex gap-2">
             <img width={20} src={BotFace} alt="" />
-            <span className="text-white text-md">{props.currentScore.bot}</span>
+            <span className="text-white text-md">
+              {props.currentScore?.bot}
+            </span>
           </div>
         </div>
       ) : null}
       <section className="relative flex flex-col items-center">
         <div
           className={`${
-            props.playerReady ? "opacity-30" : ""
+            props.playerTurn ? "opacity-40" : "opacity-100"
           } grid grid-cols-[repeat(10,30px)] auto-rows-[30px]`}
         >
           {[...Array(100).keys()].map((cell) => (

@@ -6,6 +6,8 @@ import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 
 const TOTAL_COORDINATES = 16;
+const BASE_CELL_SIZE = 30;
+const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
 function Multiplayer() {
   const [userSocketInstance, setUserSocketInstance] = useState<any>(null);
@@ -19,6 +21,13 @@ function Multiplayer() {
     DESTROYER: [],
     SUBMARINE: [],
   });
+  const [playerShipsOrientation, setPlayerShipsOrientation] = useState<any>({
+    BATTLESHIP: "H",
+    CARRIER: "H",
+    CRUISER: "H",
+    DESTROYER: "H",
+    SUBMARINE: "H",
+  });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [playerCellStatus, setPlayerCellStatus] = useState(
     [...Array(100).keys()].map(() => "EMPTY")
@@ -31,6 +40,12 @@ function Multiplayer() {
 
   /* Start game */
   const [startGame, setStartGame] = useState(false);
+  const [playerTurn, setPlayerTurn] = useState(true);
+  const [opponentTurn, setOpponentTurn] = useState(false);
+  const [score, setScore] = useState({
+    player: 0,
+    opponent: 0,
+  });
 
   useEffect(() => {
     const allPlacedCoordinates = Object.values(playerShipsCoordinates).flat(1);
@@ -51,34 +66,58 @@ function Multiplayer() {
         }
       );
     });
+    socket.on("receive-opponent-status", (message: any) => {
+      const { coordinates, shipsPlacement, turn } = message;
+      setOpponentPlacedShips(shipsPlacement);
+      setOpponentCoordinates(coordinates);
+      setOpponentReady(true);
+      setPlayerReady(turn);
+    });
+
+    socket.on("player_chance", (message) => {
+      setPlayerTurn(message);
+      setOpponentTurn(!message);
+    });
+
+    socket.on("send-cell-info", (message: any) => {
+      const { cell, strike, opponentShips } = message;
+      // Update player's board situation after opponent hit
+      setPlayerCellStatus((prev) => ({ ...prev, [cell]: strike }));
+      setPlayerShipsCoordinates(opponentShips);
+      setPlayerTurn(true);
+      setOpponentTurn(false);
+    });
+
+    socket.on("disconnect", () => {
+      toast.error(`You seem to be disconnected from the server!`);
+    });
 
     return () => {
+      socket.off("receive-opponent-status");
+      socket.off("send-cell-info");
       socket.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    if (userSocketInstance) {
-      userSocketInstance.on("receive-opponent-status", (message: any) => {
-        const { coordinates, shipsPlacement } = message;
-        setOpponentPlacedShips(shipsPlacement);
-        setOpponentCoordinates(coordinates);
-        setOpponentReady(true);
-      });
-      userSocketInstance.on("send-cell-info", (message: any) => {
-        const { cell, strike, opponentShips } = message;
-        // Update player's board situation after opponent hit
-        setPlayerCellStatus((prev) => ({ ...prev, [cell]: strike }));
-        setPlayerShipsCoordinates(opponentShips);
-      });
-    }
-  }, [userSocketInstance]);
 
   useEffect(() => {
     if (playerReady && opponentReady) {
       setStartGame(true);
     }
   }, [playerReady, opponentReady]);
+
+  useEffect(() => {
+    function checkWhichShipGotSunk() {
+      if (startGame) {
+        for (let ship in playerShipsCoordinates) {
+          if (!playerShipsCoordinates[ship].length) {
+            toast.error(`Your ${ship} got sunk`);
+            return true;
+          }
+        }
+      }
+    }
+    checkWhichShipGotSunk();
+  }, [playerShipsCoordinates]);
 
   useEffect(() => {
     if (startGame && !Object.values(playerShipsCoordinates).flat().length) {
@@ -90,10 +129,17 @@ function Multiplayer() {
   }, [playerShipsCoordinates]);
 
   // Check the actual position of the ship wrt to the board
-  const calculateCellDistance = (start: any) => {
+  const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
-    topDistance = `${Math.floor(start / 10) * 45 + 2}px`;
-    leftDistance = start % 10 === 0 ? `5px` : `${(start % 10) * 45 + 5}px`;
+    if (playerShipsOrientation[shipType] === "H") {
+      topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE - 5}px`;
+      leftDistance =
+        start % 10 === 0 ? `3px` : `${(start % 10) * BASE_CELL_SIZE + 2}px`;
+      return { topDistance, leftDistance };
+    }
+    topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE}px`;
+    leftDistance =
+      start % 10 === 0 ? `0px` : `${(start % 10) * BASE_CELL_SIZE + 2}px`;
     return { topDistance, leftDistance };
   };
 
@@ -141,26 +187,33 @@ function Multiplayer() {
     }
   };
 
-  // Run this when the ship is dragged on the board by the player
   const handleShipDrop = (event: any) => {
     const { active, collisions } = event;
     if (collisions) {
-      const sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
+      let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
 
+      /* In case the user is trying to drag outside the boundaries */
       if (sortedCollisions.length < active.data.current.length) {
         return false;
       }
 
-      if (sortedCollisions.length > active.data.current.length) {
+      if (
+        sortedCollisions.length > active.data.current.length &&
+        playerShipsOrientation[active.id] === "H"
+      ) {
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
 
-        sortedCollisions.splice(
-          active.data.current.length,
-          differenceInShipLengthAndCollisions
-        );
+        sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
+      }
 
-        console.log(sortedCollisions);
+      if (
+        sortedCollisions.length > active.data.current.length &&
+        playerShipsOrientation[active.id] === "V"
+      ) {
+        let differenceInShipLengthAndCollisions =
+          sortedCollisions.length - active.data.current.length;
+        sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
       }
 
       const draggedElement = document.getElementById(active.id);
@@ -180,7 +233,7 @@ function Multiplayer() {
           ...sortedCollisions.map((el: any) => el.id),
         ]);
         draggedElement.style.position = "absolute";
-        let coordinates = calculateCellDistance(shipStartIndex);
+        let coordinates = calculateCellDistance(shipStartIndex, active.id);
         if (coordinates) {
           draggedElement.style.top = coordinates.topDistance;
           draggedElement.style.left = coordinates.leftDistance;
@@ -213,27 +266,29 @@ function Multiplayer() {
       <main className="container-fluid text-white p-3">
         <Toaster />
         <section className="container mx-auto">
-          <div className="flex flex-col md:flex-row my-5 gap-10">
-            <div>
-              <h1 className="text-4xl ">Deploy your ships</h1>
-              <h2 className="text-white opacity-60">
-                drag to move and tap the rotate button to rotate.
-              </h2>
+          {!startGame ? (
+            <div className="flex flex-col md:flex-row my-5 gap-10">
+              <div>
+                <h1 className="text-4xl ">Deploy your ships</h1>
+                <h2 className="text-white opacity-60">
+                  drag to move and tap the rotate button to rotate.
+                </h2>
 
-              <div className="flex gap-2 my-2">
-                {!playerReady ? (
-                  <button
-                    className={`border basis-3/12 p-2 rounded-md`}
-                    onClick={() => handlePlayerReadyScenario()}
-                  >
-                    Confirm
-                  </button>
-                ) : null}
+                <div className="flex gap-2 my-2">
+                  {!playerReady ? (
+                    <button
+                      className={`border basis-3/12 p-2 rounded-md`}
+                      onClick={() => handlePlayerReadyScenario()}
+                    >
+                      Confirm
+                    </button>
+                  ) : null}
+                </div>
               </div>
             </div>
-          </div>
+          ) : null}
 
-          <div className="grid gap-5 grid-cols-1 lg:grid-cols-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}
@@ -241,6 +296,8 @@ function Multiplayer() {
               startGame={startGame}
               playerReady={playerReady}
               opponentReady={opponentReady}
+              playerTurn={playerTurn}
+              opponentTurn={opponentTurn}
             />
 
             <OpponentBoard
@@ -251,8 +308,19 @@ function Multiplayer() {
               opponentPlacedShips={opponentPlacedShips}
               opponentCoordinates={opponentCoordinates}
               setOpponentPlacedShips={setOpponentPlacedShips}
+              setOpponentTurn={setOpponentTurn}
+              setPlayerTurn={setPlayerTurn}
+              playerTurn={playerTurn}
+              opponentTurn={opponentTurn}
             />
           </div>
+          {startGame ? (
+            <div className="flex justify-center p-1">
+              <p className="text-md">
+                {playerTurn ? "Your Turn" : "Opponent's Turn"}
+              </p>
+            </div>
+          ) : null}
         </section>
       </main>
     </DndContext>

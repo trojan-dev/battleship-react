@@ -70,33 +70,46 @@ function OpponentBoard(props: any) {
         props.opponentPlacedShips
       );
     }
+    props.setPlayerTurn(false);
+    props.setOpponentTurn(true);
   }
 
   return (
-    <div className="relative h-full flex flex-col">
-      <div
-        className={`grid board grid-cols-[repeat(10,30px)] relative ${
-          !props.startGame ? "pointer-events-none" : "pointer-events-auto"
-        }`}
-      >
-        {!props.startGame ? (
-          <p className="text-sm absolute top-[50%] left-[50%] -translate-y-2/4">
-            Waiting for opponent to place their ships...
-          </p>
-        ) : null}
-        {[...Array(100).keys()].map((block: number | any) => (
-          <div
-            onClick={() => fireMissle(block)}
-            className="flex justify-center items-center"
-          >
-            <BoardCell>
-              {opponentCellStatus[block] === "EMPTY" ? "" : null}
-              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
-              {opponentCellStatus[block] === "HIT" ? <Bombed /> : null}
-            </BoardCell>
-          </div>
-        ))}
-      </div>
+    <div className="relative h-full flex flex-col items-center justify-center">
+      {/* {!props.opponentJoined ? (
+        <p className="text-md animate-pulse">Waiting for Player 2 to join</p>
+      ) : (
+        <p className="text-md animate-pulse">
+          Opponent is placing their ships.
+        </p>
+      )} */}
+
+      {props.startGame ? (
+        <div
+          className={`grid board grid-cols-[repeat(10,30px)] relative ${
+            props.opponentTurn
+              ? "pointer-events-none opacity-40"
+              : "pointer-events-auto opacity-100"
+          }`}
+        >
+          {[...Array(100).keys()].map((block: number | any) => (
+            <div
+              onClick={() => fireMissle(block)}
+              className="flex justify-center items-center"
+            >
+              <BoardCell>
+                {opponentCellStatus[block] === "EMPTY" ? "" : null}
+                {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
+                {opponentCellStatus[block] === "HIT" ? <Bombed /> : null}
+              </BoardCell>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-center animate-pulse mt-5">
+          Waiting for player 2 to join and place their ships
+        </p>
+      )}
     </div>
   );
 }

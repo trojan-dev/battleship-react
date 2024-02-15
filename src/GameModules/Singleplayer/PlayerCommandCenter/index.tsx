@@ -19,21 +19,27 @@ function PlayerBoard(props: any) {
         <div className="flex justify-between w-full gap-3 items-center">
           <div className="flex gap-2">
             <img width={20} src={PlayerFace} alt="" />
-            <span className="text-white text-md">
+            <span className="text-white text-md font-bold">
               {props.currentScore.player}
             </span>
           </div>
 
+          <p className="text-white font-bold opacity-70 mb-1">
+            {props.playerReady ? "Your Turn" : "Bot's Turn"}
+          </p>
+
           <div className="flex gap-2">
             <img width={20} src={BotFace} alt="" />
-            <span className="text-white text-md">{props.currentScore.bot}</span>
+            <span className="text-white text-md font-bold">
+              {props.currentScore.bot}
+            </span>
           </div>
         </div>
       ) : null}
       <section className="relative flex flex-col items-center">
         <div
           className={`${
-            props.playerReady ? "opacity-30" : ""
+            props.playerReady ? "opacity-50" : ""
           } grid grid-cols-[repeat(10,30px)] auto-rows-[30px]`}
         >
           {[...Array(100).keys()].map((cell) => (
@@ -48,7 +54,7 @@ function PlayerBoard(props: any) {
         </div>
 
         <div
-          className={`grid gap-2 grid-cols-2 max-w-[320px] ${
+          className={`grid gap-2 grid-cols-2 max-w-[300px] ${
             !props.startGame ? "mt-5" : "mt-0"
           }`}
         >

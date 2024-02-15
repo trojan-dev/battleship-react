@@ -12,6 +12,7 @@ const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 function SinglePlayer() {
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
+  const [isGameComplete, setIsGameComplete] = useState<boolean>(false);
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -381,8 +382,31 @@ function SinglePlayer() {
               <button
                 className="p-1 rounded-md bg-green-600 w-[100px]"
                 onClick={() => {
-                  navigate(`/singleplayer?exit=true`);
-                  window.location.reload();
+                  if (!isGameComplete) {
+                    const newPayload = {
+                      ...gamePayload,
+                      status: "abandoned",
+                      gameUrl: window.location.host,
+                      results: [
+                        {
+                          userID: gamePayload?.players[0]?._id,
+                          endResult: "loser",
+                          score: currentScore.player,
+                        },
+                        {
+                          userID: "bot",
+                          endResult: "winner",
+                          score: currentScore.bot,
+                        },
+                      ],
+                    };
+                    navigate(
+                      `/singleplayer?exit=true&data=${btoa(
+                        JSON.stringify(newPayload)
+                      )}`
+                    );
+                    window.location.reload();
+                  }
                 }}
               >
                 Yes

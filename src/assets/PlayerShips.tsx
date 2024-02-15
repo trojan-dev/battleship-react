@@ -24,20 +24,20 @@ const PlayerShips = [
   },
   {
     shipType: "BATTLESHIP",
-    length: 3,
+    length: 4,
     H: Truck4H,
     V: Truck4V,
     hDimensions: {
-      width: BASE_CELL_SIZE * 3,
+      width: BASE_CELL_SIZE * 4,
       height: BASE_CELL_SIZE,
-      viewBoxW: BASE_CELL_SIZE * 3 + 45,
+      viewBoxW: BASE_CELL_SIZE * 4 + 45,
       viewBoxH: BASE_CELL_SIZE + 20,
     },
     vDimensions: {
       width: BASE_CELL_SIZE - 10,
-      height: BASE_CELL_SIZE * 3,
-      viewBoxW: BASE_CELL_SIZE + 10,
-      viewBoxH: BASE_CELL_SIZE * 3 + 20,
+      height: BASE_CELL_SIZE * 4,
+      viewBoxW: BASE_CELL_SIZE + 5,
+      viewBoxH: BASE_CELL_SIZE * 4 + 40,
     },
   },
   {

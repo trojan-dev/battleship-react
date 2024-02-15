@@ -53,7 +53,12 @@ function OpponentBoard(props: any) {
             {
               userID: props.gamePayload?.players[0]?._id,
               endResult: "winner",
-              score: 5,
+              score: props.currentScore.player,
+            },
+            {
+              userID: "bot",
+              endResult: "loser",
+              score: props.currentScore.bot,
             },
           ],
           players: [props.gamePayload.players[0]],
@@ -92,8 +97,8 @@ function OpponentBoard(props: any) {
 
   function generateOpponentShips() {
     const placement: any = {
-      BATTLESHIP: [0, 1, 2, 3, 4],
-      CARRIER: [31, 32, 33, 34],
+      CARRIER: [0, 1, 2, 3, 4],
+      BATTLESHIP: [31, 32, 33, 34],
       CRUISER: [25, 26, 27],
       DESTROYER: [55, 65, 75],
       SUBMARINE: [98, 99],

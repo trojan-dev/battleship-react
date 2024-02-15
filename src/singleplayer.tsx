@@ -5,7 +5,7 @@ import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 
-const TOTAL_COORDINATES = 16;
+const TOTAL_COORDINATES = 17;
 const BASE_CELL_SIZE = 30;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
@@ -44,6 +44,8 @@ function SinglePlayer() {
     player: 0,
     bot: 0,
   });
+
+  const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
@@ -101,6 +103,11 @@ function SinglePlayer() {
               userID: gamePayload?.players[0]?._id,
               endResult: "loser",
               score: currentScore.player,
+            },
+            {
+              userID: "bot",
+              endResult: "winner",
+              score: currentScore.bot,
             },
           ],
           players: [gamePayload.players[0]],
@@ -274,13 +281,7 @@ function SinglePlayer() {
   };
 
   const handleExit = () => {
-    const exitPrompt = confirm("Are you sure you want to exit the game?");
-    if (exitPrompt === true) {
-      navigate(`/singleplayer?exit=true`);
-      window.location.reload();
-    } else {
-      return false;
-    }
+    setShowExitModal(true);
   };
 
   return (
@@ -288,7 +289,7 @@ function SinglePlayer() {
       collisionDetection={rectIntersection}
       onDragEnd={handleShipDrop}
     >
-      <main className="container-fluid text-white p-3">
+      <main className="container-fluid text-white p-3 relative">
         <Toaster />
 
         {!startGame && !botShipsPlacement ? (
@@ -364,6 +365,31 @@ function SinglePlayer() {
             </h1>
           ) : null}
         </div>
+        {showExitModal ? (
+          <div className="absolute transition-all top-0 left-0 w-full bg-black h-screen text-white flex flex-col justify-center items-center gap-2">
+            <h1 className="text-2xl">Exit BattleThing?</h1>
+            <p className="text-sm">Are you sure you want to exit the game?</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowExitModal(false);
+                }}
+                className="p-1 rounded-md bg-red-600 w-[100px]"
+              >
+                No
+              </button>
+              <button
+                className="p-1 rounded-md bg-green-600 w-[100px]"
+                onClick={() => {
+                  navigate(`/singleplayer?exit=true`);
+                  window.location.reload();
+                }}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        ) : null}
       </main>
     </DndContext>
   );

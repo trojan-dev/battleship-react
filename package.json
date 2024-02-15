@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
-    "js-base64": "^3.7.6",
     "preact": "^10.19.3",
+    "react-confirm": "^0.3.0-7",
     "react-hot-toast": "^2.4.1",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.21.3",

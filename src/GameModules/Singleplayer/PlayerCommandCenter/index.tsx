@@ -4,6 +4,7 @@ import ShipComponent from "./ShipComponent";
 import PlayerShips from "../../../assets/PlayerShips";
 import PlayerFace from "../../../assets/PlayerFace.svg";
 import BotFace from "../../../assets/BotFace.svg";
+import { calculateCellStyle } from "../../../helper/SIZES";
 
 function PlayerBoard(props: any) {
   const [isHorizontal, setIsHorizontal] = useState({
@@ -40,9 +41,9 @@ function PlayerBoard(props: any) {
         <div
           className={`${
             props.playerReady ? "opacity-50" : ""
-          } grid grid-cols-[repeat(10,30px)] auto-rows-[30px]`}
+          } ${calculateCellStyle()}`}
         >
-          {[...Array(100).keys()].map((cell) => (
+          {[...Array(63).keys()].map((cell) => (
             <DroppableCell
               playerCellStatus={props.playerCellStatus}
               placedShips={props.placedShips}
@@ -54,7 +55,7 @@ function PlayerBoard(props: any) {
         </div>
 
         <div
-          className={`grid gap-2 grid-cols-2 max-w-[300px] ${
+          className={`grid gap-2 grid-cols-2 ${
             !props.startGame ? "mt-5" : "mt-0"
           }`}
         >

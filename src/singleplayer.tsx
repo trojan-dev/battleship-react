@@ -1,12 +1,19 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import { DndContext, rectIntersection } from "@dnd-kit/core";
+import {
+  DndContext,
+  rectIntersection,
+  pointerWithin,
+  closestCorners,
+  closestCenter,
+} from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
+import { calculateCellSize } from "./helper/SIZES";
 
 const TOTAL_COORDINATES = 17;
-const BASE_CELL_SIZE = 30;
+const BASE_CELL_SIZE = calculateCellSize();
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
 function SinglePlayer() {
@@ -155,14 +162,17 @@ function SinglePlayer() {
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
     if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE - 5}px`;
-      leftDistance =
-        start % 10 === 0 ? `3px` : `${(start % 10) * BASE_CELL_SIZE + 2}px`;
+      topDistance = `${
+        Math.floor(start / 9) * BASE_CELL_SIZE - BASE_CELL_SIZE / 3
+      }px`;
+      leftDistance = `${(start % 9) * BASE_CELL_SIZE}px`;
       return { topDistance, leftDistance };
     }
-    topDistance = `${Math.floor(start / 10) * BASE_CELL_SIZE}px`;
-    leftDistance =
-      start % 10 === 0 ? `0px` : `${(start % 10) * BASE_CELL_SIZE + 2}px`;
+    console.log(start, Math.floor(start / 9));
+    topDistance = `${
+      Math.floor(start / 9) * BASE_CELL_SIZE - BASE_CELL_SIZE / 3
+    }px`;
+    leftDistance = `${(start % 9) * BASE_CELL_SIZE}px`;
     return { topDistance, leftDistance };
   };
 
@@ -217,6 +227,7 @@ function SinglePlayer() {
 
       /* In case the user is trying to drag outside the boundaries */
       if (sortedCollisions.length < active.data.current.length) {
+        console.log("error");
         return false;
       }
 
@@ -294,7 +305,7 @@ function SinglePlayer() {
         <Toaster />
 
         {!startGame && !botShipsPlacement ? (
-          <div className="flex flex-col my-1 gap-0.5">
+          <div className="flex flex-col my-5 gap-0.5">
             <>
               <h1 className="text-4xl funky-font">
                 Deploy <br /> your trucks
@@ -306,7 +317,7 @@ function SinglePlayer() {
           </div>
         ) : null}
 
-        {!startGame && !botShipsPlacement ? (
+        {/* {!startGame && !botShipsPlacement ? (
           <div className="flex justify-center gap-2 my-5">
             <button
               className={`border basis-3/12 rounded-md`}
@@ -321,8 +332,8 @@ function SinglePlayer() {
               Exit
             </button>
           </div>
-        ) : null}
-        {startGame && !botShipsPlacement ? (
+        ) : null} */}
+        {/* {startGame && !botShipsPlacement ? (
           <div className="flex justify-end">
             <button
               className={`bg-red-500 mb-2 text-white w-[100px] rounded-md`}
@@ -331,7 +342,7 @@ function SinglePlayer() {
               Exit
             </button>
           </div>
-        ) : null}
+        ) : null} */}
 
         <div className="grid items-center grid-cols-1 lg:grid-cols-2">
           <PlayerBoard

@@ -16,7 +16,6 @@ function ShipComponent({
     data: {
       length,
     },
-    disabled: startGame,
   });
   const style = transform
     ? {
@@ -37,44 +36,49 @@ function ShipComponent({
 
   if (isHorizontal[shipType]) {
     return (
-      <div className="flex items-center gap-1">
-        <H
-          ref={setNodeRef}
-          id={shipType}
-          data-ship={shipType}
-          style={style}
-          dimensions={hDimensions}
-          startGame={startGame}
-          {...listeners}
-        />
-        {active?.id !== shipType &&
-        !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip(false)}>
-            <RotateIcon />
-          </button>
-        ) : null}
+      <div
+        ref={setNodeRef}
+        id={shipType}
+        data-ship={shipType}
+        style={{
+          ...style,
+          width: `${hDimensions.shipWidth}px`,
+          height: `${hDimensions.shipHeight}px`,
+        }}
+        {...listeners}
+      >
+        <img className="h-auto w-full" src={H} alt="" />
       </div>
     );
   } else {
     return (
-      <div className="flex items-center gap-1">
-        <V
+      <>
+        <button onClick={() => rotateShip(true)}>Rotate</button>
+        <div
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
-          style={style}
-          dimensions={vDimensions}
-          startGame={startGame}
+          style={{
+            ...style,
+            width: `${vDimensions.shipWidth}px`,
+            height: `${vDimensions.shipHeight}px`,
+            display: "flex",
+          }}
           {...listeners}
-        />
-        {active?.id !== shipType &&
-        !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip(true)}>
-            <RotateIcon />
-          </button>
-        ) : null}
-      </div>
+        >
+          <img src={V} className="w-auto flex-grow-1" alt="" />
+        </div>
+      </>
     );
   }
 }
 export default ShipComponent;
+
+{
+  /* {active?.id !== shipType &&
+        !playerShipsCoordinates[shipType]?.length ? (
+          <button onClick={() => rotateShip(true)}>
+            <RotateIcon />
+          </button>
+        ) : null} */
+}

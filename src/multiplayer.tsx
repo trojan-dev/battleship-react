@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 
-const TOTAL_COORDINATES = 16;
+const TOTAL_COORDINATES = 17;
 const BASE_CELL_SIZE = 30;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 

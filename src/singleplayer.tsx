@@ -1,16 +1,12 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import {
-  DndContext,
-  rectIntersection,
-  pointerWithin,
-  closestCorners,
-  closestCenter,
-} from "@dnd-kit/core";
+import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import { calculateCellSize } from "./helper/SIZES";
+import PlayerFace from "./assets/PlayerFace.svg";
+import BotFace from "./assets/BotFace.svg";
 
 const TOTAL_COORDINATES = 17;
 const BASE_CELL_SIZE = calculateCellSize();
@@ -53,6 +49,13 @@ function SinglePlayer() {
     bot: 0,
   });
 
+  /* AI logic for tracking ships */
+  const [currentHitShip, setCurrentHitShip] = useState<any | null>({
+    ship: null,
+    hitCell: null,
+    possibleCells: [],
+  });
+
   const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
@@ -66,32 +69,11 @@ function SinglePlayer() {
   }, []);
 
   useEffect(() => {
-    function computerFiresMissle(cell: number) {
-      setTimeout(() => {
-        const playerCoordinates = { ...playerShipsCoordinates };
-        if (!playerReady && opponentReady) {
-          if (placedCoordinates.includes(cell)) {
-            setPlayerCellStatus((prev) => ({ ...prev, [cell]: "HIT" }));
-            for (let ship in playerCoordinates) {
-              if (playerCoordinates[ship].includes(cell)) {
-                toast.success(`Your ${ship} has been hit!`);
-                let idx = playerCoordinates[ship].findIndex(
-                  (el: any) => el === cell
-                );
-                playerCoordinates[ship].splice(idx, 1);
-                setPlayerShipsCoordinates(playerCoordinates);
-                checkIfPlayerShipSank(ship);
-              }
-            }
-          } else {
-            setPlayerCellStatus((prev) => ({ ...prev, [cell]: "MISS" }));
-          }
-          setOpponentReady(false);
-          setPlayerReady(true);
-        }
-      }, 2000);
+    if (!currentHitShip?.ship) {
+      computerFiresMissle(Math.floor(Math.random() * (62 - 0 + 1) + 0));
+    } else {
+      computerFiresIntelligentMissile(currentHitShip?.hitCell);
     }
-    computerFiresMissle(Math.floor(Math.random() * (99 - 0 + 1) + 0));
   }, [playerReady]);
 
   useEffect(() => {
@@ -140,6 +122,49 @@ function SinglePlayer() {
     }
   }
 
+  function computerFiresMissle(cell: number) {
+    setTimeout(() => {
+      const playerCoordinates = { ...playerShipsCoordinates };
+      if (!playerReady && opponentReady) {
+        if (placedCoordinates.includes(cell)) {
+          setPlayerCellStatus((prev) => ({ ...prev, [cell]: "HIT" }));
+          for (let ship in playerCoordinates) {
+            if (playerCoordinates[ship].includes(cell)) {
+              toast.success(`Your ${ship} has been hit!`);
+              let idx = playerCoordinates[ship].findIndex(
+                (el: any) => el === cell
+              );
+              playerCoordinates[ship].splice(idx, 1);
+              setPlayerShipsCoordinates(playerCoordinates);
+              if (!currentHitShip?.ship) {
+                setCurrentHitShip({
+                  ship: ship,
+                  hitCell: cell,
+                  possibleCells: [cell + 1, cell - 1, cell + 9, cell - 9],
+                });
+              }
+              checkIfPlayerShipSank(ship);
+            }
+          }
+        } else {
+          setPlayerCellStatus((prev) => ({ ...prev, [cell]: "MISS" }));
+        }
+        setOpponentReady(false);
+        setPlayerReady(true);
+      }
+    }, 2000);
+  }
+
+  function computerFiresIntelligentMissile() {
+    const randomMove =
+      currentHitShip?.possibleCells[
+        Math.floor(Math.random() * currentHitShip?.possibleCells.length)
+      ];
+    console.log(randomMove);
+    computerFiresMissle(randomMove);
+  }
+
+  console.log(currentHitShip);
   async function sendEndGameStats(payload: Response) {
     try {
       const response = await fetch(
@@ -162,16 +187,11 @@ function SinglePlayer() {
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
     if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${
-        Math.floor(start / 9) * BASE_CELL_SIZE - BASE_CELL_SIZE / 3
-      }px`;
+      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 10}px`;
       leftDistance = `${(start % 9) * BASE_CELL_SIZE}px`;
       return { topDistance, leftDistance };
     }
-    console.log(start, Math.floor(start / 9));
-    topDistance = `${
-      Math.floor(start / 9) * BASE_CELL_SIZE - BASE_CELL_SIZE / 3
-    }px`;
+    topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE}px`;
     leftDistance = `${(start % 9) * BASE_CELL_SIZE}px`;
     return { topDistance, leftDistance };
   };
@@ -221,8 +241,8 @@ function SinglePlayer() {
   };
 
   const handleShipDrop = (event: any) => {
-    const { active, collisions } = event;
-    if (collisions) {
+    const { active, collisions, over } = event;
+    if (collisions && over?.id !== "player-ships") {
       let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
 
       /* In case the user is trying to drag outside the boundaries */
@@ -274,6 +294,13 @@ function SinglePlayer() {
         }
       }
     }
+    if (collisions && over?.id === "player-ships") {
+      const draggedElement = document.getElementById(active.id);
+      draggedElement.style.position = "relative";
+      draggedElement.style.top = "0";
+      draggedElement.style.left = "0";
+      setPlayerShipsCoordinates((prev) => ({ ...prev, [active.id]: [] }));
+    }
   };
 
   // Run this after player has confirmed their ships
@@ -301,50 +328,61 @@ function SinglePlayer() {
       collisionDetection={rectIntersection}
       onDragEnd={handleShipDrop}
     >
-      <main className="container-fluid text-white p-3 relative">
+      <main className="container-fluid text-white relative">
         <Toaster />
 
+        <div className="relative flex justify-between items-center h-[10vh] z-[22] w-full game-header p-2">
+          <div className="flex items-center gap-2">
+            <span className="funky-font text-xl">01</span>
+            <img width={60} className="" src={PlayerFace} alt="" />
+          </div>
+          <img
+            className={`${opponentReady ? "visible" : "invisible"}`}
+            src={BotFace}
+            alt=""
+          />
+
+          <button>Exit</button>
+        </div>
+        {/* <div className="flex justify-center text-md font-bold mt-0.5">
+          {startGame && playerReady ? <p>Your turn</p> : null}
+          {startGame && opponentReady ? <p>Bot's turn</p> : null}
+        </div> */}
         {!startGame && !botShipsPlacement ? (
-          <div className="flex flex-col my-5 gap-0.5">
-            <>
-              <h1 className="text-4xl funky-font">
-                Deploy <br /> your trucks
-              </h1>
-              <h2 className="text-white text-sm opacity-60">
-                drag to move and tap to rotate
-              </h2>
-            </>
+          <div className="flex flex-col gap-1.5 p-1.5">
+            <h2 className="funky-font text-3xl">
+              Deploy <br />
+              Your Trucks
+            </h2>
+            <p className="text-sm opacity-50">
+              drag to move and tap to rotate, you can also pick “assign random”
+            </p>
+            <div className="flex gap-3">
+              {/* <button className="border p-1">Assign Random</button> */}
+              <button
+                onClick={() => handlePlayerReadyScenario()}
+                className="save-order p-2 rounded-md text-xs font-medium"
+              >
+                Save Order
+              </button>
+            </div>
           </div>
         ) : null}
 
-        {/* {!startGame && !botShipsPlacement ? (
-          <div className="flex justify-center gap-2 my-5">
-            <button
-              className={`border basis-3/12 rounded-md`}
-              onClick={() => handlePlayerReadyScenario()}
-            >
-              Play
-            </button>
-            <button
-              className={`bg-red-500 basis-3/12 text-white rounded-md`}
-              onClick={() => handleExit()}
-            >
-              Exit
-            </button>
-          </div>
-        ) : null} */}
-        {/* {startGame && !botShipsPlacement ? (
-          <div className="flex justify-end">
-            <button
-              className={`bg-red-500 mb-2 text-white w-[100px] rounded-md`}
-              onClick={() => handleExit()}
-            >
-              Exit
-            </button>
-          </div>
-        ) : null} */}
+        <div className="grid items-center grid-cols-1 lg:grid-cols-2 mt-2 pl-1.5 pr-1.5">
+          {startGame ? (
+            <OpponentBoard
+              startGame={startGame}
+              playerReady={playerReady}
+              opponentReady={opponentReady}
+              setPlayerReady={setPlayerReady}
+              setOpponentReady={setOpponentReady}
+              gamePayload={gamePayload}
+              currentScore={currentScore}
+              setCurrentScore={setCurrentScore}
+            />
+          ) : null}
 
-        <div className="grid items-center grid-cols-1 lg:grid-cols-2">
           <PlayerBoard
             placedShips={placedCoordinates}
             playerShipsCoordinates={playerShipsCoordinates}
@@ -359,18 +397,6 @@ function SinglePlayer() {
             currentScore={currentScore}
           />
 
-          {startGame ? (
-            <OpponentBoard
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              setPlayerReady={setPlayerReady}
-              setOpponentReady={setOpponentReady}
-              gamePayload={gamePayload}
-              currentScore={currentScore}
-              setCurrentScore={setCurrentScore}
-            />
-          ) : null}
           {botShipsPlacement ? (
             <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-xl animate-pulse">
               Bot is placing their trucks

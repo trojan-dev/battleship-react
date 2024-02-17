@@ -1,9 +1,11 @@
 import { render } from "preact";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { store } from "./store";
+import { Provider } from "react-redux";
 import SinglePlayer from "./singleplayer.tsx";
 import Multiplayer from "./multiplayer.tsx";
 import HomePage from "./home.tsx";
-import ResultsPage from "./results.tsx";
+
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -19,10 +21,11 @@ const router = createBrowserRouter([
     path: "/multiplayer",
     element: <Multiplayer />,
   },
-  {
-    path: "/results",
-    element: <ResultsPage />,
-  },
 ]);
 
-render(<RouterProvider router={router} />, document.getElementById("app")!);
+render(
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>,
+  document.getElementById("app")!
+);

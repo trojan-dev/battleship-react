@@ -6,16 +6,16 @@ function ShipComponent({
   playerShipsCoordinates,
   isHorizontal,
   setIsHorizontal,
-  playerShipsOrientation,
   setPlayerShipsOrientation,
   startGame,
 }: any) {
   const { shipType, length, H, V, hDimensions, vDimensions } = ship;
-  const { active, listeners, setNodeRef, transform } = useDraggable({
+  const { listeners, setNodeRef, transform } = useDraggable({
     id: shipType,
     data: {
       length,
     },
+    disabled: startGame,
   });
   const style = transform
     ? {
@@ -38,16 +38,17 @@ function ShipComponent({
     return (
       <div
         ref={setNodeRef}
+        {...listeners}
         id={shipType}
         data-ship={shipType}
         style={{
           ...style,
           width: `${hDimensions.shipWidth}px`,
           height: `${hDimensions.shipHeight}px`,
+          zIndex: startGame ? -1 : 0,
         }}
-        {...listeners}
       >
-        <img className="h-auto w-full" src={H} alt="" />
+        <img className="h-full w-full ship-image" src={H} alt="" />
       </div>
     );
   } else {
@@ -66,7 +67,22 @@ function ShipComponent({
           }}
           {...listeners}
         >
-          <img src={V} className="w-auto flex-grow-1" alt="" />
+          <img
+            style={
+              Object.values(playerShipsCoordinates[shipType])
+                .flat(1)
+                .some(
+                  (el) =>
+                    playerShipsCoordinates[shipType].includes(el + 10) ||
+                    playerShipsCoordinates[shipType].includes(el - 10)
+                )
+                ? "relative z-[22]"
+                : ""
+            }
+            src={V}
+            className="w-auto flex-grow-1"
+            alt=""
+          />
         </div>
       </>
     );

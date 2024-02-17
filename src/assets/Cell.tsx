@@ -7,12 +7,6 @@ function BoardCell({
   children: React.ReactNode;
   boardType: string;
 }) {
-  const style = startGame
-    ? {
-        zIndex: "22",
-        position: "relative",
-      }
-    : {};
   return (
     <svg
       width="100%"
@@ -20,7 +14,7 @@ function BoardCell({
       viewBox="0 0 45 45"
       fill="#FFFF00"
       xmlns="http://www.w3.org/2000/svg"
-      style={style}
+      // style={style}
     >
       <g id="Boxes">
         <rect
@@ -29,7 +23,7 @@ function BoardCell({
           height="41.6452"
           rx="7.28792"
           fill="url(#paint0_radial_161_5800)"
-          fill-opacity="0.28"
+          fill-opacity="0.1"
         />
       </g>
       <defs>

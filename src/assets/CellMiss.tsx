@@ -2,9 +2,9 @@ function CellMiss() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="41"
-      height="41"
-      viewBox="0 0 41 41"
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
       fill="none"
     >
       <g style="mix-blend-mode:screen" filter="url(#filter0_f_162_7387)">

@@ -1,11 +1,15 @@
 import { useState } from "preact/hooks";
+import { useDroppable } from "@dnd-kit/core";
 import DroppableCell from "./Cell";
 import ShipComponent from "./ShipComponent";
 import PlayerShips from "../../../assets/PlayerShips";
-import PlayerFace from "../../../assets/PlayerFace.svg";
-import BotFace from "../../../assets/BotFace.svg";
+
+import { calculateCellStyle } from "../../../helper/SIZES";
 
 function PlayerBoard(props: any) {
+  const { over, setNodeRef } = useDroppable({
+    id: "player-ships",
+  });
   const [isHorizontal, setIsHorizontal] = useState({
     BATTLESHIP: true,
     CARRIER: true,
@@ -15,7 +19,7 @@ function PlayerBoard(props: any) {
   });
   return (
     <div className="flex flex-col items-center">
-      {props.startGame ? (
+      {/* {props.startGame ? (
         <div className="flex justify-between w-full gap-3 items-center">
           <div className="flex gap-2">
             <img width={20} src={PlayerFace} alt="" />
@@ -35,14 +39,14 @@ function PlayerBoard(props: any) {
             </span>
           </div>
         </div>
-      ) : null}
+      ) : null} */}
       <section className="relative flex flex-col items-center">
         <div
           className={`${
-            props.playerReady ? "opacity-50" : ""
-          } grid grid-cols-[repeat(10,30px)] auto-rows-[30px]`}
+            props.playerReady ? "opacity-40" : ""
+          } ${calculateCellStyle()}`}
         >
-          {[...Array(100).keys()].map((cell) => (
+          {[...Array(63).keys()].map((cell) => (
             <DroppableCell
               playerCellStatus={props.playerCellStatus}
               placedShips={props.placedShips}
@@ -54,12 +58,15 @@ function PlayerBoard(props: any) {
         </div>
 
         <div
-          className={`grid gap-2 grid-cols-2 max-w-[300px] ${
-            !props.startGame ? "mt-5" : "mt-0"
+          className={`flex flex-wrap gap-2 ${
+            !props.startGame
+              ? "mt-5 min-h-[100px] w-full max-w-[380px]"
+              : "mt-0 max-w-[300px]"
           }`}
+          ref={setNodeRef}
         >
           {PlayerShips.map((ship) => (
-            <div className={`${props.startGame ? "opacity-30" : ""}`}>
+            <div>
               <ShipComponent
                 isHorizontal={isHorizontal}
                 playerShipsCoordinates={props.playerShipsCoordinates}

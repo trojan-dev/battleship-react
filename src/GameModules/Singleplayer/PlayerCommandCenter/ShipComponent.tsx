@@ -6,12 +6,11 @@ function ShipComponent({
   playerShipsCoordinates,
   isHorizontal,
   setIsHorizontal,
-  playerShipsOrientation,
   setPlayerShipsOrientation,
   startGame,
 }: any) {
   const { shipType, length, H, V, hDimensions, vDimensions } = ship;
-  const { active, listeners, setNodeRef, transform } = useDraggable({
+  const { listeners, setNodeRef, transform } = useDraggable({
     id: shipType,
     data: {
       length,
@@ -37,44 +36,65 @@ function ShipComponent({
 
   if (isHorizontal[shipType]) {
     return (
-      <div className="flex items-center gap-1">
-        <H
-          ref={setNodeRef}
-          id={shipType}
-          data-ship={shipType}
-          style={style}
-          dimensions={hDimensions}
-          startGame={startGame}
-          {...listeners}
-        />
-        {active?.id !== shipType &&
-        !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip(false)}>
-            <RotateIcon />
-          </button>
-        ) : null}
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        id={shipType}
+        data-ship={shipType}
+        style={{
+          ...style,
+          width: `${hDimensions.shipWidth}px`,
+          height: `${hDimensions.shipHeight}px`,
+          zIndex: startGame ? -1 : 0,
+        }}
+      >
+        <img className="h-full w-full ship-image" src={H} alt="" />
       </div>
     );
   } else {
     return (
-      <div className="flex items-center gap-1">
-        <V
+      <>
+        <button onClick={() => rotateShip(true)}>Rotate</button>
+        <div
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
-          style={style}
-          dimensions={vDimensions}
-          startGame={startGame}
+          style={{
+            ...style,
+            width: `${vDimensions.shipWidth}px`,
+            height: `${vDimensions.shipHeight}px`,
+            display: "flex",
+          }}
           {...listeners}
-        />
-        {active?.id !== shipType &&
-        !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip(true)}>
-            <RotateIcon />
-          </button>
-        ) : null}
-      </div>
+        >
+          <img
+            style={
+              Object.values(playerShipsCoordinates[shipType])
+                .flat(1)
+                .some(
+                  (el) =>
+                    playerShipsCoordinates[shipType].includes(el + 10) ||
+                    playerShipsCoordinates[shipType].includes(el - 10)
+                )
+                ? "relative z-[22]"
+                : ""
+            }
+            src={V}
+            className="w-auto flex-grow-1"
+            alt=""
+          />
+        </div>
+      </>
     );
   }
 }
 export default ShipComponent;
+
+{
+  /* {active?.id !== shipType &&
+        !playerShipsCoordinates[shipType]?.length ? (
+          <button onClick={() => rotateShip(true)}>
+            <RotateIcon />
+          </button>
+        ) : null} */
+}

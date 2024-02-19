@@ -5,6 +5,8 @@ import "./style.css";
 import Bombed from "../../../assets/Bombed";
 import BoardCell from "../../../assets/Cell";
 import CellMiss from "../../../assets/CellMiss";
+import Canon from "../../../assets/canon.svg";
+import { calculateCellStyle } from "../../../helper/SIZES";
 
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 
@@ -16,7 +18,7 @@ function OpponentBoard(props: any) {
   const [currentHitShip, setCurrentHitShip] = useState<any>(null);
   // Opponent's ship cell status
   const [opponentCellStatus, setOpponentCellStatus] = useState<any>(
-    [...Array(100).keys()].map(() => "EMPTY")
+    [...Array(63).keys()].map(() => "EMPTY")
   );
 
   useEffect(() => {
@@ -47,7 +49,7 @@ function OpponentBoard(props: any) {
         const { mode } = props.gamePayload;
         const newPayload = {
           ...props.gamePayload,
-          status: "completed",
+          gameStatus: "completed",
           gameUrl: window.location.host,
           result: [
             {
@@ -134,15 +136,15 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="relative h-full flex flex-col items-center transition-opacity delay-500">
-      <div
-        className={`${
-          !props.startGame ? "pointer-events-none" : "pointer-events-auto"
-        } grid board grid-cols-[repeat(10,30px)] relative`}
-      >
-        {[...Array(100).keys()].map((block: number | any) => (
+    <div className="relative h-full flex flex-col items-center mt-5">
+      <div className={`${calculateCellStyle()}`}>
+        {[...Array(63).keys()].map((block: number | any) => (
           <div
-            onClick={() => fireMissle(block)}
+            onClick={() => {
+              if (opponentCellStatus[block] === "EMPTY") {
+                fireMissle(block);
+              }
+            }}
             className={`flex justify-center items-center ${
               props.playerReady
                 ? "pointer-events-auto"
@@ -162,3 +164,9 @@ function OpponentBoard(props: any) {
 }
 
 export default OpponentBoard;
+
+{
+  /* <div className="canon">
+                    <img src={Canon} alt="" />
+                  </div> */
+}

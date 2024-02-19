@@ -11,6 +11,7 @@ import BotFace from "./assets/BotFace.svg";
 const TOTAL_COORDINATES = 17;
 const BASE_CELL_SIZE = calculateCellSize();
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
+let CURRENT_SHIP_HITS: number[] = [];
 
 function SinglePlayer() {
   const navigate = useNavigate();
@@ -69,11 +70,11 @@ function SinglePlayer() {
   }, []);
 
   useEffect(() => {
-    if (!currentHitShip?.ship) {
-      computerFiresMissle(Math.floor(Math.random() * (62 - 0 + 1) + 0));
-    } else {
-      computerFiresIntelligentMissile(currentHitShip?.hitCell);
-    }
+    // if (!currentHitShip?.ship) {
+    computerFiresMissle(Math.floor(Math.random() * (62 - 0 + 1) + 0));
+    // } else {
+    //   computerFiresIntelligentMissile();
+    // }
   }, [playerReady]);
 
   useEffect(() => {
@@ -86,7 +87,7 @@ function SinglePlayer() {
         const { mode } = gamePayload;
         const newPayload = {
           ...gamePayload,
-          status: "completed",
+          gameStatus: "completed",
           gameUrl: window.location.host,
           result: [
             {
@@ -115,10 +116,17 @@ function SinglePlayer() {
     }
   }, [playerShipsCoordinates, startGame]);
 
+  useEffect(() => {}, [playerShipsCoordinates]);
+
   function checkIfPlayerShipSank(ship: any) {
     if (!playerShipsCoordinates[ship].length) {
       toast.success(`Opponent sank your ${ship}`);
       setCurrentScore((prev: any) => ({ ...prev, bot: prev.bot + 1 }));
+      setCurrentHitShip({
+        ship: null,
+        possibleCells: [],
+        trackedShip: [],
+      });
     }
   }
 
@@ -136,14 +144,15 @@ function SinglePlayer() {
               );
               playerCoordinates[ship].splice(idx, 1);
               setPlayerShipsCoordinates(playerCoordinates);
+              checkIfPlayerShipSank(ship);
               if (!currentHitShip?.ship) {
                 setCurrentHitShip({
                   ship: ship,
                   hitCell: cell,
-                  possibleCells: [cell + 1, cell - 1, cell + 9, cell - 9],
+                  trackedShip: [],
                 });
+                CURRENT_SHIP_HITS = [cell - 1, cell + 1, cell - 9, cell + 9];
               }
-              checkIfPlayerShipSank(ship);
             }
           }
         } else {
@@ -152,19 +161,15 @@ function SinglePlayer() {
         setOpponentReady(false);
         setPlayerReady(true);
       }
-    }, 2000);
+    }, 1200);
   }
 
   function computerFiresIntelligentMissile() {
-    const randomMove =
-      currentHitShip?.possibleCells[
-        Math.floor(Math.random() * currentHitShip?.possibleCells.length)
-      ];
-    console.log(randomMove);
+    const randomMove = CURRENT_SHIP_HITS[0];
     computerFiresMissle(randomMove);
+    CURRENT_SHIP_HITS.pop();
   }
 
-  console.log(currentHitShip);
   async function sendEndGameStats(payload: Response) {
     try {
       const response = await fetch(
@@ -187,7 +192,7 @@ function SinglePlayer() {
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
     if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 10}px`;
+      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 7}px`;
       leftDistance = `${(start % 9) * BASE_CELL_SIZE}px`;
       return { topDistance, leftDistance };
     }

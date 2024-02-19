@@ -49,7 +49,7 @@ function OpponentBoard(props: any) {
         const { mode } = props.gamePayload;
         const newPayload = {
           ...props.gamePayload,
-          status: "completed",
+          gameStatus: "completed",
           gameUrl: window.location.host,
           result: [
             {
@@ -140,7 +140,11 @@ function OpponentBoard(props: any) {
       <div className={`${calculateCellStyle()}`}>
         {[...Array(63).keys()].map((block: number | any) => (
           <div
-            onClick={() => fireMissle(block)}
+            onClick={() => {
+              if (opponentCellStatus[block] === "EMPTY") {
+                fireMissle(block);
+              }
+            }}
             className={`flex justify-center items-center ${
               props.playerReady
                 ? "pointer-events-auto"

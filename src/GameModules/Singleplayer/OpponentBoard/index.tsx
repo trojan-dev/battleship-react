@@ -2,10 +2,9 @@ import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./style.css";
-import Bombed from "../../../assets/Bombed";
-import BoardCell from "../../../assets/Cell";
+// import Bombed from "../../../assets/Bombed";
+import Bombed from "../../../assets/bombed.svg";
 import CellMiss from "../../../assets/CellMiss";
-import Canon from "../../../assets/canon.svg";
 import { calculateCellStyle } from "../../../helper/SIZES";
 
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
@@ -117,6 +116,11 @@ function OpponentBoard(props: any) {
     }
     return "";
   }
+  function wait(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
 
   function fireMissle(cell: number) {
     if (allPlacedCoordinates.includes(cell)) {
@@ -131,12 +135,13 @@ function OpponentBoard(props: any) {
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
     }
+
     props.setPlayerReady(false);
     props.setOpponentReady(true);
   }
 
   return (
-    <div className="relative h-full flex flex-col mt-5">
+    <div className="flex flex-col items-center justify-center mb-5">
       <div className={`${calculateCellStyle()}`}>
         {[...Array(63).keys()].map((block: number | any) => (
           <div
@@ -151,11 +156,21 @@ function OpponentBoard(props: any) {
                 : "pointer-events-none opacity-40"
             }`}
           >
-            <BoardCell boardType="opponent">
-              {opponentCellStatus[block] === "EMPTY" ? "" : ""}
-              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : ""}
-              {opponentCellStatus[block] === "HIT" ? <Bombed /> : ""}
-            </BoardCell>
+            <div
+              className={`${
+                props.startGame ? "relative" : ""
+              } rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
+            >
+              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
+              {opponentCellStatus[block] === "EMPTY" ? "" : null}
+              {opponentCellStatus[block] === "HIT" ? (
+                <img
+                  width={40}
+                  className="bombed absolute top-0"
+                  src={Bombed}
+                />
+              ) : null}
+            </div>
           </div>
         ))}
       </div>

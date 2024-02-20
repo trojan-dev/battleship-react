@@ -4,21 +4,16 @@ import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
-import { calculateCellSize } from "./helper/SIZES";
 import PlayerFace from "./assets/PlayerFace.svg";
 import BotFace from "./assets/BotFace.svg";
-import Canon from "./assets/canon.svg";
-import BattleFog from "./assets/battle-fog.svg";
 
 const TOTAL_COORDINATES = 17;
-const BASE_CELL_SIZE = calculateCellSize();
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
-let CURRENT_SHIP_HITS: number[] = [];
 
 function SinglePlayer() {
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
-  const [isGameComplete, setIsGameComplete] = useState<boolean>(false);
+  const [isGameComplete] = useState<boolean>(false);
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -42,8 +37,6 @@ function SinglePlayer() {
 
   /* Bot info */
   const [opponentReady, setOpponentReady] = useState(false);
-  // const [opponentPlacedShips, setOpponentPlacedShips] = useState<any>({});
-  // const [opponentCoordinates, setOpponentCoordinates] = useState([]);
 
   const [startGame, setStartGame] = useState(false);
   const [botShipsPlacement, setBotShipsPlacement] = useState(false);
@@ -52,14 +45,7 @@ function SinglePlayer() {
     bot: 0,
   });
 
-  /* AI logic for tracking ships */
-  const [currentHitShip, setCurrentHitShip] = useState<any | null>({
-    ship: null,
-    hitCell: null,
-    possibleCells: [],
-  });
-
-  const [showExitModal, setShowExitModal] = useState(false);
+  const [setShowExitModal] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
@@ -72,11 +58,7 @@ function SinglePlayer() {
   }, []);
 
   useEffect(() => {
-    // if (!currentHitShip?.ship) {
     computerFiresMissle(Math.floor(Math.random() * (62 - 0 + 1) + 0));
-    // } else {
-    //   computerFiresIntelligentMissile();
-    // }
   }, [playerReady]);
 
   useEffect(() => {
@@ -118,18 +100,26 @@ function SinglePlayer() {
     }
   }, [playerShipsCoordinates, startGame]);
 
-  useEffect(() => {}, [playerShipsCoordinates]);
+  useEffect(() => {
+    const allPlacedCoordinates = Object.values(playerShipsCoordinates).flat(1);
+    setPlacedCoordinates(allPlacedCoordinates);
+  }, [playerShipsCoordinates]);
 
   function checkIfPlayerShipSank(ship: any) {
     if (!playerShipsCoordinates[ship].length) {
       toast.success(`Opponent sank your ${ship}`);
       setCurrentScore((prev: any) => ({ ...prev, bot: prev.bot + 1 }));
-      setCurrentHitShip({
-        ship: null,
-        possibleCells: [],
-        trackedShip: [],
-      });
+      setTimeout(() => {
+        setPlayerReady(true);
+        setOpponentReady(false);
+      }, 1500);
     }
+  }
+
+  function wait(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
   function computerFiresMissle(cell: number) {
@@ -147,29 +137,17 @@ function SinglePlayer() {
               playerCoordinates[ship].splice(idx, 1);
               setPlayerShipsCoordinates(playerCoordinates);
               checkIfPlayerShipSank(ship);
-              if (!currentHitShip?.ship) {
-                setCurrentHitShip({
-                  ship: ship,
-                  hitCell: cell,
-                  trackedShip: [],
-                });
-                CURRENT_SHIP_HITS = [cell - 1, cell + 1, cell - 9, cell + 9];
-              }
             }
           }
         } else {
           setPlayerCellStatus((prev) => ({ ...prev, [cell]: "MISS" }));
         }
-        setOpponentReady(false);
-        setPlayerReady(true);
+        wait(1500).then(() => {
+          setOpponentReady(false);
+          setPlayerReady(true);
+        });
       }
-    }, 1200);
-  }
-
-  function computerFiresIntelligentMissile() {
-    const randomMove = CURRENT_SHIP_HITS[0];
-    computerFiresMissle(randomMove);
-    CURRENT_SHIP_HITS.pop();
+    }, 2000);
   }
 
   async function sendEndGameStats(payload: Response) {
@@ -190,18 +168,6 @@ function SinglePlayer() {
       console.error(error);
     }
   }
-  // Check the actual position of the ship wrt to the board
-  const calculateCellDistance = (start: any, shipType: string) => {
-    let topDistance, leftDistance;
-    if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 15}px`;
-      leftDistance = `${(start % 9) * BASE_CELL_SIZE + 2}px`;
-      return { topDistance, leftDistance };
-    }
-    topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE}px`;
-    leftDistance = `${(start % 7) * BASE_CELL_SIZE}px`;
-    return { topDistance, leftDistance };
-  };
 
   // Check if ships are overlapping with each other while placement
   const checkIfShipCollision = (
@@ -254,7 +220,6 @@ function SinglePlayer() {
 
       /* In case the user is trying to drag outside the boundaries */
       if (sortedCollisions.length < active.data.current.length) {
-        console.log("error");
         return false;
       }
 
@@ -285,28 +250,17 @@ function SinglePlayer() {
         if (ifCollision) {
           return false;
         }
+        const startIndexElement = document.getElementById(shipStartIndex);
+        draggedElement.classList.add("truck-arrive");
+        startIndexElement?.append(draggedElement);
+        draggedElement.style.position = "relative";
+        draggedElement.style.top = "-10px";
+        draggedElement.style.left = "5px";
         setPlayerShipsCoordinates((prev: any) => ({
           ...prev,
           [active.id]: [...sortedCollisions.map((el: any) => el.id)],
         }));
-        setPlacedCoordinates((prev: any) => [
-          ...prev,
-          ...sortedCollisions.map((el: any) => el.id),
-        ]);
-        draggedElement.style.position = "absolute";
-        let coordinates = calculateCellDistance(shipStartIndex, active.id);
-        if (coordinates) {
-          draggedElement.style.top = coordinates.topDistance;
-          draggedElement.style.left = coordinates.leftDistance;
-        }
       }
-    }
-    if (collisions && over?.id === "player-ships") {
-      const draggedElement = document.getElementById(active.id);
-      draggedElement.style.position = "relative";
-      draggedElement.style.top = "0";
-      draggedElement.style.left = "0";
-      setPlayerShipsCoordinates((prev) => ({ ...prev, [active.id]: [] }));
     }
   };
 
@@ -326,12 +280,6 @@ function SinglePlayer() {
     }
   };
 
-  const handleExit = () => {
-    setShowExitModal(true);
-  };
-
-  console.log(playerShipsCoordinates);
-
   return (
     <DndContext
       collisionDetection={rectIntersection}
@@ -340,7 +288,7 @@ function SinglePlayer() {
       <main className="container-fluid text-white relative flex flex-col">
         <Toaster />
 
-        <div className="relative flex justify-between items-center w-full game-header p-2">
+        <div className="relative flex justify-between items-center w-full game-header p-1">
           {startGame ? (
             <>
               <div className="flex items-center gap-2">
@@ -350,7 +298,7 @@ function SinglePlayer() {
                   </span>
                 ) : null}
                 <img
-                  width={60}
+                  width={50}
                   className={`${
                     !playerReady ? "transition-all scale-75 opacity-40" : ""
                   }`}
@@ -419,7 +367,7 @@ function SinglePlayer() {
           </div>
         ) : null}
 
-        <div className="grow grid grid-cols-1 lg:grid-cols-2 mt-2 pl-1.5 pr-1.5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 mt-1 pl-1.5 pr-1.5">
           {startGame ? (
             <OpponentBoard
               startGame={startGame}

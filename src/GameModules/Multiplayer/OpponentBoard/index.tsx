@@ -97,11 +97,11 @@ function OpponentBoard(props: any) {
               onClick={() => fireMissle(block)}
               className="flex justify-center items-center"
             >
-              <BoardCell>
+              {/* <BoardCell>
                 {opponentCellStatus[block] === "EMPTY" ? "" : null}
                 {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
                 {opponentCellStatus[block] === "HIT" ? <Bombed /> : null}
-              </BoardCell>
+              </BoardCell> */}
             </div>
           ))}
         </div>

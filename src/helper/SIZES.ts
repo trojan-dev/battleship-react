@@ -1,16 +1,16 @@
 function calculateCellStyle() {
-  let _cellStyle = `grid grid-cols-[repeat(9,50px)]`;
+  let _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,50px)]`;
   if (window.matchMedia("(min-device-width : 600px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,50px)]`;
+    _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,50px)]`;
   }
   if (window.matchMedia("(min-device-width : 1024px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,60px)]`;
+    _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,60px)]`;
   }
   if (window.matchMedia("(max-device-width : 460px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,42px)]`;
+    _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,42px)]`;
   }
   if (window.matchMedia("(max-device-width : 380px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,36px)]`;
+    _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,36px)]`;
   }
   return _cellStyle;
 }
@@ -30,4 +30,20 @@ function calculateCellSize() {
   }
   return _cellSize;
 }
-export { calculateCellStyle, calculateCellSize };
+function calculateShipsContainer() {
+  let _cellStyle = `max-w-[500px]`;
+  if (window.matchMedia("(min-device-width : 600px)").matches) {
+    _cellStyle = `max-w-[500px]`;
+  }
+  if (window.matchMedia("(min-device-width : 1024px)").matches) {
+    _cellStyle = `max-w-[600px]`;
+  }
+  if (window.matchMedia("(max-device-width : 460px)").matches) {
+    _cellStyle = `max-w-[420px]`;
+  }
+  if (window.matchMedia("(max-device-width : 380px)").matches) {
+    _cellStyle = `max-w-[360px]`;
+  }
+  return _cellStyle;
+}
+export { calculateCellStyle, calculateCellSize, calculateShipsContainer };

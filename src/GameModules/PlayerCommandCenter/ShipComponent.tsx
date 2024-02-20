@@ -20,6 +20,7 @@ function ShipComponent({
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 22,
       }
     : undefined;
 
@@ -45,8 +46,9 @@ function ShipComponent({
           ...style,
           width: `${hDimensions.shipWidth}px`,
           height: `${hDimensions.shipHeight}px`,
-          zIndex: startGame ? -1 : 0,
-          position: "relative",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "baseline",
         }}
       >
         {/* {active?.id !== shipType &&

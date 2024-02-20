@@ -21,7 +21,7 @@ function PlayerBoard(props: any) {
     SUBMARINE: true,
   });
   return (
-    <div className={`mt-2 grid place-items-center`}>
+    <div className={`mt-5 grid place-items-center`}>
       <div
         className={`${
           props.playerReady ? "opacity-50" : ""

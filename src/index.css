@@ -113,6 +113,11 @@ svg {
   background-repeat: no-repeat;
   background-size: cover;
 }
+.game-footer {
+  background-image: url("./assets/game-footer.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
 .save-order {
   background: linear-gradient(180deg, #555555 0%, rgba(0, 0, 0, 0) 100%),
@@ -132,46 +137,18 @@ svg {
   object-position: 10px -6px;
 }
 
-.canon {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: canon-drop 1.3s ease-in-out;
-  display: relative;
-}
-.canon > img {
-  position: relative;
-  z-index: 5;
+.cloud {
+  animation: battle-fog 20s ease-in;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  opacity: 0.5;
 }
 
-/* .canon::after {
-  content: "";
-  display: inline-block;
-  position: absolute;
-  z-index: 1;
-  top: 80%;
-  left: 50%;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: black;
-  animation: canon-drop-shadow 5s ease-in-out;
-} */
-
-@keyframes canon-drop {
+@keyframes battle-fog {
   0% {
-    transform: scale(1);
+    transform: translateX(0px);
   }
   100% {
-    transform: scale(0);
-  }
-}
-@keyframes canon-drop-shadow {
-  0% {
-    transform: scale(0.1);
-  }
-  100% {
-    transform: scale(3);
+    transform: translateX(50px);
   }
 }

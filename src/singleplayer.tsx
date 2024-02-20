@@ -194,8 +194,8 @@ function SinglePlayer() {
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
     if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE}px`;
-      leftDistance = `${(start % 9) * BASE_CELL_SIZE}px`;
+      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 10}px`;
+      leftDistance = `${(start % 9) * BASE_CELL_SIZE + 5}px`;
       return { topDistance, leftDistance };
     }
     topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE}px`;

@@ -58,7 +58,7 @@ function ShipComponent({
             <RotateIcon />
           </button>
         ) : null} */}
-        <img className="h-full w-full ship-image" src={H} alt="" />
+        <img className="h-auto w-full ship-image" src={H} alt="" />
       </div>
     );
   } else {

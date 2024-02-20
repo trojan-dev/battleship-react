@@ -17,12 +17,12 @@ main {
 }
 
 body {
-  /* background: linear-gradient(
+  background: linear-gradient(
     180deg,
     rgba(168, 144, 59, 1) 2%,
     rgba(0, 0, 0, 1) 45%,
     rgba(37, 60, 73, 1) 85%
-  ); */
+  );
 
   background-image: -webkit-linear-gradient(
     top,
@@ -132,10 +132,10 @@ svg {
   text-transform: uppercase;
 }
 
-.ship-image {
+/* .ship-image {
   object-fit: cover;
   object-position: 10px -6px;
-}
+} */
 
 .cloud {
   animation: battle-fog 20s ease-in;

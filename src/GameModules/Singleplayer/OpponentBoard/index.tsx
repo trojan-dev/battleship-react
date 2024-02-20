@@ -136,7 +136,7 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="relative h-full flex flex-col items-center mt-5">
+    <div className="relative h-full flex flex-col mt-5">
       <div className={`${calculateCellStyle()}`}>
         {[...Array(63).keys()].map((block: number | any) => (
           <div

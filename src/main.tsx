@@ -24,8 +24,8 @@ const router = createBrowserRouter([
 ]);
 
 render(
-  <Provider store={store}>
-    <RouterProvider router={router} />
-  </Provider>,
+  // <Provider store={store}>
+  <RouterProvider router={router} />,
+  // </Provider>,
   document.getElementById("app")!
 );

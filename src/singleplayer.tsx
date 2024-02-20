@@ -7,6 +7,8 @@ import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import { calculateCellSize } from "./helper/SIZES";
 import PlayerFace from "./assets/PlayerFace.svg";
 import BotFace from "./assets/BotFace.svg";
+import Canon from "./assets/canon.svg";
+import BattleFog from "./assets/battle-fog.svg";
 
 const TOTAL_COORDINATES = 17;
 const BASE_CELL_SIZE = calculateCellSize();
@@ -336,30 +338,49 @@ function SinglePlayer() {
       <main className="container-fluid text-white relative">
         <Toaster />
 
-        <div className="relative flex justify-between items-center h-[10vh] z-[22] w-full game-header p-2">
-          <div className="flex items-center gap-2">
-            <span className="funky-font text-xl">01</span>
-            <img width={60} className="" src={PlayerFace} alt="" />
-          </div>
-          <img
-            className={`${opponentReady ? "visible" : "invisible"}`}
-            src={BotFace}
-            alt=""
-          />
-
-          <button>Exit</button>
+        <div className="relative flex justify-between items-center h-[10vh] -z-[22] w-full game-header p-2 -z-1">
+          {startGame ? (
+            <>
+              <div className="flex items-center gap-2">
+                {playerReady ? (
+                  <span className="funky-font text-xl">
+                    {currentScore?.player}
+                  </span>
+                ) : null}
+                <img
+                  width={60}
+                  className={`${
+                    !playerReady ? "transition-all scale-75 opacity-40" : ""
+                  }`}
+                  src={PlayerFace}
+                  alt=""
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <img width={80} src={PlayerFace} alt="" />
+            </>
+          )}
         </div>
-        {/* <div className="flex justify-center text-md font-bold mt-0.5">
-          {startGame && playerReady ? <p>Your turn</p> : null}
-          {startGame && opponentReady ? <p>Bot's turn</p> : null}
-        </div> */}
+        <img
+          className="absolute top-[50px] left-[200px] z-2 cloud"
+          src={BattleFog}
+          alt=""
+        />
+        <img
+          className="absolute top-[50px] left-[170px] -z-23 cloud"
+          src={BattleFog}
+          alt=""
+        />
+
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-1.5">
             <h2 className="funky-font text-3xl">
               Deploy <br />
               Your Trucks
             </h2>
-            <p className="text-sm opacity-50">
+            <p className="text-sm opacity-50 uppercase">
               drag to move and tap to rotate, you can also pick “assign random”
             </p>
             <div className="flex gap-3">
@@ -456,6 +477,26 @@ function SinglePlayer() {
             </div>
           </div>
         ) : null}
+        <div className="fixed bottom-0 flex justify-between items-center h-[10vh] z-[22] w-full game-footer">
+          <button
+            onClick={handleExit}
+            className="mt-3 ml-5 text-sm bg-black p-1 rounded-md"
+          >
+            Exit Game
+          </button>
+          <div className="flex items-center gap-2">
+            {opponentReady ? (
+              <span className="funky-font text-xl">{currentScore?.bot}</span>
+            ) : null}
+            <img
+              className={`${
+                !opponentReady ? "transition-all scale-75 opacity-40" : ""
+              }`}
+              src={BotFace}
+              alt=""
+            />
+          </div>
+        </div>
       </main>
     </DndContext>
   );

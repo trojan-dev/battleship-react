@@ -194,8 +194,8 @@ function SinglePlayer() {
   const calculateCellDistance = (start: any, shipType: string) => {
     let topDistance, leftDistance;
     if (playerShipsOrientation[shipType] === "H") {
-      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 10}px`;
-      leftDistance = `${(start % 9) * BASE_CELL_SIZE + 5}px`;
+      topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE - 15}px`;
+      leftDistance = `${(start % 9) * BASE_CELL_SIZE + 2}px`;
       return { topDistance, leftDistance };
     }
     topDistance = `${Math.floor(start / 9) * BASE_CELL_SIZE}px`;
@@ -452,6 +452,7 @@ function SinglePlayer() {
               Bot is placing their trucks
             </h1>
           ) : null}
+          {/* <progress value={40}></progress> */}
         </div>
         {/* {showExitModal ? (
           <div className="absolute transition-all top-0 left-0 w-full bg-black h-screen text-white flex flex-col justify-center items-center gap-2">
@@ -472,7 +473,7 @@ function SinglePlayer() {
             </div>
           </div>
         ) : null} */}
-        <div className="flex justify-end items-center z-[22] w-full game-footer">
+        <div className="flex fixed bottom-0 justify-end items-center z-[22] w-full game-footer">
           <div className="flex items-center gap-2">
             {opponentReady ? (
               <span className="funky-font text-xl">{currentScore?.bot}</span>

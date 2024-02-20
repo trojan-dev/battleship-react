@@ -19,10 +19,10 @@ function PlayerBoard(props: any) {
   });
   return (
     <>
-      <div className={`relative ${props.startGame ? "mt-5" : "mt-0"}`}>
+      <div className={`relative mb-5 ${props.startGame ? "mt-5" : "mt-0"}`}>
         <div
           className={`${
-            props.playerReady ? "opacity-80" : ""
+            props.playerReady ? "opacity-50" : ""
           } ${calculateCellStyle()}`}
         >
           {[...Array(63).keys()].map((cell) => (

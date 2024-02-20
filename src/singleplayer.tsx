@@ -368,19 +368,6 @@ function SinglePlayer() {
         ) : null}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 mt-1 pl-1.5 pr-1.5">
-          {startGame ? (
-            <OpponentBoard
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              setPlayerReady={setPlayerReady}
-              setOpponentReady={setOpponentReady}
-              gamePayload={gamePayload}
-              currentScore={currentScore}
-              setCurrentScore={setCurrentScore}
-            />
-          ) : null}
-
           <PlayerBoard
             placedShips={placedCoordinates}
             playerShipsCoordinates={playerShipsCoordinates}
@@ -394,6 +381,18 @@ function SinglePlayer() {
             setPlayerShipsOrientation={setPlayerShipsOrientation}
             currentScore={currentScore}
           />
+          {startGame ? (
+            <OpponentBoard
+              startGame={startGame}
+              playerReady={playerReady}
+              opponentReady={opponentReady}
+              setPlayerReady={setPlayerReady}
+              setOpponentReady={setOpponentReady}
+              gamePayload={gamePayload}
+              currentScore={currentScore}
+              setCurrentScore={setCurrentScore}
+            />
+          ) : null}
 
           {botShipsPlacement ? (
             <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-xl animate-pulse">

@@ -2,9 +2,9 @@ import { useState } from "preact/hooks";
 import { useDroppable } from "@dnd-kit/core";
 import DroppableCell from "./Cell";
 import ShipComponent from "./ShipComponent";
-import PlayerShips from "../../../assets/PlayerShips";
+import PlayerShips from "../../assets/PlayerShips";
 
-import { calculateCellStyle } from "../../../helper/SIZES";
+import { calculateCellStyle } from "../../helper/SIZES";
 
 function PlayerBoard(props: any) {
   const { over, setNodeRef } = useDroppable({

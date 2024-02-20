@@ -340,7 +340,7 @@ function SinglePlayer() {
       <main className="container-fluid text-white relative flex flex-col">
         <Toaster />
 
-        <div className="relative flex justify-between items-center -z-[22] w-full game-header p-2 -z-1">
+        <div className="relative flex justify-between items-center w-full game-header p-2">
           {startGame ? (
             <>
               <div className="flex items-center gap-2">
@@ -365,8 +365,34 @@ function SinglePlayer() {
             </>
           )}
           <button
-            onClick={handleExit}
-            className="mt-3 ml-5 text-sm bg-black p-1 rounded-md"
+            onClick={() => {
+              if (!isGameComplete) {
+                const newPayload = {
+                  ...gamePayload,
+                  status: "abandoned",
+                  gameUrl: window.location.host,
+                  results: [
+                    {
+                      userID: gamePayload?.players[0]?._id,
+                      endResult: "loser",
+                      score: currentScore.player,
+                    },
+                    {
+                      userID: "bot",
+                      endResult: "winner",
+                      score: currentScore.bot,
+                    },
+                  ],
+                };
+                navigate(
+                  `/singleplayer?exit=true&data=${btoa(
+                    JSON.stringify(newPayload)
+                  )}`
+                );
+                window.location.reload();
+              }
+            }}
+            className="text-sm p-1 rounded-md"
           >
             Exit Game
           </button>
@@ -427,7 +453,7 @@ function SinglePlayer() {
             </h1>
           ) : null}
         </div>
-        {showExitModal ? (
+        {/* {showExitModal ? (
           <div className="absolute transition-all top-0 left-0 w-full bg-black h-screen text-white flex flex-col justify-center items-center gap-2">
             <h1 className="text-2xl">Exit BattleThing?</h1>
             <p className="text-sm">Are you sure you want to exit the game?</p>
@@ -440,41 +466,12 @@ function SinglePlayer() {
               >
                 No
               </button>
-              <button
-                className="p-1 rounded-md bg-green-600 w-[100px]"
-                onClick={() => {
-                  if (!isGameComplete) {
-                    const newPayload = {
-                      ...gamePayload,
-                      status: "abandoned",
-                      gameUrl: window.location.host,
-                      results: [
-                        {
-                          userID: gamePayload?.players[0]?._id,
-                          endResult: "loser",
-                          score: currentScore.player,
-                        },
-                        {
-                          userID: "bot",
-                          endResult: "winner",
-                          score: currentScore.bot,
-                        },
-                      ],
-                    };
-                    navigate(
-                      `/singleplayer?exit=true&data=${btoa(
-                        JSON.stringify(newPayload)
-                      )}`
-                    );
-                    window.location.reload();
-                  }
-                }}
-              >
+              <button className="p-1 rounded-md bg-green-600 w-[100px]">
                 Yes
               </button>
             </div>
           </div>
-        ) : null}
+        ) : null} */}
         <div className="flex justify-end items-center z-[22] w-full game-footer">
           <div className="flex items-center gap-2">
             {opponentReady ? (

@@ -19,7 +19,11 @@ function PlayerBoard(props: any) {
   });
   return (
     <>
-      <div className={`relative flex flex-col items-center`}>
+      <div
+        className={`relative flex flex-col items-center ${
+          props.startGame ? "mt-5" : "mt-0"
+        }`}
+      >
         <div
           className={`${
             props.playerReady ? "opacity-40" : ""
@@ -36,24 +40,22 @@ function PlayerBoard(props: any) {
           ))}
         </div>
         <div
-          className={`grid grid-cols-2 gap-3 ${
+          className={`grid grow grid-cols-2 gap-3 ${
             !props.startGame ? "mt-5 w-full" : "mt-0"
           }`}
           ref={setNodeRef}
         >
           {PlayerShips.map((ship) => (
-            <div>
-              <ShipComponent
-                isHorizontal={isHorizontal}
-                playerShipsCoordinates={props.playerShipsCoordinates}
-                setShipOrientation={props.setShipOrientation}
-                setIsHorizontal={setIsHorizontal}
-                ship={ship}
-                startGame={props.startGame}
-                playerShipsOrientation={props.playerShipsOrientation}
-                setPlayerShipsOrientation={props.setPlayerShipsOrientation}
-              />
-            </div>
+            <ShipComponent
+              isHorizontal={isHorizontal}
+              playerShipsCoordinates={props.playerShipsCoordinates}
+              setShipOrientation={props.setShipOrientation}
+              setIsHorizontal={setIsHorizontal}
+              ship={ship}
+              startGame={props.startGame}
+              playerShipsOrientation={props.playerShipsOrientation}
+              setPlayerShipsOrientation={props.setPlayerShipsOrientation}
+            />
           ))}
         </div>
       </div>

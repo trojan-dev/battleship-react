@@ -10,7 +10,7 @@ function calculateCellStyle() {
     _cellStyle = `grid grid-cols-[repeat(9,42px)]`;
   }
   if (window.matchMedia("(max-device-width : 380px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,30px)]`;
+    _cellStyle = `grid grid-cols-[repeat(9,36px)]`;
   }
   return _cellStyle;
 }
@@ -26,7 +26,7 @@ function calculateCellSize() {
     _cellSize = 42;
   }
   if (window.matchMedia("(max-device-width : 380px)").matches) {
-    _cellSize = 30;
+    _cellSize = 36;
   }
   return _cellSize;
 }

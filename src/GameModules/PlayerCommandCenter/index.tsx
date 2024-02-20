@@ -19,23 +19,21 @@ function PlayerBoard(props: any) {
   });
   return (
     <>
-      <section className="relative">
-        <div className="flex justify-center">
-          <div
-            className={`${
-              props.playerReady ? "opacity-40" : ""
-            } ${calculateCellStyle()}`}
-          >
-            {[...Array(63).keys()].map((cell) => (
-              <DroppableCell
-                playerCellStatus={props.playerCellStatus}
-                placedShips={props.placedShips}
-                playerShipsCoordinates={props.playerShipsCoordinates}
-                id={cell}
-                startGame={props.startGame}
-              />
-            ))}
-          </div>
+      <div className={`relative flex flex-col items-center`}>
+        <div
+          className={`${
+            props.playerReady ? "opacity-40" : ""
+          } ${calculateCellStyle()}`}
+        >
+          {[...Array(63).keys()].map((cell) => (
+            <DroppableCell
+              playerCellStatus={props.playerCellStatus}
+              placedShips={props.placedShips}
+              playerShipsCoordinates={props.playerShipsCoordinates}
+              id={cell}
+              startGame={props.startGame}
+            />
+          ))}
         </div>
         <div
           className={`grid grid-cols-2 gap-3 ${
@@ -58,7 +56,7 @@ function PlayerBoard(props: any) {
             </div>
           ))}
         </div>
-      </section>
+      </div>
     </>
   );
 }

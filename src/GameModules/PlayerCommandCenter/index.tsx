@@ -18,50 +18,28 @@ function PlayerBoard(props: any) {
     SUBMARINE: true,
   });
   return (
-    <div className="flex flex-col items-center">
-      {/* {props.startGame ? (
-        <div className="flex justify-between w-full gap-3 items-center">
-          <div className="flex gap-2">
-            <img width={20} src={PlayerFace} alt="" />
-            <span className="text-white text-md font-bold">
-              {props.currentScore.player}
-            </span>
-          </div>
-
-          <p className="text-white font-bold opacity-70 mb-1">
-            {props.playerReady ? "Your Turn" : "Bot's Turn"}
-          </p>
-
-          <div className="flex gap-2">
-            <img width={20} src={BotFace} alt="" />
-            <span className="text-white text-md font-bold">
-              {props.currentScore.bot}
-            </span>
+    <>
+      <section className="relative">
+        <div className="flex justify-center">
+          <div
+            className={`${
+              props.playerReady ? "opacity-40" : ""
+            } ${calculateCellStyle()}`}
+          >
+            {[...Array(63).keys()].map((cell) => (
+              <DroppableCell
+                playerCellStatus={props.playerCellStatus}
+                placedShips={props.placedShips}
+                playerShipsCoordinates={props.playerShipsCoordinates}
+                id={cell}
+                startGame={props.startGame}
+              />
+            ))}
           </div>
         </div>
-      ) : null} */}
-      <section className="relative flex flex-col items-center">
         <div
-          className={`${
-            props.playerReady ? "opacity-40" : ""
-          } ${calculateCellStyle()}`}
-        >
-          {[...Array(63).keys()].map((cell) => (
-            <DroppableCell
-              playerCellStatus={props.playerCellStatus}
-              placedShips={props.placedShips}
-              playerShipsCoordinates={props.playerShipsCoordinates}
-              id={cell}
-              startGame={props.startGame}
-            />
-          ))}
-        </div>
-
-        <div
-          className={`flex flex-wrap gap-2 ${
-            !props.startGame
-              ? "mt-5 min-h-[100px] w-full max-w-[380px]"
-              : "mt-0 max-w-[300px]"
+          className={`grid grid-cols-2 gap-3 ${
+            !props.startGame ? "mt-5 w-full" : "mt-0"
           }`}
           ref={setNodeRef}
         >
@@ -81,7 +59,7 @@ function PlayerBoard(props: any) {
           ))}
         </div>
       </section>
-    </div>
+    </>
   );
 }
 

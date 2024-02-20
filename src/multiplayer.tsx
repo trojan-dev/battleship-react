@@ -2,7 +2,7 @@ import { useState, useEffect } from "preact/hooks";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import { io } from "socket.io-client";
-import PlayerBoard from "./GameModules/Multiplayer/PlayerCommandCenter";
+import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 
 const TOTAL_COORDINATES = 17;

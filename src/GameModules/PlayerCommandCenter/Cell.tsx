@@ -1,7 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
-import BoardCell from "../../../assets/Cell";
-import CellMiss from "../../../assets/CellMiss";
-import Bombed from "../../../assets/Bombed";
+import BoardCell from "../../assets/Cell";
+import CellMiss from "../../assets/CellMiss";
+import Bombed from "../../assets/Bombed";
 
 function DroppableCell({ id, playerCellStatus, startGame, placedShips }: any) {
   const { setNodeRef, over } = useDroppable({

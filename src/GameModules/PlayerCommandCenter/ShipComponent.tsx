@@ -1,12 +1,11 @@
 import { useDraggable } from "@dnd-kit/core";
-import RotateIcon from "../../../assets/RotateIcon";
+import RotateIcon from "../../assets/RotateIcon";
 
 function ShipComponent({
   ship,
   playerShipsCoordinates,
   isHorizontal,
   setIsHorizontal,
-  playerShipsOrientation,
   setPlayerShipsOrientation,
   startGame,
 }: any) {
@@ -37,43 +36,50 @@ function ShipComponent({
 
   if (isHorizontal[shipType]) {
     return (
-      <div className="flex items-center gap-1">
-        <H
-          ref={setNodeRef}
-          id={shipType}
-          data-ship={shipType}
-          style={style}
-          dimensions={hDimensions}
-          startGame={startGame}
-          {...listeners}
-        />
-        {active?.id !== shipType &&
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        id={shipType}
+        data-ship={shipType}
+        style={{
+          ...style,
+          width: `${hDimensions.shipWidth}px`,
+          height: `${hDimensions.shipHeight}px`,
+          zIndex: startGame ? -1 : 0,
+          position: "relative",
+        }}
+      >
+        {/* {active?.id !== shipType &&
         !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip(false)}>
+          <button
+            className="absolute z-22 top-0 left-[50%]"
+            onClick={() => alert("dasd")}
+          >
             <RotateIcon />
           </button>
-        ) : null}
+        ) : null} */}
+        <img className="h-full w-full ship-image" src={H} alt="" />
       </div>
     );
   } else {
     return (
-      <div className="flex items-center gap-1">
-        <V
+      <>
+        <button onClick={() => rotateShip(true)}>Rotate</button>
+        <div
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
-          style={style}
-          dimensions={vDimensions}
-          startGame={startGame}
+          style={{
+            ...style,
+            width: `${vDimensions.shipWidth}px`,
+            height: `${vDimensions.shipHeight}px`,
+            display: "flex",
+          }}
           {...listeners}
-        />
-        {active?.id !== shipType &&
-        !playerShipsCoordinates[shipType]?.length ? (
-          <button onClick={() => rotateShip(true)}>
-            <RotateIcon />
-          </button>
-        ) : null}
-      </div>
+        >
+          <img className="h-full w-full ship-image" src={V} alt="" />
+        </div>
+      </>
     );
   }
 }

@@ -102,7 +102,7 @@ function OpponentBoard(props: any) {
       CARRIER: [0, 1, 2, 3, 4],
       BATTLESHIP: [31, 32, 33, 34],
       CRUISER: [25, 26, 27],
-      DESTROYER: [55, 65, 75],
+      DESTROYER: [35, 65, 75],
       SUBMARINE: [98, 99],
     };
     setShipCoordinates(placement);

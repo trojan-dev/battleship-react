@@ -2,7 +2,7 @@ import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
-import PlayerBoard from "./GameModules/Singleplayer/PlayerCommandCenter";
+import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import { calculateCellSize } from "./helper/SIZES";
 import PlayerFace from "./assets/PlayerFace.svg";
@@ -335,10 +335,10 @@ function SinglePlayer() {
       collisionDetection={rectIntersection}
       onDragEnd={handleShipDrop}
     >
-      <main className="container-fluid text-white relative">
+      <main className="container-fluid text-white relative flex flex-col">
         <Toaster />
 
-        <div className="relative flex justify-between items-center h-[10vh] -z-[22] w-full game-header p-2 -z-1">
+        <div className="relative flex justify-between items-center -z-[22] w-full game-header p-2 -z-1">
           {startGame ? (
             <>
               <div className="flex items-center gap-2">
@@ -359,20 +359,16 @@ function SinglePlayer() {
             </>
           ) : (
             <>
-              <img width={80} src={PlayerFace} alt="" />
+              <img width={50} src={PlayerFace} alt="" />
             </>
           )}
+          <button
+            onClick={handleExit}
+            className="mt-3 ml-5 text-sm bg-black p-1 rounded-md"
+          >
+            Exit Game
+          </button>
         </div>
-        <img
-          className="absolute top-[50px] left-[200px] z-2 cloud"
-          src={BattleFog}
-          alt=""
-        />
-        <img
-          className="absolute top-[50px] left-[170px] -z-23 cloud"
-          src={BattleFog}
-          alt=""
-        />
 
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-1.5">
@@ -395,7 +391,7 @@ function SinglePlayer() {
           </div>
         ) : null}
 
-        <div className="grid items-center grid-cols-1 lg:grid-cols-2 mt-2 pl-1.5 pr-1.5">
+        <div className="grow grid grid-cols-1 lg:grid-cols-2 mt-2 pl-1.5 pr-1.5">
           {startGame ? (
             <OpponentBoard
               startGame={startGame}
@@ -477,13 +473,7 @@ function SinglePlayer() {
             </div>
           </div>
         ) : null}
-        <div className="fixed bottom-0 flex justify-between items-center h-[10vh] z-[22] w-full game-footer">
-          <button
-            onClick={handleExit}
-            className="mt-3 ml-5 text-sm bg-black p-1 rounded-md"
-          >
-            Exit Game
-          </button>
+        <div className="flex justify-end items-center z-[22] w-full game-footer">
           <div className="flex items-center gap-2">
             {opponentReady ? (
               <span className="funky-font text-xl">{currentScore?.bot}</span>

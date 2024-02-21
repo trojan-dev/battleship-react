@@ -1,5 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
-import RotateIcon from "../../assets/RotateIcon";
+import Rotate from "../../assets/rotate.svg";
 
 function ShipComponent({
   ship,
@@ -10,7 +10,7 @@ function ShipComponent({
   startGame,
 }: any) {
   const { shipType, length, H, V, hDimensions, vDimensions } = ship;
-  const { active, listeners, setNodeRef, transform } = useDraggable({
+  const { listeners, setNodeRef, transform } = useDraggable({
     id: shipType,
     data: {
       length,
@@ -37,37 +37,30 @@ function ShipComponent({
 
   if (isHorizontal[shipType]) {
     return (
-      <div
-        ref={setNodeRef}
-        {...listeners}
-        id={shipType}
-        data-ship={shipType}
-        style={{
-          ...style,
-          width: `${hDimensions.shipWidth}px`,
-          height: `${hDimensions.shipHeight}px`,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "baseline",
-        }}
-      >
-        {/* {active?.id !== shipType &&
-        !playerShipsCoordinates[shipType]?.length ? (
-          <button
-            className="absolute z-22 top-0 left-[50%]"
-            onClick={() => alert("dasd")}
-          >
-            <RotateIcon />
-          </button>
-        ) : null} */}
-        <img className="h-auto w-full ship-image" src={H} alt="" />
+      <div className="relative">
+        <div
+          onClick={() => rotateShip(false)}
+          ref={setNodeRef}
+          {...listeners}
+          id={shipType}
+          data-ship={shipType}
+          style={{
+            ...style,
+            width: `${hDimensions.shipWidth}px`,
+            height: `${hDimensions.shipHeight}px`,
+            zIndex: startGame ? "0" : "2",
+            position: "relative",
+          }}
+        >
+          <img className="h-auto w-full" src={H} alt="" />
+        </div>
       </div>
     );
   } else {
     return (
-      <>
-        <button onClick={() => rotateShip(true)}>Rotate</button>
+      <div className="relative">
         <div
+          onClick={() => rotateShip(true)}
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
@@ -75,13 +68,20 @@ function ShipComponent({
             ...style,
             width: `${vDimensions.shipWidth}px`,
             height: `${vDimensions.shipHeight}px`,
-            display: "flex",
+            zIndex: startGame ? "0" : "2",
+            position: "absolute",
+            left: "2px",
+            objectPosition: "0",
           }}
           {...listeners}
         >
-          <img className="h-full w-full ship-image" src={V} alt="" />
+          <img
+            className="h-full w-full ship-image object-cover"
+            src={V}
+            alt=""
+          />
         </div>
-      </>
+      </div>
     );
   }
 }

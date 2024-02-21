@@ -7,20 +7,15 @@ import BombedSmoke from "../../assets/bombed-smoke.svg";
 function DroppableCell({
   id,
   playerCellStatus,
-  startGame,
   playerSunkShipsCoordinates,
 }: any) {
-  const { setNodeRef, over } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id,
   });
 
   return (
     <div
-      className={`${
-        startGame ? "relative" : ""
-      } rounded-md aspect-square w-full ${
-        over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.5)]"
-      } `}
+      className={`relative rounded-md aspect-[auto_1/1] w-full bg-[rgb(36,41,42,0.5)]`}
       ref={setNodeRef}
       id={id}
     >

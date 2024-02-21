@@ -109,15 +109,17 @@ function OpponentBoard(props: any) {
     alreadyPlacedCells: Array<Array<number>>
   ) {
     if (
-      index % 9 <= truckLength &&
-      !alreadyPlacedCells.flat(1).includes(index)
+      index % 9 < truckLength &&
+      !alreadyPlacedCells.flat(1).includes(index) &&
+      !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
     ) {
+      console.log("original", index, alreadyPlacedCells);
       return index;
     }
     return checkValidStartIndex(
       Math.floor(Math.random() * (62 - 0 + 1)) + 0,
       truckLength,
-      allPlacedCoordinates
+      alreadyPlacedCells
     );
   }
 
@@ -147,6 +149,8 @@ function OpponentBoard(props: any) {
     setShipCoordinates(placement);
     setAllPlacedCoordinates(Object.values(placement).flat(Infinity));
   }
+
+  console.log(shipCoordinatesArr);
 
   function checkWhichShipGotHit(currentCoordinates: any, cell: any): string {
     for (let ship in currentCoordinates) {

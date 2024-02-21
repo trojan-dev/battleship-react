@@ -390,12 +390,14 @@ function SinglePlayer() {
           ...prev,
           [ships[i].shipType]: newShipPlacement,
         }));
-        shipPlacements.length = 0;
       }
     }
+    shipPlacements.length = 0;
   };
 
   const sensors = useSensors(touchSensor);
+
+  console.log(playerShipsCoordinates);
 
   return (
     <DndContext

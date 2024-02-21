@@ -1,6 +1,4 @@
-function CellMiss() {
-  return (
-    <svg
+<svg
       xmlns="http://www.w3.org/2000/svg"
       width="30"
       height="30"
@@ -70,7 +68,3 @@ function CellMiss() {
         </radialGradient>
       </defs>
     </svg>
-  );
-}
-
-export default CellMiss;

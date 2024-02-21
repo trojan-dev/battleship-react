@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import { useDroppable } from "@dnd-kit/core";
-import CellMiss from "../../assets/CellMiss";
+import CellMiss from "../../assets/cell-miss.svg";
 import Bombed from "../../assets/bombed.svg";
 import BombedSmoke from "../../assets/bombed-smoke.svg";
 
@@ -24,7 +24,7 @@ function DroppableCell({
       ref={setNodeRef}
       id={id}
     >
-      {playerCellStatus[id] === "MISS" ? <CellMiss /> : null}
+      {playerCellStatus[id] === "MISS" ? <img src={CellMiss} /> : null}
       {playerCellStatus[id] === "EMPTY" ? "" : null}
       {playerCellStatus[id] === "HIT" ? (
         <img width={35} className="bombed absolute top-0" src={Bombed} />

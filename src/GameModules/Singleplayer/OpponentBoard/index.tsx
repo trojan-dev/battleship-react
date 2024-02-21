@@ -1,14 +1,14 @@
 import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import "./style.css";
-// import Bombed from "../../../assets/Bombed";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
-import CellMiss from "../../../assets/CellMiss";
+import CellMiss from "../../../assets/cell-miss.svg";
 import { calculateCellStyle } from "../../../helper/SIZES";
+import "./style.css";
 
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
+const shipPlacements: Array<Array<number>> = [];
 
 function OpponentBoard(props: any) {
   const navigate = useNavigate();
@@ -122,7 +122,6 @@ function OpponentBoard(props: any) {
   }
 
   function generateOpponentShips() {
-    const shipPlacements = [];
     const truckLengths = [5, 4, 3, 3, 2];
     for (let i = 0; i < truckLengths.length; i++) {
       let randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
@@ -198,7 +197,9 @@ function OpponentBoard(props: any) {
                 props.startGame ? "relative" : ""
               } rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
             >
-              {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
+              {opponentCellStatus[block] === "MISS" ? (
+                <img className="" src={CellMiss} />
+              ) : null}
               {opponentCellStatus[block] === "EMPTY" ? "" : null}
               {opponentCellStatus[block] === "HIT" ? (
                 <img

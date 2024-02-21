@@ -10,6 +10,7 @@ import BotFace from "./assets/BotFace.svg";
 
 const TOTAL_COORDINATES = 17;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
+const shipPlacements: Array<Array<number>> = [];
 
 function SinglePlayer() {
   const navigate = useNavigate();
@@ -333,7 +334,6 @@ function SinglePlayer() {
   }
 
   const handleAssignRandom = (ships: any) => {
-    const shipPlacements = [];
     for (let i = 0; i < ships.length; i++) {
       const randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
       const newRandomStartIndex = checkValidStartIndex(
@@ -348,19 +348,19 @@ function SinglePlayer() {
       shipPlacements.push(newShipPlacement);
       const startCell = document.getElementById(newRandomStartIndex);
       const currentShip = document.getElementById(`${ships[i].shipType}`);
-      currentShip?.classList.add("truck-arrive");
-      currentShip.style.position = "relative";
-      currentShip.style.top = "-10px";
-      currentShip.style.left = "5px";
-      startCell?.append(currentShip);
-      setPlayerShipsCoordinates((prev: any) => ({
-        ...prev,
-        [ships[i].shipType]: newShipPlacement,
-      }));
+      if (currentShip) {
+        currentShip?.classList.add("truck-arrive");
+        currentShip.style.position = "relative";
+        currentShip.style.top = "-10px";
+        currentShip.style.left = "5px";
+        startCell?.append(currentShip);
+        setPlayerShipsCoordinates((prev: any) => ({
+          ...prev,
+          [ships[i].shipType]: newShipPlacement,
+        }));
+      }
     }
   };
-
-  console.log(playerShipsCoordinates);
 
   return (
     <DndContext

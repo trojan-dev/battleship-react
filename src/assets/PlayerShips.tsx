@@ -33,7 +33,7 @@ const PlayerShips = [
       shipHeight: BASE_CELL_SIZE,
     },
     vDimensions: {
-      shipWidth: BASE_CELL_SIZE,
+      shipWidth: BASE_CELL_SIZE - 7,
       shipHeight: BASE_CELL_SIZE * 4,
     },
   },
@@ -47,7 +47,7 @@ const PlayerShips = [
       shipHeight: BASE_CELL_SIZE,
     },
     vDimensions: {
-      shipWidth: BASE_CELL_SIZE,
+      shipWidth: BASE_CELL_SIZE - 7,
       shipHeight: BASE_CELL_SIZE * 3,
     },
   },
@@ -61,7 +61,7 @@ const PlayerShips = [
       shipHeight: BASE_CELL_SIZE,
     },
     vDimensions: {
-      shipWidth: BASE_CELL_SIZE,
+      shipWidth: BASE_CELL_SIZE - 7,
       shipHeight: BASE_CELL_SIZE * 3,
     },
   },
@@ -75,7 +75,7 @@ const PlayerShips = [
       shipHeight: BASE_CELL_SIZE,
     },
     vDimensions: {
-      shipWidth: BASE_CELL_SIZE,
+      shipWidth: BASE_CELL_SIZE - 7,
       shipHeight: BASE_CELL_SIZE * 2,
     },
   },

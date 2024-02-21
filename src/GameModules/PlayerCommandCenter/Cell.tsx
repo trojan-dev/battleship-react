@@ -1,4 +1,3 @@
-import { useState } from "preact/hooks";
 import { useDroppable } from "@dnd-kit/core";
 import CellMiss from "../../assets/cell-miss.svg";
 import Bombed from "../../assets/bombed.svg";

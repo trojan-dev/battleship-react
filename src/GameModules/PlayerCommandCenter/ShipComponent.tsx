@@ -1,13 +1,15 @@
 import { useDraggable } from "@dnd-kit/core";
-import Rotate from "../../assets/rotate.svg";
 
 function ShipComponent({
   ship,
   playerShipsCoordinates,
+  setPlayerShipsCoordinates,
   isHorizontal,
   setIsHorizontal,
   setPlayerShipsOrientation,
   startGame,
+  isShipValid,
+  setIsShipValid,
 }: any) {
   const { shipType, length, H, V, hDimensions, vDimensions } = ship;
   const { listeners, setNodeRef, transform } = useDraggable({
@@ -34,12 +36,73 @@ function ShipComponent({
       [shipType]: isHorizontal ? "H" : "V",
     }));
   };
+  function generateVerticalCoordinatesForTruck(
+    playerCoordinates: any,
+    shipType: string
+  ) {
+    const newPlayerCoordinates = { ...playerCoordinates };
+    delete newPlayerCoordinates[shipType];
+    const allCoordinatesExceptCurrentShip =
+      Object.values(newPlayerCoordinates).flat(1);
+    const newCoordinateSystem = [playerCoordinates[shipType][0]];
+    for (let i = 1; i < playerCoordinates[shipType].length; i++) {
+      newCoordinateSystem.push(playerCoordinates[shipType][0] + 9 * i);
+    }
+    if (
+      newCoordinateSystem.some((el) =>
+        allCoordinatesExceptCurrentShip.includes(el)
+      )
+    ) {
+      setIsShipValid((prev: any) => ({ ...prev, [shipType]: false }));
+      return newCoordinateSystem;
+    }
+    setIsShipValid((prev: any) => ({ ...prev, [shipType]: true }));
+    return newCoordinateSystem;
+  }
+
+  function generateHorizontalCoordinatesForTruck(
+    playerCoordinates: any,
+    shipType: string
+  ) {
+    const newPlayerCoordinates = { ...playerCoordinates };
+    delete newPlayerCoordinates[shipType];
+    const allCoordinatesExceptCurrentShip =
+      Object.values(newPlayerCoordinates).flat(1);
+    const newCoordinateSystem = [playerCoordinates[shipType][0]];
+    for (let i = 1; i < playerCoordinates[shipType].length; i++) {
+      newCoordinateSystem.push(playerCoordinates[shipType][0] + 1 * i);
+    }
+    if (
+      newCoordinateSystem.some((el) =>
+        allCoordinatesExceptCurrentShip.includes(el)
+      )
+    ) {
+      setIsShipValid((prev: any) => ({ ...prev, [shipType]: false }));
+      return newCoordinateSystem;
+    }
+    setIsShipValid((prev: any) => ({ ...prev, [shipType]: true }));
+    return newCoordinateSystem;
+  }
 
   if (isHorizontal[shipType]) {
     return (
       <div className="relative">
         <div
-          onClick={() => rotateShip(false)}
+          onClick={() => {
+            if (playerShipsCoordinates[shipType].length) {
+              const newCoordinateSystem = generateVerticalCoordinatesForTruck(
+                playerShipsCoordinates,
+                shipType
+              );
+              if (newCoordinateSystem.length) {
+                rotateShip(false);
+                setPlayerShipsCoordinates((prev: any) => ({
+                  ...prev,
+                  [shipType]: newCoordinateSystem,
+                }));
+              }
+            }
+          }}
           ref={setNodeRef}
           {...listeners}
           id={shipType}
@@ -52,7 +115,13 @@ function ShipComponent({
             position: "relative",
           }}
         >
-          <img className="h-auto w-full" src={H} alt="" />
+          <img
+            className={`h-auto w-full ${
+              !isShipValid[shipType] ? "opacity-30" : ""
+            }`}
+            src={H}
+            alt=""
+          />
         </div>
       </div>
     );
@@ -60,7 +129,21 @@ function ShipComponent({
     return (
       <div className="relative">
         <div
-          onClick={() => rotateShip(true)}
+          onClick={() => {
+            if (playerShipsCoordinates[shipType].length) {
+              const newCoordinateSystem = generateHorizontalCoordinatesForTruck(
+                playerShipsCoordinates,
+                shipType
+              );
+              if (newCoordinateSystem.length) {
+                rotateShip(true);
+                setPlayerShipsCoordinates((prev: any) => ({
+                  ...prev,
+                  [shipType]: newCoordinateSystem,
+                }));
+              }
+            }
+          }}
           ref={setNodeRef}
           id={shipType}
           data-ship={shipType}
@@ -71,12 +154,13 @@ function ShipComponent({
             zIndex: startGame ? "0" : "2",
             position: "absolute",
             left: "2px",
-            objectPosition: "0",
           }}
           {...listeners}
         >
           <img
-            className="h-full w-full ship-image object-cover"
+            className={`h-full w-full ship-image object-cover object-[0] ${
+              !isShipValid[shipType] ? "opacity-30" : ""
+            }`}
             src={V}
             alt=""
           />

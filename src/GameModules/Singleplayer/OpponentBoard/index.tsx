@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
+import Canon from "../../../assets/canon.svg";
 import CellMiss from "../../../assets/cell-miss.svg";
 import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
@@ -150,8 +151,6 @@ function OpponentBoard(props: any) {
     setAllPlacedCoordinates(Object.values(placement).flat(Infinity));
   }
 
-  console.log(shipCoordinatesArr);
-
   function checkWhichShipGotHit(currentCoordinates: any, cell: any): string {
     for (let ship in currentCoordinates) {
       if (currentCoordinates[ship].includes(cell)) {
@@ -159,6 +158,12 @@ function OpponentBoard(props: any) {
       }
     }
     return "";
+  }
+
+  function wait(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
   function fireMissle(cell: number) {
@@ -175,9 +180,10 @@ function OpponentBoard(props: any) {
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
     }
-
-    props.setPlayerReady(false);
-    props.setOpponentReady(true);
+    wait(2000).then(() => {
+      props.setPlayerReady(false);
+      props.setOpponentReady(true);
+    });
   }
 
   return (
@@ -202,7 +208,10 @@ function OpponentBoard(props: any) {
               } rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
             >
               {opponentCellStatus[block] === "MISS" ? (
-                <img className="" src={CellMiss} />
+                <>
+                  {/* <img className="missile-drop" src={Canon} alt="" /> */}
+                  <img className="" src={CellMiss} />
+                </>
               ) : null}
               {opponentCellStatus[block] === "EMPTY" ? "" : null}
               {opponentCellStatus[block] === "HIT" ? (

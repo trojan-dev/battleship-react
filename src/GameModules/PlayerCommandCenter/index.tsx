@@ -54,6 +54,9 @@ function PlayerBoard(props: any) {
             startGame={props.startGame}
             playerShipsOrientation={props.playerShipsOrientation}
             setPlayerShipsOrientation={props.setPlayerShipsOrientation}
+            setPlayerShipsCoordinates={props.setPlayerShipsCoordinates}
+            setIsShipValid={props.setIsShipValid}
+            isShipValid={props.isShipValid}
           />
         ))}
       </div>

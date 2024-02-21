@@ -47,6 +47,13 @@ function SinglePlayer() {
     DESTROYER: "H",
     SUBMARINE: "H",
   });
+  const [isShipValid, setIsShipValid] = useState({
+    BATTLESHIP: true,
+    CARRIER: true,
+    CRUISER: true,
+    DESTROYER: true,
+    SUBMARINE: true,
+  });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [playerCellStatus, setPlayerCellStatus] = useState<Array<any>>(
     [...Array(100).keys()].map(() => "EMPTY")
@@ -234,6 +241,13 @@ function SinglePlayer() {
   const handleShipDrop = (event: any) => {
     const { active, collisions, over } = event;
     if (collisions && over?.id !== "player-ships") {
+      setIsShipValid({
+        BATTLESHIP: true,
+        CARRIER: true,
+        CRUISER: true,
+        DESTROYER: true,
+        SUBMARINE: true,
+      });
       let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
 
       /* In case the user is trying to drag outside the boundaries */
@@ -242,9 +256,10 @@ function SinglePlayer() {
       }
 
       if (
-        sortedCollisions.length > active.data.current.length &&
+        sortedCollisions.length >= active.data.current.length &&
         playerShipsOrientation[active.id] === "H"
       ) {
+        console.log("dsadasd", sortedCollisions);
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
         sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
@@ -259,7 +274,7 @@ function SinglePlayer() {
           const startIndexElement = document.getElementById(shipStartIndex);
           draggedElement.classList.add("truck-arrive");
           draggedElement.style.position = "relative";
-          draggedElement.style.top = "-10px";
+          draggedElement.style.top = "-7px";
           draggedElement.style.left = "5px";
           startIndexElement?.append(draggedElement);
           setPlayerShipsCoordinates((prev: any) => ({
@@ -269,7 +284,7 @@ function SinglePlayer() {
         }
       }
       if (
-        sortedCollisions.length > active.data.current.length &&
+        sortedCollisions.length >= active.data.current.length &&
         playerShipsOrientation[active.id] === "V"
       ) {
         let differenceInShipLengthAndCollisions =
@@ -478,6 +493,9 @@ function SinglePlayer() {
             setPlayerShipsOrientation={setPlayerShipsOrientation}
             currentScore={currentScore}
             playerSunkShipsCoordinates={playerSunkShipsCoordinates}
+            setPlayerShipsCoordinates={setPlayerShipsCoordinates}
+            setIsShipValid={setIsShipValid}
+            isShipValid={isShipValid}
           />
           {startGame ? (
             <OpponentBoard

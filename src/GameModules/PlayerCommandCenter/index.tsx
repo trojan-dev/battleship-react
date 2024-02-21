@@ -34,6 +34,7 @@ function PlayerBoard(props: any) {
             playerShipsCoordinates={props.playerShipsCoordinates}
             id={cell}
             startGame={props.startGame}
+            playerSunkShipsCoordinates={props.playerSunkShipsCoordinates}
           />
         ))}
       </div>

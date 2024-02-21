@@ -23,6 +23,8 @@ function SinglePlayer() {
     DESTROYER: [],
     SUBMARINE: [],
   });
+  const [playerSunkShipsCoordinates, setPlayerSunkShipsCoordinates] =
+    useState<any>([]);
   const [playerShipsOrientation, setPlayerShipsOrientation] = useState<any>({
     BATTLESHIP: "H",
     CARRIER: "H",
@@ -37,7 +39,6 @@ function SinglePlayer() {
 
   /* Bot info */
   const [opponentReady, setOpponentReady] = useState(false);
-
   const [startGame, setStartGame] = useState(false);
   const [botShipsPlacement, setBotShipsPlacement] = useState(false);
   const [currentScore, setCurrentScore] = useState<any>({
@@ -131,6 +132,10 @@ function SinglePlayer() {
           for (let ship in playerCoordinates) {
             if (playerCoordinates[ship].includes(cell)) {
               toast.success(`Your ${ship} has been hit!`);
+              setPlayerSunkShipsCoordinates((prev: Array<number>) => [
+                ...prev,
+                cell,
+              ]);
               let idx = playerCoordinates[ship].findIndex(
                 (el: any) => el === cell
               );
@@ -288,7 +293,7 @@ function SinglePlayer() {
       <main className="container-fluid text-white relative flex flex-col">
         <Toaster />
 
-        <div className="relative flex justify-between items-center w-full game-header p-1">
+        <div className="relative fixed top-0 flex justify-between items-center w-full game-header p-1 h-[10dvh]">
           {startGame ? (
             <>
               <div className="flex items-center gap-2">
@@ -309,7 +314,7 @@ function SinglePlayer() {
             </>
           ) : (
             <>
-              <img width={50} src={PlayerFace} alt="" />
+              <img width={70} src={PlayerFace} alt="" />
             </>
           )}
           <button
@@ -340,7 +345,7 @@ function SinglePlayer() {
                 window.location.reload();
               }
             }}
-            className="text-sm p-1 rounded-md"
+            className="text-sm p-1 mb-5 rounded-md"
           >
             Exit Game
           </button>
@@ -380,6 +385,7 @@ function SinglePlayer() {
             playerShipsOrientation={playerShipsOrientation}
             setPlayerShipsOrientation={setPlayerShipsOrientation}
             currentScore={currentScore}
+            playerSunkShipsCoordinates={playerSunkShipsCoordinates}
           />
           {startGame ? (
             <OpponentBoard
@@ -391,6 +397,7 @@ function SinglePlayer() {
               gamePayload={gamePayload}
               currentScore={currentScore}
               setCurrentScore={setCurrentScore}
+              playerSunkShipsCoordinates={playerSunkShipsCoordinates}
             />
           ) : null}
 

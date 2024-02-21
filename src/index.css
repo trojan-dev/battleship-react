@@ -17,7 +17,7 @@ main {
 }
 
 body {
-  background: linear-gradient(
+  background-image: linear-gradient(
     180deg,
     rgba(168, 144, 59, 1) 2%,
     rgba(0, 0, 0, 1) 45%,
@@ -30,9 +30,9 @@ body {
     rgba(0, 0, 0, 1),
     rgba(37, 60, 73, 1)
   );
-  background-color: black;
+  /* background-color: black; */
   background-repeat: no-repeat;
-  /* overflow-x: hidden; */
+  overflow-x: hidden;
 }
 
 img[data-ship],

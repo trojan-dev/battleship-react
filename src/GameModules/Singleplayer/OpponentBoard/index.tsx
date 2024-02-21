@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import "./style.css";
 // import Bombed from "../../../assets/Bombed";
 import Bombed from "../../../assets/bombed.svg";
+import BombedSmoke from "../../../assets/bombed-smoke.svg";
 import CellMiss from "../../../assets/CellMiss";
 import { calculateCellStyle } from "../../../helper/SIZES";
 
@@ -15,6 +16,8 @@ function OpponentBoard(props: any) {
   const [allPlacedCoordinates, setAllPlacedCoordinates] = useState<any>([]);
   const [sankShips, setSankShips] = useState<any>([]);
   const [currentHitShip, setCurrentHitShip] = useState<any>(null);
+  const [opponentSunkShipsCoordinates, setOpponentSunkShipsCoordinates] =
+    useState<any>([]);
   // Opponent's ship cell status
   const [opponentCellStatus, setOpponentCellStatus] = useState<any>(
     [...Array(63).keys()].map(() => "EMPTY")
@@ -96,13 +99,51 @@ function OpponentBoard(props: any) {
     }
   }
 
+  function generateContinuousArray(start: number, length: number) {
+    return Array.from({ length: length }, (_, index) => start + index);
+  }
+
+  function checkValidStartIndex(
+    index: number,
+    truckLength: number,
+    alreadyPlacedCells: Array<Array<number>>
+  ) {
+    if (
+      index % 9 <= truckLength &&
+      !alreadyPlacedCells.flat(1).includes(index)
+    ) {
+      return index;
+    }
+    return checkValidStartIndex(
+      Math.floor(Math.random() * (62 - 0 + 1)) + 0,
+      truckLength,
+      allPlacedCoordinates
+    );
+  }
+
   function generateOpponentShips() {
+    const shipPlacements = [];
+    const truckLengths = [5, 4, 3, 3, 2];
+    for (let i = 0; i < truckLengths.length; i++) {
+      let randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
+      const truckLength = truckLengths[i];
+      const newRandomStartIndex = checkValidStartIndex(
+        randomStartIndex,
+        truckLength,
+        shipPlacements
+      );
+      const newShipPlacement = generateContinuousArray(
+        newRandomStartIndex,
+        truckLength
+      );
+      shipPlacements.push(newShipPlacement);
+    }
     const placement: any = {
-      CARRIER: [0, 1, 2, 3, 4],
-      BATTLESHIP: [31, 32, 33, 34],
-      CRUISER: [25, 26, 27],
-      DESTROYER: [35, 65, 75],
-      SUBMARINE: [98, 99],
+      CARRIER: shipPlacements[0],
+      BATTLESHIP: shipPlacements[1],
+      CRUISER: shipPlacements[2],
+      DESTROYER: shipPlacements[3],
+      SUBMARINE: shipPlacements[4],
     };
     setShipCoordinates(placement);
     setAllPlacedCoordinates(Object.values(placement).flat(Infinity));
@@ -116,17 +157,13 @@ function OpponentBoard(props: any) {
     }
     return "";
   }
-  function wait(ms: number) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
 
   function fireMissle(cell: number) {
     if (allPlacedCoordinates.includes(cell)) {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "HIT" }));
       const hitShip = checkWhichShipGotHit(shipCoordinatesArr, cell);
       toast.success(`You hit ${hitShip}`);
+      setOpponentSunkShipsCoordinates((prev: Array<number>) => [...prev, cell]);
       setCurrentHitShip(hitShip);
       const newArr = shipCoordinatesArr[hitShip].filter(
         (el: any) => el !== cell
@@ -168,6 +205,13 @@ function OpponentBoard(props: any) {
                   width={40}
                   className="bombed absolute top-0"
                   src={Bombed}
+                />
+              ) : null}
+              {opponentSunkShipsCoordinates.includes(block) ? (
+                <img
+                  width={40}
+                  className="bombed absolute top-0"
+                  src={BombedSmoke}
                 />
               ) : null}
             </div>

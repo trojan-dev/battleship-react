@@ -29,8 +29,7 @@ function DroppableCell({
       {playerCellStatus[id] === "HIT" ? (
         <img width={35} className="bombed absolute top-0" src={Bombed} />
       ) : null}
-      {playerSunkShipsCoordinates.includes(id) &&
-      playerSunkShipsCoordinates.length === 5 ? (
+      {playerSunkShipsCoordinates.includes(id) ? (
         <img width={40} src={BombedSmoke} className="absolute top-0" />
       ) : null}
     </div>

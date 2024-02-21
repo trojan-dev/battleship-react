@@ -149,6 +149,17 @@ svg {
     transform: translateX(0);
   }
 }
+.truck-arrive-vertical {
+  animation: truck-arrive-v 1.3s ease-in;
+}
+@keyframes truck-arrive-v {
+  0% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
 
 .bombed {
   animation: missile-drop 1s ease-out 1;

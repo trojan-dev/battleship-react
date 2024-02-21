@@ -10,7 +10,7 @@ import {
 } from "../../helper/SIZES";
 
 function PlayerBoard(props: any) {
-  const { over, setNodeRef } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id: "player-ships",
   });
   const [isHorizontal, setIsHorizontal] = useState({

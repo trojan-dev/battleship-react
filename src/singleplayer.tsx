@@ -1,7 +1,13 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import { DndContext, rectIntersection } from "@dnd-kit/core";
+import {
+  DndContext,
+  TouchSensor,
+  rectIntersection,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import PlayerShips from "./assets/PlayerShips";
@@ -13,6 +19,13 @@ const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 const shipPlacements: Array<Array<number>> = [];
 
 function SinglePlayer() {
+  const touchSensor = useSensor(TouchSensor, {
+    // Press delay of 250ms, with tolerance of 5px of movement
+    activationConstraint: {
+      delay: 250,
+      tolerance: 10,
+    },
+  });
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);
@@ -234,37 +247,56 @@ function SinglePlayer() {
       ) {
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
-
         sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
+        const draggedElement = document.getElementById(active.id);
+        let shipStartIndex, ifCollision;
+        if (draggedElement) {
+          shipStartIndex = sortedCollisions[0].id;
+          ifCollision = checkIfShipCollision(sortedCollisions, active.id);
+          if (ifCollision) {
+            return false;
+          }
+          const startIndexElement = document.getElementById(shipStartIndex);
+          draggedElement.classList.add("truck-arrive");
+          draggedElement.style.position = "relative";
+          draggedElement.style.top = "-10px";
+          draggedElement.style.left = "5px";
+          startIndexElement?.append(draggedElement);
+          setPlayerShipsCoordinates((prev: any) => ({
+            ...prev,
+            [active.id]: [...sortedCollisions.map((el: any) => el.id)],
+          }));
+        }
       }
-
       if (
         sortedCollisions.length > active.data.current.length &&
         playerShipsOrientation[active.id] === "V"
       ) {
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
-        sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
-      }
+        sortedCollisions.splice(
+          active.data.current.length,
+          differenceInShipLengthAndCollisions
+        );
 
-      const draggedElement = document.getElementById(active.id);
-      let shipStartIndex, ifCollision;
-      if (draggedElement) {
-        shipStartIndex = sortedCollisions[0].id;
-        ifCollision = checkIfShipCollision(sortedCollisions, active.id);
-        if (ifCollision) {
-          return false;
+        const draggedElement = document.getElementById(active.id);
+        let shipStartIndex, ifCollision;
+        if (draggedElement) {
+          shipStartIndex = sortedCollisions[0].id;
+          ifCollision = checkIfShipCollision(sortedCollisions, active.id);
+          if (ifCollision) {
+            return false;
+          }
+          const startIndexElement = document.getElementById(shipStartIndex);
+          draggedElement.style.position = "absolute";
+          draggedElement.classList.add("truck-arrive-vertical");
+          draggedElement.style.top = "10px";
+          startIndexElement?.append(draggedElement);
+          setPlayerShipsCoordinates((prev: any) => ({
+            ...prev,
+            [active.id]: [...sortedCollisions.map((el: any) => el.id)],
+          }));
         }
-        const startIndexElement = document.getElementById(shipStartIndex);
-        draggedElement.classList.add("truck-arrive");
-        startIndexElement?.append(draggedElement);
-        draggedElement.style.position = "relative";
-        draggedElement.style.top = "-10px";
-        draggedElement.style.left = "5px";
-        setPlayerShipsCoordinates((prev: any) => ({
-          ...prev,
-          [active.id]: [...sortedCollisions.map((el: any) => el.id)],
-        }));
       }
     }
   };
@@ -318,7 +350,8 @@ function SinglePlayer() {
   ) {
     if (
       index % 9 <= truckLength &&
-      !alreadyPlacedCells.flat(1).includes(index)
+      !alreadyPlacedCells.flat(1).includes(index) &&
+      !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
     ) {
       return index;
     }
@@ -352,20 +385,23 @@ function SinglePlayer() {
         currentShip?.classList.add("truck-arrive");
         currentShip.style.position = "relative";
         currentShip.style.top = "-10px";
-        currentShip.style.left = "5px";
         startCell?.append(currentShip);
         setPlayerShipsCoordinates((prev: any) => ({
           ...prev,
           [ships[i].shipType]: newShipPlacement,
         }));
+        shipPlacements.length = 0;
       }
     }
   };
+
+  const sensors = useSensors(touchSensor);
 
   return (
     <DndContext
       collisionDetection={rectIntersection}
       onDragEnd={handleShipDrop}
+      sensors={sensors}
     >
       <main className="container-fluid text-white relative flex flex-col">
         <Toaster />

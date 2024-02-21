@@ -4,6 +4,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { DndContext, rectIntersection } from "@dnd-kit/core";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
+import PlayerShips from "./assets/PlayerShips";
 import PlayerFace from "./assets/PlayerFace.svg";
 import BotFace from "./assets/BotFace.svg";
 
@@ -45,8 +46,6 @@ function SinglePlayer() {
     player: 0,
     bot: 0,
   });
-
-  const [setShowExitModal] = useState(false);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
@@ -285,6 +284,84 @@ function SinglePlayer() {
     }
   };
 
+  const handleExit = () => {
+    if (!isGameComplete) {
+      const newPayload = {
+        ...gamePayload,
+        status: "abandoned",
+        gameUrl: window.location.host,
+        results: [
+          {
+            userID: gamePayload?.players[0]?._id,
+            endResult: "loser",
+            score: currentScore.player,
+          },
+          {
+            userID: "bot",
+            endResult: "winner",
+            score: currentScore.bot,
+          },
+        ],
+      };
+      navigate(
+        `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+      );
+      window.location.reload();
+    }
+  };
+
+  function checkValidStartIndex(
+    index: number,
+    truckLength: number,
+    alreadyPlacedCells: Array<Array<number>>
+  ) {
+    if (
+      index % 9 <= truckLength &&
+      !alreadyPlacedCells.flat(1).includes(index)
+    ) {
+      return index;
+    }
+    return checkValidStartIndex(
+      Math.floor(Math.random() * (62 - 0 + 1)) + 0,
+      truckLength,
+      alreadyPlacedCells
+    );
+  }
+
+  function generateContinuousArray(start: number, length: number) {
+    return Array.from({ length: length }, (_, index) => start + index);
+  }
+
+  const handleAssignRandom = (ships: any) => {
+    const shipPlacements = [];
+    for (let i = 0; i < ships.length; i++) {
+      const randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
+      const newRandomStartIndex = checkValidStartIndex(
+        randomStartIndex,
+        ships[i].length,
+        shipPlacements
+      );
+      const newShipPlacement = generateContinuousArray(
+        newRandomStartIndex,
+        ships[i].length
+      );
+      shipPlacements.push(newShipPlacement);
+      const startCell = document.getElementById(newRandomStartIndex);
+      const currentShip = document.getElementById(`${ships[i].shipType}`);
+      currentShip?.classList.add("truck-arrive");
+      currentShip.style.position = "relative";
+      currentShip.style.top = "-10px";
+      currentShip.style.left = "5px";
+      startCell?.append(currentShip);
+      setPlayerShipsCoordinates((prev: any) => ({
+        ...prev,
+        [ships[i].shipType]: newShipPlacement,
+      }));
+    }
+  };
+
+  console.log(playerShipsCoordinates);
+
   return (
     <DndContext
       collisionDetection={rectIntersection}
@@ -313,39 +390,11 @@ function SinglePlayer() {
               </div>
             </>
           ) : (
-            <>
-              <img width={70} src={PlayerFace} alt="" />
-            </>
+            <img width={70} src={PlayerFace} alt="" />
           )}
           <button
-            onClick={() => {
-              if (!isGameComplete) {
-                const newPayload = {
-                  ...gamePayload,
-                  status: "abandoned",
-                  gameUrl: window.location.host,
-                  results: [
-                    {
-                      userID: gamePayload?.players[0]?._id,
-                      endResult: "loser",
-                      score: currentScore.player,
-                    },
-                    {
-                      userID: "bot",
-                      endResult: "winner",
-                      score: currentScore.bot,
-                    },
-                  ],
-                };
-                navigate(
-                  `/singleplayer?exit=true&data=${btoa(
-                    JSON.stringify(newPayload)
-                  )}`
-                );
-                window.location.reload();
-              }
-            }}
-            className="text-sm p-1 mb-5 rounded-md"
+            onClick={() => handleExit()}
+            className="text-sm p-1 rounded-md"
           >
             Exit Game
           </button>
@@ -361,7 +410,12 @@ function SinglePlayer() {
               drag to move and tap to rotate, you can also pick “assign random”
             </p>
             <div className="flex gap-3">
-              {/* <button className="border p-1">Assign Random</button> */}
+              <button
+                onClick={() => handleAssignRandom(PlayerShips)}
+                className="save-order p-2 rounded-md text-xs font-medium"
+              >
+                Assign Random
+              </button>
               <button
                 onClick={() => handlePlayerReadyScenario()}
                 className="save-order p-2 rounded-md text-xs font-medium"
@@ -408,25 +462,7 @@ function SinglePlayer() {
           ) : null}
           {/* <progress value={40}></progress> */}
         </div>
-        {/* {showExitModal ? (
-          <div className="absolute transition-all top-0 left-0 w-full bg-black h-screen text-white flex flex-col justify-center items-center gap-2">
-            <h1 className="text-2xl">Exit BattleThing?</h1>
-            <p className="text-sm">Are you sure you want to exit the game?</p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setShowExitModal(false);
-                }}
-                className="p-1 rounded-md bg-red-600 w-[100px]"
-              >
-                No
-              </button>
-              <button className="p-1 rounded-md bg-green-600 w-[100px]">
-                Yes
-              </button>
-            </div>
-          </div>
-        ) : null} */}
+
         <div className="flex fixed bottom-0 justify-end items-center z-[22] w-full game-footer">
           <div className="flex items-center gap-2">
             {opponentReady ? (

@@ -293,7 +293,7 @@ function SinglePlayer() {
       <main className="container-fluid text-white relative flex flex-col">
         <Toaster />
 
-        <div className="relative fixed top-0 flex justify-between items-center w-full game-header p-1 h-[10dvh]">
+        <div className="relative fixed top-0 flex justify-between items-center w-full game-header p-1">
           {startGame ? (
             <>
               <div className="flex items-center gap-2">

@@ -449,7 +449,7 @@ function SinglePlayer() {
       onDragEnd={handleShipDrop}
       sensors={sensors}
     >
-      <main className="container-fluid text-white relative flex flex-col">
+      <main className="container-fluid text-white relative">
         <Toaster />
 
         <div className="relative fixed top-0 flex justify-between items-center w-full">

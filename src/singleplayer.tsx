@@ -14,6 +14,7 @@ import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import PlayerShips from "./assets/PlayerShips";
 import PlayerFace from "./assets/PlayerFace.svg";
 import BotFace from "./assets/BotFace.svg";
+import GameHeader from "./assets/game-header.png";
 
 const TOTAL_COORDINATES = 17;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
@@ -451,31 +452,34 @@ function SinglePlayer() {
       <main className="container-fluid text-white relative flex flex-col">
         <Toaster />
 
-        <div className="relative fixed top-0 flex justify-between items-center w-full game-header p-1">
+        <div className="relative fixed top-0 flex justify-between items-center w-full">
+          <img
+            className="absolute w-full top-0 h-full -z-[1]"
+            src={GameHeader}
+            alt=""
+          />
           {startGame ? (
-            <>
-              <div className="flex items-center gap-2">
-                {playerReady ? (
-                  <span className="funky-font text-xl">
-                    {currentScore?.player}
-                  </span>
-                ) : null}
-                <img
-                  width={50}
-                  className={`${
-                    !playerReady ? "transition-all scale-75 opacity-40" : ""
-                  }`}
-                  src={PlayerFace}
-                  alt=""
-                />
-              </div>
-            </>
+            <div className="flex items-center gap-5">
+              <img
+                width={60}
+                className={`ml-2 mt-2 ${
+                  !playerReady ? "transition-all scale-75 opacity-40" : ""
+                }`}
+                src={PlayerFace}
+                alt=""
+              />
+              {playerReady ? (
+                <span className="funky-font text-xl mt-2">
+                  {currentScore?.player}
+                </span>
+              ) : null}
+            </div>
           ) : (
-            <img width={70} src={PlayerFace} alt="" />
+            <img width={60} src={PlayerFace} className="ml-2 mt-2" />
           )}
           <button
             onClick={() => handleExit()}
-            className="text-sm p-1 rounded-md"
+            className="text-sm p-1 rounded-md mb-4 mr-2"
           >
             Exit Game
           </button>
@@ -548,12 +552,12 @@ function SinglePlayer() {
         </div>
 
         <div className="flex fixed bottom-0 justify-end items-center z-[22] w-full game-footer">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-5">
             {opponentReady ? (
               <span className="funky-font text-xl">{currentScore?.bot}</span>
             ) : null}
             <img
-              className={`${
+              className={`mr-2 mt-2 ${
                 !opponentReady ? "transition-all scale-75 opacity-40" : ""
               }`}
               src={BotFace}

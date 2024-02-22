@@ -110,9 +110,9 @@ svg {
 }
 
 .game-header {
-  background-image: url("./assets/game-header.png");
+  /* background-image: url("./assets/game-header.png");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover; */
 }
 .game-footer {
   background-image: url("./assets/game-footer.svg");

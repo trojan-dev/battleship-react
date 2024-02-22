@@ -8,13 +8,15 @@ function DroppableCell({
   playerCellStatus,
   playerSunkShipsCoordinates,
 }: any) {
-  const { setNodeRef } = useDroppable({
+  const { over, setNodeRef } = useDroppable({
     id,
   });
 
   return (
     <div
-      className={`relative rounded-md aspect-[auto_1/1] w-full bg-[rgb(36,41,42,0.5)]`}
+      className={`${
+        over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.5)]"
+      } relative rounded-md aspect-[auto_1/1] w-full `}
       ref={setNodeRef}
       id={id}
     >

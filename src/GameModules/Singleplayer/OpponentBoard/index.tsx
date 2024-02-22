@@ -71,10 +71,12 @@ function OpponentBoard(props: any) {
         if (mode !== 0) {
           sendEndGameStats(newPayload);
         }
-        navigate(
-          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
-        );
-        window.location.reload();
+        wait(1200).then(() => {
+          navigate(
+            `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+          );
+          window.location.reload();
+        });
       } else {
         navigate(`/singleplayer/?exit=true`);
       }
@@ -114,7 +116,6 @@ function OpponentBoard(props: any) {
       !alreadyPlacedCells.flat(1).includes(index) &&
       !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
     ) {
-      console.log("original", index, alreadyPlacedCells);
       return index;
     }
     return checkValidStartIndex(
@@ -180,7 +181,7 @@ function OpponentBoard(props: any) {
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
     }
-    wait(2000).then(() => {
+    wait(1400).then(() => {
       props.setPlayerReady(false);
       props.setOpponentReady(true);
     });

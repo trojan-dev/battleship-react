@@ -117,7 +117,7 @@ function ShipComponent({
         >
           <img
             className={`h-auto w-full ${
-              !isShipValid[shipType] ? "opacity-30" : ""
+              !isShipValid[shipType] ? "opacity-60" : ""
             }`}
             src={H}
             alt=""
@@ -159,7 +159,7 @@ function ShipComponent({
         >
           <img
             className={`h-full w-full ship-image object-cover object-[0] ${
-              !isShipValid[shipType] ? "opacity-30" : ""
+              !isShipValid[shipType] ? "opacity-60" : ""
             }`}
             src={V}
             alt=""

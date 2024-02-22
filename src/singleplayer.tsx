@@ -79,7 +79,16 @@ function SinglePlayer() {
   }, []);
 
   useEffect(() => {
-    computerFiresMissle(Math.floor(Math.random() * (62 - 0 + 1) + 0));
+    computerFiresMissle(
+      getRandomExcluding(
+        62,
+        0,
+        Object.keys(playerCellStatus).filter(
+          (el) =>
+            playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT"
+        )
+      )
+    );
   }, [playerReady]);
 
   useEffect(() => {
@@ -125,6 +134,18 @@ function SinglePlayer() {
     const allPlacedCoordinates = Object.values(playerShipsCoordinates).flat(1);
     setPlacedCoordinates(allPlacedCoordinates);
   }, [playerShipsCoordinates]);
+
+  function getRandomExcluding(
+    min: number,
+    max: number,
+    exclude: Array<string>
+  ) {
+    let randomNum;
+    do {
+      randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (exclude.includes(String(randomNum)));
+    return randomNum;
+  }
 
   function checkIfPlayerShipSank(ship: any) {
     if (!playerShipsCoordinates[ship].length) {
@@ -259,7 +280,6 @@ function SinglePlayer() {
         sortedCollisions.length >= active.data.current.length &&
         playerShipsOrientation[active.id] === "H"
       ) {
-        console.log("dsadasd", sortedCollisions);
         let differenceInShipLengthAndCollisions =
           sortedCollisions.length - active.data.current.length;
         sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
@@ -321,12 +341,16 @@ function SinglePlayer() {
     if (
       Object.values(playerShipsCoordinates).flat(1).length === TOTAL_COORDINATES
     ) {
-      setBotShipsPlacement(true);
-      setTimeout(() => {
-        setPlayerReady(true);
-        setStartGame(true);
-        setBotShipsPlacement(false);
-      }, 4000);
+      if (Object.values(isShipValid).every((el) => el === true)) {
+        setBotShipsPlacement(true);
+        setTimeout(() => {
+          setPlayerReady(true);
+          setStartGame(true);
+          setBotShipsPlacement(false);
+        }, 4000);
+      } else {
+        toast.error(`Please place all your ships correctly!`);
+      }
     } else {
       toast.error(`Please place all your ships first!`);
     }
@@ -364,7 +388,7 @@ function SinglePlayer() {
     alreadyPlacedCells: Array<Array<number>>
   ) {
     if (
-      index % 9 <= truckLength &&
+      index % 9 < truckLength &&
       !alreadyPlacedCells.flat(1).includes(index) &&
       !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
     ) {
@@ -411,8 +435,6 @@ function SinglePlayer() {
   };
 
   const sensors = useSensors(touchSensor);
-
-  console.log(playerShipsCoordinates);
 
   return (
     <DndContext

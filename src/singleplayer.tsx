@@ -555,7 +555,7 @@ function SinglePlayer() {
         <div className="absolute bottom-0 w-full">
           <div className="relative w-full">
             <img
-              className="absolute top-0 object-cover object-position-top -z-[1] h-full w-full"
+              className="absolute top-0 object-cover object-top -z-[1] h-full w-full"
               src={GameFooter}
               alt=""
             />

@@ -15,6 +15,7 @@ import PlayerShips from "./assets/PlayerShips";
 import PlayerFace from "./assets/PlayerFace.svg";
 import BotFace from "./assets/BotFace.svg";
 import GameHeader from "./assets/game-header.png";
+import GameFooter from "./assets/game-footer.svg";
 
 const TOTAL_COORDINATES = 17;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
@@ -551,18 +552,26 @@ function SinglePlayer() {
           {/* <progress value={40}></progress> */}
         </div>
 
-        <div className="flex fixed bottom-0 justify-end items-center z-[22] w-full game-footer">
-          <div className="flex items-center gap-5">
-            {opponentReady ? (
-              <span className="funky-font text-xl">{currentScore?.bot}</span>
-            ) : null}
+        <div className="absolute bottom-0 w-full">
+          <div className="relative w-full">
             <img
-              className={`mr-2 mt-2 ${
-                !opponentReady ? "transition-all scale-75 opacity-40" : ""
-              }`}
-              src={BotFace}
+              className="absolute top-0 object-cover object-position-top -z-[1] h-full w-full"
+              src={GameFooter}
               alt=""
             />
+            <div className="flex justify-end items-center gap-5 h-full">
+              {opponentReady ? (
+                <span className="funky-font text-xl">{currentScore?.bot}</span>
+              ) : null}
+              <img
+                className={`${
+                  !opponentReady ? "transition-all scale-75 opacity-40" : ""
+                }`}
+                src={BotFace}
+                alt=""
+                width={80}
+              />
+            </div>
           </div>
         </div>
       </main>

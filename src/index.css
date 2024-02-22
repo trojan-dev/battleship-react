@@ -39,7 +39,7 @@ body {
   );
   background-repeat: no-repeat;
   overflow-x: hidden;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 
 img[data-ship],

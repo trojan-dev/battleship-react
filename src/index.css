@@ -110,7 +110,7 @@ svg {
 }
 
 .game-header {
-  background-image: url("./assets/game-header.svg");
+  background-image: url("./assets/game-header.png");
   background-repeat: no-repeat;
   background-size: cover;
 }

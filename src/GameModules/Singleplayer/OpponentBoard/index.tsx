@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
 import Canon from "../../../assets/canon.svg";
-import CellMiss from "../../../assets/cell-miss.svg";
+import CellMiss from "../../../assets/cell-miss.png";
 import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
 
@@ -209,10 +209,10 @@ function OpponentBoard(props: any) {
               } rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
             >
               {opponentCellStatus[block] === "MISS" ? (
-                <>
+                <div className="flex justify-center items-center h-full">
                   {/* <img className="missile-drop" src={Canon} alt="" /> */}
-                  <img className="" src={CellMiss} />
-                </>
+                  <img className="w-[70%]" src={CellMiss} />
+                </div>
               ) : null}
               {opponentCellStatus[block] === "EMPTY" ? "" : null}
               {opponentCellStatus[block] === "HIT" ? (

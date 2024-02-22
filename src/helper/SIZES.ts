@@ -9,7 +9,7 @@ function calculateCellStyle() {
   if (window.matchMedia("(max-device-width : 460px)").matches) {
     _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,42px)]`;
   }
-  if (window.matchMedia("(max-device-width : 380px)").matches) {
+  if (window.matchMedia("(max-device-width : 400px)").matches) {
     _cellStyle = `grid gap-0.5 grid-cols-[repeat(9,36px)]`;
   }
   return _cellStyle;
@@ -25,7 +25,7 @@ function calculateCellSize() {
   if (window.matchMedia("(max-device-width : 460px)").matches) {
     _cellSize = 42;
   }
-  if (window.matchMedia("(max-device-width : 380px)").matches) {
+  if (window.matchMedia("(max-device-width : 400px)").matches) {
     _cellSize = 36;
   }
   return _cellSize;
@@ -41,8 +41,8 @@ function calculateShipsContainer() {
   if (window.matchMedia("(max-device-width : 460px)").matches) {
     _cellStyle = `max-w-[420px]`;
   }
-  if (window.matchMedia("(max-device-width : 380px)").matches) {
-    _cellStyle = `max-w-[360px]`;
+  if (window.matchMedia("(max-device-width : 400px)").matches) {
+    _cellStyle = `max-w-[400px]`;
   }
   return _cellStyle;
 }

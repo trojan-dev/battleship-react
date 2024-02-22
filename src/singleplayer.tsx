@@ -22,11 +22,16 @@ const shipPlacements: Array<Array<number>> = [];
 function SinglePlayer() {
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
-      delay: 150,
+      delay: 0,
       tolerance: 10,
     },
   });
-  const mouseSensor = useSensor(MouseSensor);
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      delay: 10,
+      tolerance: 10,
+    },
+  });
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);
@@ -293,7 +298,7 @@ function SinglePlayer() {
             return false;
           }
           const startIndexElement = document.getElementById(shipStartIndex);
-          draggedElement.classList.add("truck-arrive");
+          // draggedElement.classList.add("truck-arrive");
           draggedElement.style.position = "relative";
           draggedElement.style.top = "-7px";
           draggedElement.style.left = "5px";
@@ -325,7 +330,7 @@ function SinglePlayer() {
           }
           const startIndexElement = document.getElementById(shipStartIndex);
           draggedElement.style.position = "absolute";
-          draggedElement.classList.add("truck-arrive-vertical");
+          // draggedElement.classList.add("truck-arrive-vertical");
           draggedElement.style.top = "10px";
           startIndexElement?.append(draggedElement);
           setPlayerShipsCoordinates((prev: any) => ({
@@ -422,7 +427,7 @@ function SinglePlayer() {
       const startCell = document.getElementById(newRandomStartIndex);
       const currentShip = document.getElementById(`${ships[i].shipType}`);
       if (currentShip) {
-        currentShip?.classList.add("truck-arrive");
+        // currentShip?.classList.add("truck-arrive");
         currentShip.style.position = "relative";
         currentShip.style.top = "-10px";
         startCell?.append(currentShip);
@@ -502,7 +507,7 @@ function SinglePlayer() {
           </div>
         ) : null}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 mt-1 pl-1.5 pr-1.5">
+        <div className="grid grid-cols-1 xl:grid-cols-2 mt-1 pl-1.5 pr-1.5">
           <PlayerBoard
             placedShips={placedCoordinates}
             playerShipsCoordinates={playerShipsCoordinates}

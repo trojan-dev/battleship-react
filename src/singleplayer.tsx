@@ -4,6 +4,7 @@ import { Toaster, toast } from "react-hot-toast";
 import {
   DndContext,
   TouchSensor,
+  MouseSensor,
   rectIntersection,
   useSensor,
   useSensors,
@@ -20,12 +21,12 @@ const shipPlacements: Array<Array<number>> = [];
 
 function SinglePlayer() {
   const touchSensor = useSensor(TouchSensor, {
-    // Press delay of 250ms, with tolerance of 5px of movement
     activationConstraint: {
-      delay: 250,
+      delay: 150,
       tolerance: 10,
     },
   });
+  const mouseSensor = useSensor(MouseSensor);
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);

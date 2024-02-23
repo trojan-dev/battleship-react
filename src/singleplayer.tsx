@@ -642,7 +642,7 @@ function SinglePlayer() {
           className="h-screen bg-black absolute w-full top-0 z-[99999] grid
       place-items-center text-white"
         >
-          <div className="flex flex-col gap-5 items-center">
+          <div className="flex flex-col gap-5 items-center justify-center p-1">
             <h1 className="funky-font text-xl">
               Are you sure you want to quit?
             </h1>

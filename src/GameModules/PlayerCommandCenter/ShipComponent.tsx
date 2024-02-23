@@ -152,7 +152,7 @@ function ShipComponent({
             ...style,
             width: `${vDimensions.shipWidth}px`,
             height: `${vDimensions.shipHeight}px`,
-            zIndex: startGame ? "0" : "2",
+            zIndex: 1,
             position: "absolute",
             left: "2px",
           }}

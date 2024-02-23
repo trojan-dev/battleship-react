@@ -6,6 +6,8 @@ import BombedSmoke from "../../assets/bombed-smoke.svg";
 function DroppableCell({
   id,
   playerCellStatus,
+  placedShips,
+  startGame,
   playerSunkShipsCoordinates,
 }: any) {
   const { over, setNodeRef } = useDroppable({
@@ -16,6 +18,8 @@ function DroppableCell({
     <div
       className={`${
         over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.3)]"
+      } ${
+        startGame && placedShips.includes(id) ? "bg-yellow-500" : ""
       } border border-[rgb(36,41,42,0.5)]  relative rounded-md aspect-[auto_1/1] w-full `}
       ref={setNodeRef}
       id={id}

@@ -16,7 +16,12 @@ const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 const shipPlacements: Array<Array<number>> = [];
 
 function SinglePlayer() {
-  const touchSensor = useSensor(TouchSensor);
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 120,
+      tolerance: 5,
+    },
+  });
   const sensors = useSensors(touchSensor);
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
@@ -352,11 +357,19 @@ function SinglePlayer() {
     const playerCoordinates = { ...playerShipsCoordinates };
     // Reset if the current dragged ship has any existing coordinates
     setPlayerShipsCoordinates((prev: any) => ({ ...prev, [id]: [] }));
-    const generatedCoordinatesForTruck = generateContinuousArray(
-      over?.id,
-      length
-    );
-    /* Out of bounds edge case */
+    let generatedCoordinatesForTruck: Array<number> = [];
+    if (playerShipsOrientation[id] === "H") {
+      generatedCoordinatesForTruck = generateContinuousArrayHorizontal(
+        over?.id,
+        length
+      );
+    } else {
+      generatedCoordinatesForTruck = generateContinuousArrayVertical(
+        over?.id,
+        length
+      );
+    }
+    /* Out of bounds edge case WIP */
 
     /* Overlapping edge case */
     for (const key in playerCoordinates) {
@@ -373,9 +386,14 @@ function SinglePlayer() {
     const draggedTruck = document.getElementById(id);
     const startIndex = document.getElementById(over?.id);
     if (draggedTruck) {
-      draggedTruck.style.position = "relative";
-      draggedTruck.style.top = "-7px";
-      draggedTruck.style.left = "5px";
+      if (playerShipsOrientation[id] === "H") {
+        draggedTruck.style.position = "relative";
+        draggedTruck.style.top = "-10px";
+        draggedTruck.style.left = "5px";
+      } else {
+        draggedTruck.style.position = "absolute";
+        draggedTruck.style.top = "10px";
+      }
       startIndex?.appendChild(draggedTruck);
       setPlayerShipsCoordinates((prev: any) => ({
         ...prev,
@@ -449,18 +467,11 @@ function SinglePlayer() {
     );
   }
 
-  function hasElementOverflowed(container, element) {
-    const containerRect = container.getBoundingClientRect();
-    const elementRect = element.getBoundingClientRect();
-
-    return (
-      elementRect.left < containerRect.left ||
-      elementRect.right > containerRect.right
-    );
-  }
-
-  function generateContinuousArray(start: number, length: number) {
+  function generateContinuousArrayHorizontal(start: number, length: number) {
     return Array.from({ length: length }, (_, index) => start + index);
+  }
+  function generateContinuousArrayVertical(start: number, length: number) {
+    return Array.from({ length: length }, (_, index) => start + 9 * index);
   }
 
   const handleAssignRandom = (ships: any) => {
@@ -471,7 +482,7 @@ function SinglePlayer() {
         ships[i].length,
         shipPlacements
       );
-      const newShipPlacement = generateContinuousArray(
+      const newShipPlacement = generateContinuousArrayHorizontal(
         newRandomStartIndex,
         ships[i].length
       );
@@ -491,6 +502,8 @@ function SinglePlayer() {
     }
     shipPlacements.length = 0;
   };
+
+  console.log(playerShipsCoordinates);
 
   return (
     <main className="container-fluid text-white relative">
@@ -594,7 +607,7 @@ function SinglePlayer() {
           ) : null}
 
           {botShipsPlacement ? (
-            <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-xl animate-pulse">
+            <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-2xl funky-font animate-pulse">
               Bot is placing their trucks
             </h1>
           ) : null}

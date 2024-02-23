@@ -351,6 +351,13 @@ function SinglePlayer() {
       /* If player starts dragging and dropping in the same region */
       return false;
     }
+    setIsShipValid({
+      BATTLESHIP: true,
+      CARRIER: true,
+      CRUISER: true,
+      DESTROYER: true,
+      SUBMARINE: true,
+    });
     if (!collisions.length || collisions.length < length) {
       return false;
     }

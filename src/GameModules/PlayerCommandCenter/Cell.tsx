@@ -31,10 +31,10 @@ function DroppableCell({
       ) : null}
       {playerCellStatus[id] === "EMPTY" ? "" : null}
       {playerCellStatus[id] === "HIT" ? (
-        <img width={35} className="bombed absolute top-0 z-[2]" src={Bombed} />
+        <img width={35} className="bombed absolute top-0 z-[33]" src={Bombed} />
       ) : null}
       {playerSunkShipsCoordinates.includes(id) ? (
-        <img width={40} src={BombedSmoke} className="absolute top-0 z-[2]" />
+        <img width={40} src={BombedSmoke} className="absolute top-0 z-[33]" />
       ) : null}
     </div>
   );

@@ -189,7 +189,7 @@ function OpponentBoard(props: any) {
 
   return (
     <div className="flex flex-col items-center justify-center mt-3">
-      <div className={`${calculateCellStyle()} gap-0.5`}>
+      <div className={`${calculateCellStyle()}`}>
         {[...Array(63).keys()].map((block: number | any) => (
           <div
             onClick={() => {
@@ -206,7 +206,7 @@ function OpponentBoard(props: any) {
             <div
               className={`${
                 props.startGame ? "relative" : ""
-              } rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
+              } border border-[rgb(36,41,42,0.5)] rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
             >
               {opponentCellStatus[block] === "MISS" ? (
                 <div className="flex justify-center items-center h-full">

@@ -26,6 +26,7 @@ const invalidCells: any = {
   DESTROYER: [7, 8, 16, 17, 25, 26, 34, 35, 43, 44, 52, 53, 61, 62],
   SUBMARINE: [8, 17, 26, 35, 44, 53, 62],
 };
+let clock: string | null = null;
 
 function SinglePlayer() {
   const touchSensor = useSensor(TouchSensor, {
@@ -38,6 +39,8 @@ function SinglePlayer() {
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);
+  const [startTimer, setStartTimer] = useState(false);
+  const [timer, setTimerValue] = useState(3);
   const [showExitModal, setShowExitModal] = useState<boolean>(false);
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
@@ -152,6 +155,19 @@ function SinglePlayer() {
     setPlacedCoordinates(allPlacedCoordinates);
   }, [playerShipsCoordinates]);
 
+  useEffect(() => {
+    if (clock && timer === 0) {
+      clearInterval(clock);
+      setStartTimer(false);
+      setStartGame(true);
+    }
+    if (startTimer && clock === null && timer === 3) {
+      clock = setInterval(() => {
+        setTimerValue((prev) => prev - 1);
+      }, 1000);
+    }
+  }, [startTimer, timer]);
+
   function getRandomExcluding(
     min: number,
     max: number,
@@ -232,127 +248,83 @@ function SinglePlayer() {
     }
   }
 
-  // Check if ships are overlapping with each other while placement
-  const checkIfShipCollision = (
-    currentShipBlocks: Array<any>,
-    currentShip: any
-  ) => {
-    const mutatedSortedCollisionsArray = currentShipBlocks.map((el) => el.id);
+  // const handleShipDrop = (event: any) => {
+  //   const { active, collisions, over } = event;
+  //   if (collisions && over?.id !== "player-ships") {
+  //     setIsShipValid({
+  //       BATTLESHIP: true,
+  //       CARRIER: true,
+  //       CRUISER: true,
+  //       DESTROYER: true,
+  //       SUBMARINE: true,
+  //     });
+  //     let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
 
-    // Condition for a ship that is already dragged;
-    if (playerShipsCoordinates[currentShip].length > 0) {
-      if (
-        playerShipsCoordinates[currentShip].every((el: any) =>
-          currentShipBlocks.includes(el)
-        )
-      ) {
-        return true;
-      } else {
-        // Condition for a dragged ship that can be moved across the board
-        for (let ship in playerShipsCoordinates) {
-          if (
-            ship !== currentShip &&
-            playerShipsCoordinates[ship].some((el: any) =>
-              mutatedSortedCollisionsArray.includes(el)
-            )
-          ) {
-            return true;
-          }
-        }
-        return false;
-      }
-    } else {
-      // Condition for a new ship that hasnt been dragged yet.
-      for (let ship in playerShipsCoordinates) {
-        if (
-          playerShipsCoordinates[ship].some((el: any) =>
-            mutatedSortedCollisionsArray.includes(el)
-          )
-        ) {
-          return true;
-        }
-      }
-      return false;
-    }
-  };
+  //     /* In case the user is trying to drag outside the boundaries */
+  //     if (sortedCollisions.length < active.data.current.length) {
+  //       return false;
+  //     }
 
-  const handleShipDrop = (event: any) => {
-    const { active, collisions, over } = event;
-    if (collisions && over?.id !== "player-ships") {
-      setIsShipValid({
-        BATTLESHIP: true,
-        CARRIER: true,
-        CRUISER: true,
-        DESTROYER: true,
-        SUBMARINE: true,
-      });
-      let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
+  //     if (
+  //       sortedCollisions.length >= active.data.current.length &&
+  //       playerShipsOrientation[active.id] === "H"
+  //     ) {
+  //       let differenceInShipLengthAndCollisions =
+  //         sortedCollisions.length - active.data.current.length;
+  //       sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
+  //       const draggedElement = document.getElementById(active.id);
+  //       let shipStartIndex, ifCollision;
+  //       if (draggedElement) {
+  //         shipStartIndex = sortedCollisions[0].id;
+  //         ifCollision = checkIfShipCollision(sortedCollisions, active.id);
+  //         if (ifCollision) {
+  //           return false;
+  //         }
+  //         const startIndexElement = document.getElementById(shipStartIndex);
+  //         // draggedElement.classList.add("truck-arrive");
+  //         draggedElement.style.position = "relative";
+  //         draggedElement.style.top = "-7px";
+  //         draggedElement.style.left = "5px";
+  //         startIndexElement?.append(draggedElement);
+  //         setPlayerShipsCoordinates((prev: any) => ({
+  //           ...prev,
+  //           [active.id]: [...sortedCollisions.map((el: any) => el.id)],
+  //         }));
+  //       }
+  //     }
+  //     if (
+  //       sortedCollisions.length >= active.data.current.length &&
+  //       playerShipsOrientation[active.id] === "V"
+  //     ) {
+  //       let differenceInShipLengthAndCollisions =
+  //         sortedCollisions.length - active.data.current.length;
+  //       sortedCollisions.splice(
+  //         active.data.current.length,
+  //         differenceInShipLengthAndCollisions
+  //       );
 
-      /* In case the user is trying to drag outside the boundaries */
-      if (sortedCollisions.length < active.data.current.length) {
-        return false;
-      }
-
-      if (
-        sortedCollisions.length >= active.data.current.length &&
-        playerShipsOrientation[active.id] === "H"
-      ) {
-        let differenceInShipLengthAndCollisions =
-          sortedCollisions.length - active.data.current.length;
-        sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
-        const draggedElement = document.getElementById(active.id);
-        let shipStartIndex, ifCollision;
-        if (draggedElement) {
-          shipStartIndex = sortedCollisions[0].id;
-          ifCollision = checkIfShipCollision(sortedCollisions, active.id);
-          if (ifCollision) {
-            return false;
-          }
-          const startIndexElement = document.getElementById(shipStartIndex);
-          // draggedElement.classList.add("truck-arrive");
-          draggedElement.style.position = "relative";
-          draggedElement.style.top = "-7px";
-          draggedElement.style.left = "5px";
-          startIndexElement?.append(draggedElement);
-          setPlayerShipsCoordinates((prev: any) => ({
-            ...prev,
-            [active.id]: [...sortedCollisions.map((el: any) => el.id)],
-          }));
-        }
-      }
-      if (
-        sortedCollisions.length >= active.data.current.length &&
-        playerShipsOrientation[active.id] === "V"
-      ) {
-        let differenceInShipLengthAndCollisions =
-          sortedCollisions.length - active.data.current.length;
-        sortedCollisions.splice(
-          active.data.current.length,
-          differenceInShipLengthAndCollisions
-        );
-
-        const draggedElement = document.getElementById(active.id);
-        let shipStartIndex, ifCollision;
-        if (draggedElement) {
-          shipStartIndex = sortedCollisions[0].id;
-          ifCollision = checkIfShipCollision(sortedCollisions, active.id);
-          if (ifCollision) {
-            return false;
-          }
-          // const startIndexElement = document.getElementById(shipStartIndex);
-          const startIndexElement = document.getElementById(over?.id);
-          draggedElement.style.position = "absolute";
-          // draggedElement.classList.add("truck-arrive-vertical");
-          draggedElement.style.top = "10px";
-          startIndexElement?.append(draggedElement);
-          setPlayerShipsCoordinates((prev: any) => ({
-            ...prev,
-            [active.id]: [...sortedCollisions.map((el: any) => el.id)],
-          }));
-        }
-      }
-    }
-  };
+  //       const draggedElement = document.getElementById(active.id);
+  //       let shipStartIndex, ifCollision;
+  //       if (draggedElement) {
+  //         shipStartIndex = sortedCollisions[0].id;
+  //         ifCollision = checkIfShipCollision(sortedCollisions, active.id);
+  //         if (ifCollision) {
+  //           return false;
+  //         }
+  //         // const startIndexElement = document.getElementById(shipStartIndex);
+  //         const startIndexElement = document.getElementById(over?.id);
+  //         draggedElement.style.position = "absolute";
+  //         // draggedElement.classList.add("truck-arrive-vertical");
+  //         draggedElement.style.top = "10px";
+  //         startIndexElement?.append(draggedElement);
+  //         setPlayerShipsCoordinates((prev: any) => ({
+  //           ...prev,
+  //           [active.id]: [...sortedCollisions.map((el: any) => el.id)],
+  //         }));
+  //       }
+  //     }
+  //   }
+  // };
 
   const newHandleShipDrop = (event: any) => {
     /* The new algo for deciding the drop coordinates of the ship */
@@ -440,11 +412,11 @@ function SinglePlayer() {
     ) {
       if (Object.values(isShipValid).every((el) => el === true)) {
         setBotShipsPlacement(true);
-        setTimeout(() => {
+        wait(2000).then(() => {
           setPlayerReady(true);
-          setStartGame(true);
           setBotShipsPlacement(false);
-        }, 4000);
+          setStartTimer(true);
+        });
       } else {
         toast.error(`Please place all your trucks correctly!`);
       }
@@ -548,8 +520,6 @@ function SinglePlayer() {
     shipPlacements.length = 0;
   };
 
-  console.log(playerShipsCoordinates);
-
   return (
     <main className="container-fluid text-white relative">
       <Toaster />
@@ -587,80 +557,89 @@ function SinglePlayer() {
         </button>
       </div>
 
-      {!startGame && !botShipsPlacement ? (
-        <div className="flex flex-col gap-1.5 p-1.5">
-          <h2 className="funky-font text-3xl">
-            Deploy <br />
-            Your Trucks
-          </h2>
-          <p className="text-sm opacity-50 uppercase">
-            drag to move and tap to rotate, you can also pick “assign random”
-          </p>
-          <div className="flex gap-3">
-            <button
-              onClick={() => handleAssignRandom(PlayerShips)}
-              className="save-order p-2 rounded-md text-xs font-medium"
-            >
-              Assign Random
-            </button>
-            <button
-              onClick={() => handlePlayerReadyScenario()}
-              className="save-order p-2 rounded-md text-xs font-medium"
-            >
-              Save Order
-            </button>
+      <main className="relative">
+        {!startGame && !botShipsPlacement ? (
+          <div className="flex flex-col gap-1.5 p-1.5">
+            <h2 className="funky-font text-3xl">
+              Deploy <br />
+              Your Trucks
+            </h2>
+            <p className="text-sm opacity-50 uppercase">
+              drag to move and tap to rotate, you can also pick “assign random”
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleAssignRandom(PlayerShips)}
+                className="save-order p-2 rounded-md text-xs font-medium"
+              >
+                Assign Random
+              </button>
+              <button
+                onClick={() => handlePlayerReadyScenario()}
+                className="save-order p-2 rounded-md text-xs font-medium"
+              >
+                Save Order
+              </button>
+            </div>
           </div>
-        </div>
-      ) : null}
-      <DndContext
-        // onDragEnd={handleShipDrop}
-        onDragEnd={newHandleShipDrop}
-        // onDragOver={(event) => console.log("sdasd", event)}
-        sensors={sensors}
-        modifiers={[restrictToWindowEdges]}
-      >
-        <div className="grid grid-cols-1 xl:grid-cols-2 pl-1.5 pr-1.5">
-          <PlayerBoard
-            placedShips={placedCoordinates}
-            playerShipsCoordinates={playerShipsCoordinates}
-            playerCellStatus={playerCellStatus}
-            startGame={startGame}
-            playerReady={playerReady}
-            opponentReady={opponentReady}
-            setPlayerReady={setPlayerReady}
-            setOpponentReady={setOpponentReady}
-            playerShipsOrientation={playerShipsOrientation}
-            setPlayerShipsOrientation={setPlayerShipsOrientation}
-            currentScore={currentScore}
-            playerSunkShipsCoordinates={playerSunkShipsCoordinates}
-            setPlayerShipsCoordinates={setPlayerShipsCoordinates}
-            setIsShipValid={setIsShipValid}
-            isShipValid={isShipValid}
-            isHorizontal={isHorizontal}
-            setIsHorizontal={setIsHorizontal}
-          />
-          {startGame ? (
-            <OpponentBoard
+        ) : null}
+        <DndContext
+          // onDragEnd={handleShipDrop}
+          onDragEnd={newHandleShipDrop}
+          // onDragOver={(event) => console.log("sdasd", event)}
+          sensors={sensors}
+          modifiers={[restrictToWindowEdges]}
+        >
+          <div className={`grid grid-cols-1 xl:grid-cols-2 p-2 relative`}>
+            <PlayerBoard
+              placedShips={placedCoordinates}
+              playerShipsCoordinates={playerShipsCoordinates}
+              playerCellStatus={playerCellStatus}
               startGame={startGame}
               playerReady={playerReady}
               opponentReady={opponentReady}
               setPlayerReady={setPlayerReady}
               setOpponentReady={setOpponentReady}
-              gamePayload={gamePayload}
+              playerShipsOrientation={playerShipsOrientation}
+              setPlayerShipsOrientation={setPlayerShipsOrientation}
               currentScore={currentScore}
-              setCurrentScore={setCurrentScore}
               playerSunkShipsCoordinates={playerSunkShipsCoordinates}
+              setPlayerShipsCoordinates={setPlayerShipsCoordinates}
+              setIsShipValid={setIsShipValid}
+              isShipValid={isShipValid}
+              isHorizontal={isHorizontal}
+              setIsHorizontal={setIsHorizontal}
             />
-          ) : null}
-
-          {botShipsPlacement ? (
-            <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-md funky-font animate-pulse">
-              Bot is placing their trucks
-            </h1>
-          ) : null}
-          {/* <progress value={40}></progress> */}
-        </div>
-      </DndContext>
+            {startGame ? (
+              <OpponentBoard
+                startGame={startGame}
+                playerReady={playerReady}
+                opponentReady={opponentReady}
+                setPlayerReady={setPlayerReady}
+                setOpponentReady={setOpponentReady}
+                gamePayload={gamePayload}
+                currentScore={currentScore}
+                setCurrentScore={setCurrentScore}
+                playerSunkShipsCoordinates={playerSunkShipsCoordinates}
+              />
+            ) : null}
+            {botShipsPlacement ? (
+              <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-md funky-font animate-pulse">
+                Bot is placing their trucks
+              </h1>
+            ) : null}
+            {/* <progress value={40}></progress> */}
+          </div>
+        </DndContext>
+        {startTimer ? (
+          <div className="absolute top-0 left-0 z-[222] w-full h-[100%] grid place-items-center backdrop-blur-md">
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <span className="funky-font text-5xl">{timer}</span>
+              <p className="funky-font text-3xl">Get Ready!</p>
+            </div>
+          </div>
+        ) : null}
+      </main>
 
       <div className="fixed bottom-0 w-full">
         <div className="relative w-full">

@@ -1,4 +1,3 @@
-import { useState } from "preact/hooks";
 import { useDroppable } from "@dnd-kit/core";
 import DroppableCell from "./Cell";
 import ShipComponent from "./ShipComponent";
@@ -13,13 +12,7 @@ function PlayerBoard(props: any) {
   const { setNodeRef } = useDroppable({
     id: "player-ships",
   });
-  const [isHorizontal, setIsHorizontal] = useState({
-    BATTLESHIP: true,
-    CARRIER: true,
-    CRUISER: true,
-    DESTROYER: true,
-    SUBMARINE: true,
-  });
+
   return (
     <div className={`mt-5 grid place-items-center`}>
       <div
@@ -47,10 +40,10 @@ function PlayerBoard(props: any) {
       >
         {PlayerShips.map((ship) => (
           <ShipComponent
-            isHorizontal={isHorizontal}
+            isHorizontal={props.isHorizontal}
             playerShipsCoordinates={props.playerShipsCoordinates}
             setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={setIsHorizontal}
+            setIsHorizontal={props.setIsHorizontal}
             ship={ship}
             startGame={props.startGame}
             playerShipsOrientation={props.playerShipsOrientation}

@@ -47,13 +47,18 @@ function ShipComponent({
       Object.values(newPlayerCoordinates).flat(1);
     const newCoordinateSystem = [playerCoordinates[shipType][0]];
     for (let i = 1; i < playerCoordinates[shipType].length; i++) {
-      newCoordinateSystem.push(playerCoordinates[shipType][0] + 9 * i);
+      newCoordinateSystem.push(Number(playerCoordinates[shipType][0] + 9 * i));
     }
     if (
       newCoordinateSystem.some((el) =>
         allCoordinatesExceptCurrentShip.includes(el)
       )
     ) {
+      setIsShipValid((prev: any) => ({ ...prev, [shipType]: false }));
+      return newCoordinateSystem;
+    }
+
+    if (newCoordinateSystem.some((el) => el > 62)) {
       setIsShipValid((prev: any) => ({ ...prev, [shipType]: false }));
       return newCoordinateSystem;
     }

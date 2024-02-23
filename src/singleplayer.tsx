@@ -14,6 +14,18 @@ import GameFooter from "./assets/game-footer.svg";
 const TOTAL_COORDINATES = 17;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 const shipPlacements: Array<Array<number>> = [];
+const invalidCells: any = {
+  CARRIER: [
+    5, 6, 7, 8, 14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44,
+    50, 51, 52, 53, 59, 60, 61, 62,
+  ],
+  BATTLESHIP: [
+    6, 7, 8, 15, 16, 17, 24, 25, 26, 33, 34, 35, 42, 43, 44, 51, 52, 53, 61, 62,
+  ],
+  CRUISER: [7, 8, 16, 17, 25, 26, 34, 35, 43, 44, 52, 53, 61, 62],
+  DESTROYER: [7, 8, 16, 17, 25, 26, 34, 35, 43, 44, 52, 53, 61, 62],
+  SUBMARINE: [8, 17, 26, 35, 44, 53, 62],
+};
 
 function SinglePlayer() {
   const touchSensor = useSensor(TouchSensor, {
@@ -44,6 +56,13 @@ function SinglePlayer() {
     CRUISER: "H",
     DESTROYER: "H",
     SUBMARINE: "H",
+  });
+  const [isHorizontal, setIsHorizontal] = useState({
+    BATTLESHIP: true,
+    CARRIER: true,
+    CRUISER: true,
+    DESTROYER: true,
+    SUBMARINE: true,
   });
   const [isShipValid, setIsShipValid] = useState({
     BATTLESHIP: true,
@@ -351,13 +370,7 @@ function SinglePlayer() {
       /* If player starts dragging and dropping in the same region */
       return false;
     }
-    setIsShipValid({
-      BATTLESHIP: true,
-      CARRIER: true,
-      CRUISER: true,
-      DESTROYER: true,
-      SUBMARINE: true,
-    });
+    setIsShipValid((prev) => ({ ...prev, [id]: true }));
     if (!collisions.length || collisions.length < length) {
       return false;
     }
@@ -376,7 +389,17 @@ function SinglePlayer() {
         length
       );
     }
+    if (generatedCoordinatesForTruck.some((el) => el > 62)) {
+      return false;
+    }
     /* Out of bounds edge case WIP */
+    if (
+      invalidCells[id].includes(over?.id) &&
+      playerShipsOrientation[id] === "H"
+    ) {
+      toast.error(`Truck can't be placed like that!`);
+      return false;
+    }
 
     /* Overlapping edge case */
     for (const key in playerCoordinates) {
@@ -386,6 +409,7 @@ function SinglePlayer() {
             generatedCoordinatesForTruck.includes(el)
           )
         ) {
+          toast.error(`Trucks can't overlap!`);
           return false;
         }
       }
@@ -399,7 +423,7 @@ function SinglePlayer() {
         draggedTruck.style.left = "5px";
       } else {
         draggedTruck.style.position = "absolute";
-        draggedTruck.style.top = "10px";
+        draggedTruck.style.top = "20px";
       }
       startIndex?.appendChild(draggedTruck);
       setPlayerShipsCoordinates((prev: any) => ({
@@ -422,10 +446,10 @@ function SinglePlayer() {
           setBotShipsPlacement(false);
         }, 4000);
       } else {
-        toast.error(`Please place all your ships correctly!`);
+        toast.error(`Please place all your trucks correctly!`);
       }
     } else {
-      toast.error(`Please place all your ships first!`);
+      toast.error(`Please place all your trucks first!`);
     }
   };
 
@@ -482,6 +506,20 @@ function SinglePlayer() {
   }
 
   const handleAssignRandom = (ships: any) => {
+    setPlayerShipsOrientation({
+      BATTLESHIP: "H",
+      CARRIER: "H",
+      CRUISER: "H",
+      DESTROYER: "H",
+      SUBMARINE: "H",
+    });
+    setIsHorizontal({
+      BATTLESHIP: true,
+      CARRIER: true,
+      CRUISER: true,
+      DESTROYER: true,
+      SUBMARINE: true,
+    });
     for (let i = 0; i < ships.length; i++) {
       const randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
       const newRandomStartIndex = checkValidStartIndex(
@@ -516,7 +554,7 @@ function SinglePlayer() {
     <main className="container-fluid text-white relative">
       <Toaster />
 
-      <div className="relative fixed top-0 flex justify-between items-center w-full">
+      <div className="relative fixed top-0 flex justify-between items-center w-full pt-2 pb-1">
         <img
           className="absolute w-full top-0 h-full -z-[1]"
           src={GameHeader}
@@ -598,6 +636,8 @@ function SinglePlayer() {
             setPlayerShipsCoordinates={setPlayerShipsCoordinates}
             setIsShipValid={setIsShipValid}
             isShipValid={isShipValid}
+            isHorizontal={isHorizontal}
+            setIsHorizontal={setIsHorizontal}
           />
           {startGame ? (
             <OpponentBoard

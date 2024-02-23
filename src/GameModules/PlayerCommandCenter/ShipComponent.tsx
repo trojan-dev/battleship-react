@@ -21,7 +21,8 @@ function ShipComponent({
   });
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(1.05)`,
+        opacity: 0.8,
         zIndex: 22,
       }
     : undefined;
@@ -111,7 +112,7 @@ function ShipComponent({
             ...style,
             width: `${hDimensions.shipWidth}px`,
             height: `${hDimensions.shipHeight}px`,
-            zIndex: startGame ? "0" : "2",
+            zIndex: 1,
             position: "relative",
           }}
         >

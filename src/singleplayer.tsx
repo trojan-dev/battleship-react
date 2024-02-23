@@ -1,14 +1,8 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import {
-  DndContext,
-  TouchSensor,
-  MouseSensor,
-  rectIntersection,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import { DndContext, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import PlayerShips from "./assets/PlayerShips";
@@ -22,21 +16,12 @@ const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
 const shipPlacements: Array<Array<number>> = [];
 
 function SinglePlayer() {
-  const touchSensor = useSensor(TouchSensor, {
-    activationConstraint: {
-      delay: 0,
-      tolerance: 10,
-    },
-  });
-  const mouseSensor = useSensor(MouseSensor, {
-    activationConstraint: {
-      delay: 10,
-      tolerance: 10,
-    },
-  });
+  const touchSensor = useSensor(TouchSensor);
+  const sensors = useSensors(touchSensor);
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);
+  const [showExitModal, setShowExitModal] = useState<boolean>(false);
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -330,7 +315,8 @@ function SinglePlayer() {
           if (ifCollision) {
             return false;
           }
-          const startIndexElement = document.getElementById(shipStartIndex);
+          // const startIndexElement = document.getElementById(shipStartIndex);
+          const startIndexElement = document.getElementById(over?.id);
           draggedElement.style.position = "absolute";
           // draggedElement.classList.add("truck-arrive-vertical");
           draggedElement.style.top = "10px";
@@ -341,6 +327,60 @@ function SinglePlayer() {
           }));
         }
       }
+    }
+  };
+
+  const newHandleShipDrop = (event: any) => {
+    /* The new algo for deciding the drop coordinates of the ship */
+    const {
+      collisions,
+      active: {
+        id,
+        data: {
+          current: { length },
+        },
+      },
+      over,
+    } = event;
+    if (over?.id === "player-ships") {
+      /* If player starts dragging and dropping in the same region */
+      return false;
+    }
+    if (!collisions.length || collisions.length < length) {
+      return false;
+    }
+    const playerCoordinates = { ...playerShipsCoordinates };
+    // Reset if the current dragged ship has any existing coordinates
+    setPlayerShipsCoordinates((prev: any) => ({ ...prev, [id]: [] }));
+    const generatedCoordinatesForTruck = generateContinuousArray(
+      over?.id,
+      length
+    );
+    /* Out of bounds edge case */
+
+    /* Overlapping edge case */
+    for (const key in playerCoordinates) {
+      if (key !== id) {
+        if (
+          playerCoordinates[key].some((el: number) =>
+            generatedCoordinatesForTruck.includes(el)
+          )
+        ) {
+          return false;
+        }
+      }
+    }
+    const draggedTruck = document.getElementById(id);
+    const startIndex = document.getElementById(over?.id);
+    if (draggedTruck) {
+      draggedTruck.style.position = "relative";
+      draggedTruck.style.top = "-7px";
+      draggedTruck.style.left = "5px";
+      startIndex?.appendChild(draggedTruck);
+      setPlayerShipsCoordinates((prev: any) => ({
+        ...prev,
+        [id]: generatedCoordinatesForTruck,
+      }));
     }
   };
 
@@ -409,6 +449,16 @@ function SinglePlayer() {
     );
   }
 
+  function hasElementOverflowed(container, element) {
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+
+    return (
+      elementRect.left < containerRect.left ||
+      elementRect.right > containerRect.right
+    );
+  }
+
   function generateContinuousArray(start: number, length: number) {
     return Array.from({ length: length }, (_, index) => start + index);
   }
@@ -442,76 +492,75 @@ function SinglePlayer() {
     shipPlacements.length = 0;
   };
 
-  const sensors = useSensors(touchSensor);
-
   return (
-    <DndContext
-      collisionDetection={rectIntersection}
-      onDragEnd={handleShipDrop}
-      sensors={sensors}
-    >
-      <main className="container-fluid text-white relative">
-        <Toaster />
+    <main className="container-fluid text-white relative">
+      <Toaster />
 
-        <div className="relative fixed top-0 flex justify-between items-center w-full">
-          <img
-            className="absolute w-full top-0 h-full -z-[1]"
-            src={GameHeader}
-            alt=""
-          />
-          {startGame ? (
-            <div className="flex items-center gap-5">
-              <img
-                width={60}
-                className={`ml-2 mt-2 ${
-                  !playerReady ? "transition-all scale-75 opacity-40" : ""
-                }`}
-                src={PlayerFace}
-                alt=""
-              />
-              {playerReady ? (
-                <span className="funky-font text-xl mt-2">
-                  {currentScore?.player}
-                </span>
-              ) : null}
-            </div>
-          ) : (
-            <img width={60} src={PlayerFace} className="ml-2 mt-2" />
-          )}
-          <button
-            onClick={() => handleExit()}
-            className="text-sm p-1 rounded-md mb-4 mr-2"
-          >
-            Exit Game
-          </button>
-        </div>
-
-        {!startGame && !botShipsPlacement ? (
-          <div className="flex flex-col gap-1.5 p-1.5">
-            <h2 className="funky-font text-3xl">
-              Deploy <br />
-              Your Trucks
-            </h2>
-            <p className="text-sm opacity-50 uppercase">
-              drag to move and tap to rotate, you can also pick “assign random”
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => handleAssignRandom(PlayerShips)}
-                className="save-order p-2 rounded-md text-xs font-medium"
-              >
-                Assign Random
-              </button>
-              <button
-                onClick={() => handlePlayerReadyScenario()}
-                className="save-order p-2 rounded-md text-xs font-medium"
-              >
-                Save Order
-              </button>
-            </div>
+      <div className="relative fixed top-0 flex justify-between items-center w-full">
+        <img
+          className="absolute w-full top-0 h-full -z-[1]"
+          src={GameHeader}
+          alt=""
+        />
+        {startGame ? (
+          <div className="flex items-center gap-5">
+            <img
+              width={60}
+              className={`ml-2 mt-2 ${
+                !playerReady ? "transition-all scale-75 opacity-40" : ""
+              }`}
+              src={PlayerFace}
+              alt=""
+            />
+            {playerReady ? (
+              <span className="funky-font text-xl mt-2">
+                {currentScore?.player}
+              </span>
+            ) : null}
           </div>
-        ) : null}
+        ) : (
+          <img width={60} src={PlayerFace} className="ml-2 mt-2" />
+        )}
+        <button
+          onClick={() => setShowExitModal(true)}
+          className="text-sm p-1 rounded-md mb-4 mr-2"
+        >
+          Exit Game
+        </button>
+      </div>
 
+      {!startGame && !botShipsPlacement ? (
+        <div className="flex flex-col gap-1.5 p-1.5">
+          <h2 className="funky-font text-3xl">
+            Deploy <br />
+            Your Trucks
+          </h2>
+          <p className="text-sm opacity-50 uppercase">
+            drag to move and tap to rotate, you can also pick “assign random”
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => handleAssignRandom(PlayerShips)}
+              className="save-order p-2 rounded-md text-xs font-medium"
+            >
+              Assign Random
+            </button>
+            <button
+              onClick={() => handlePlayerReadyScenario()}
+              className="save-order p-2 rounded-md text-xs font-medium"
+            >
+              Save Order
+            </button>
+          </div>
+        </div>
+      ) : null}
+      <DndContext
+        // onDragEnd={handleShipDrop}
+        onDragEnd={newHandleShipDrop}
+        // onDragOver={(event) => console.log("sdasd", event)}
+        sensors={sensors}
+        modifiers={[restrictToWindowEdges]}
+      >
         <div className="grid grid-cols-1 xl:grid-cols-2 mt-1 pl-1.5 pr-1.5">
           <PlayerBoard
             placedShips={placedCoordinates}
@@ -551,31 +600,57 @@ function SinglePlayer() {
           ) : null}
           {/* <progress value={40}></progress> */}
         </div>
+      </DndContext>
 
-        <div className="fixed bottom-0 w-full">
-          <div className="relative w-full">
+      <div className="fixed bottom-0 w-full">
+        <div className="relative w-full">
+          <img
+            className="absolute top-0 object-cover object-top -z-[1] h-full w-full"
+            src={GameFooter}
+            alt=""
+          />
+          <div className="flex justify-end items-center gap-5 h-full">
+            {opponentReady ? (
+              <span className="funky-font text-xl">{currentScore?.bot}</span>
+            ) : null}
             <img
-              className="absolute top-0 object-cover object-top -z-[1] h-full w-full"
-              src={GameFooter}
+              className={`${
+                !opponentReady ? "transition-all scale-75 opacity-40" : ""
+              }`}
+              src={BotFace}
               alt=""
+              width={80}
             />
-            <div className="flex justify-end items-center gap-5 h-full">
-              {opponentReady ? (
-                <span className="funky-font text-xl">{currentScore?.bot}</span>
-              ) : null}
-              <img
-                className={`${
-                  !opponentReady ? "transition-all scale-75 opacity-40" : ""
-                }`}
-                src={BotFace}
-                alt=""
-                width={80}
-              />
+          </div>
+        </div>
+      </div>
+      {showExitModal ? (
+        <div
+          className="h-screen bg-black absolute w-full top-0 z-[99999] grid
+      place-items-center text-white"
+        >
+          <div className="flex flex-col gap-5 items-center">
+            <h1 className="funky-font text-xl">
+              Are you sure you want to quit?
+            </h1>
+            <div className="flex gap-5">
+              <button
+                className="text-xl funky-font"
+                onClick={() => handleExit()}
+              >
+                Yes
+              </button>
+              <button
+                className="text-xl funky-font"
+                onClick={() => setShowExitModal(false)}
+              >
+                No
+              </button>
             </div>
           </div>
         </div>
-      </main>
-    </DndContext>
+      ) : null}
+    </main>
   );
 }
 

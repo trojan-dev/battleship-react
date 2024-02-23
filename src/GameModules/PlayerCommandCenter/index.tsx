@@ -25,7 +25,8 @@ function PlayerBoard(props: any) {
       <div
         className={`${
           props.playerReady ? "opacity-50" : ""
-        } ${calculateCellStyle()}`}
+        } ${calculateCellStyle()} gap-1`}
+        id="board"
       >
         {[...Array(63).keys()].map((cell) => (
           <DroppableCell

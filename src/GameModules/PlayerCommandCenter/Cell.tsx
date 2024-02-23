@@ -15,8 +15,8 @@ function DroppableCell({
   return (
     <div
       className={`${
-        over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.5)]"
-      } relative rounded-md aspect-[auto_1/1] w-full `}
+        over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.3)]"
+      } border border-[rgb(36,41,42,0.5)]  relative rounded-md aspect-[auto_1/1] w-full `}
       ref={setNodeRef}
       id={id}
     >
@@ -27,10 +27,10 @@ function DroppableCell({
       ) : null}
       {playerCellStatus[id] === "EMPTY" ? "" : null}
       {playerCellStatus[id] === "HIT" ? (
-        <img width={35} className="bombed absolute top-0" src={Bombed} />
+        <img width={35} className="bombed absolute top-0 z-[2]" src={Bombed} />
       ) : null}
       {playerSunkShipsCoordinates.includes(id) ? (
-        <img width={40} src={BombedSmoke} className="absolute top-0" />
+        <img width={40} src={BombedSmoke} className="absolute top-0 z-[2]" />
       ) : null}
     </div>
   );

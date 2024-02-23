@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
-import Canon from "../../../assets/canon.svg";
 import CellMiss from "../../../assets/cell-miss.png";
 import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
@@ -168,6 +167,8 @@ function OpponentBoard(props: any) {
   }
 
   function fireMissle(cell: number) {
+    props.setPlayerReady(false);
+    props.setOpponentReady(true);
     if (allPlacedCoordinates.includes(cell)) {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "HIT" }));
       const hitShip = checkWhichShipGotHit(shipCoordinatesArr, cell);
@@ -181,10 +182,6 @@ function OpponentBoard(props: any) {
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
     }
-    wait(1400).then(() => {
-      props.setPlayerReady(false);
-      props.setOpponentReady(true);
-    });
   }
 
   return (
@@ -206,7 +203,7 @@ function OpponentBoard(props: any) {
             <div
               className={`${
                 props.startGame ? "relative" : ""
-              } border border-[rgb(36,41,42,0.5)] rounded-md aspect-square w-full bg-[rgb(36,41,42,0.5)]`}
+              } border border-[rgb(36,41,42,0.5)] rounded-md aspect-square w-full bg-[rgb(36,41,42,0.8)]`}
             >
               {opponentCellStatus[block] === "MISS" ? (
                 <div className="flex justify-center items-center h-full">

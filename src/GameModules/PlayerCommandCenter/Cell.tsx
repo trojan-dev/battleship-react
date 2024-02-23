@@ -17,7 +17,7 @@ function DroppableCell({
   return (
     <div
       className={`${
-        over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.3)]"
+        over?.id === id ? "bg-red-500" : "bg-[rgb(36,41,42,0.6)]"
       } ${
         startGame && placedShips.includes(id) ? "bg-[#4D565C]" : ""
       } border border-[rgb(36,41,42,0.5)] relative rounded-md aspect-[auto_1/1] w-full `}

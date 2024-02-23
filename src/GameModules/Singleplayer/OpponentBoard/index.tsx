@@ -188,7 +188,7 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mt-5">
+    <div className="flex flex-col items-center justify-center mt-3">
       <div className={`${calculateCellStyle()} gap-0.5`}>
         {[...Array(63).keys()].map((block: number | any) => (
           <div

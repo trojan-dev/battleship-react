@@ -76,7 +76,7 @@ function ShipComponent({
       Object.values(newPlayerCoordinates).flat(1);
     const newCoordinateSystem = [playerCoordinates[shipType][0]];
     for (let i = 1; i < playerCoordinates[shipType].length; i++) {
-      newCoordinateSystem.push(playerCoordinates[shipType][0] + 1 * i);
+      newCoordinateSystem.push(Number(playerCoordinates[shipType][0] + 1 * i));
     }
     if (
       newCoordinateSystem.some((el) =>

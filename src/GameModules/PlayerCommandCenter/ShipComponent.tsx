@@ -157,7 +157,7 @@ function ShipComponent({
             ...style,
             width: `${vDimensions.shipWidth}px`,
             height: `${vDimensions.shipHeight}px`,
-            zIndex: 1,
+            zIndex: 3,
             position: "absolute",
             left: "2px",
           }}

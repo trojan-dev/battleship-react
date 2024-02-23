@@ -518,7 +518,7 @@ function SinglePlayer() {
         {startGame ? (
           <div className="flex items-center gap-5">
             <img
-              width={60}
+              width={50}
               className={`ml-2 mt-2 ${
                 !playerReady ? "transition-all scale-75 opacity-40" : ""
               }`}
@@ -532,7 +532,7 @@ function SinglePlayer() {
             ) : null}
           </div>
         ) : (
-          <img width={60} src={PlayerFace} className="ml-2 mt-2" />
+          <img width={50} src={PlayerFace} className="ml-2 mt-2" />
         )}
         <button
           onClick={() => setShowExitModal(true)}
@@ -574,7 +574,7 @@ function SinglePlayer() {
         sensors={sensors}
         modifiers={[restrictToWindowEdges]}
       >
-        <div className="grid grid-cols-1 xl:grid-cols-2 mt-1 pl-1.5 pr-1.5">
+        <div className="grid grid-cols-1 xl:grid-cols-2 pl-1.5 pr-1.5">
           <PlayerBoard
             placedShips={placedCoordinates}
             playerShipsCoordinates={playerShipsCoordinates}
@@ -607,7 +607,7 @@ function SinglePlayer() {
           ) : null}
 
           {botShipsPlacement ? (
-            <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-2xl funky-font animate-pulse">
+            <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-md funky-font animate-pulse">
               Bot is placing their trucks
             </h1>
           ) : null}
@@ -632,7 +632,7 @@ function SinglePlayer() {
               }`}
               src={BotFace}
               alt=""
-              width={80}
+              width={50}
             />
           </div>
         </div>

@@ -76,7 +76,7 @@ function SinglePlayer() {
   });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [playerCellStatus, setPlayerCellStatus] = useState<Array<any>>(
-    [...Array(100).keys()].map(() => "EMPTY")
+    [...Array(100).keys()].map(() => "EMPTY"),
   );
 
   /* Bot info */
@@ -90,7 +90,7 @@ function SinglePlayer() {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
-      "data"
+      "data",
     );
     if (searchParams) {
       const decoded = JSON.parse(atob(searchParams));
@@ -105,9 +105,9 @@ function SinglePlayer() {
         0,
         Object.keys(playerCellStatus).filter(
           (el) =>
-            playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT"
-        )
-      )
+            playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT",
+        ),
+      ),
     );
   }, [playerReady]);
 
@@ -141,7 +141,7 @@ function SinglePlayer() {
           sendEndGameStats(newPayload);
         }
         navigate(
-          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`,
         );
         window.location.reload();
       } else {
@@ -171,7 +171,7 @@ function SinglePlayer() {
   function getRandomExcluding(
     min: number,
     max: number,
-    exclude: Array<string>
+    exclude: Array<string>,
   ) {
     let randomNum;
     do {
@@ -211,7 +211,7 @@ function SinglePlayer() {
                 cell,
               ]);
               let idx = playerCoordinates[ship].findIndex(
-                (el: any) => el === cell
+                (el: any) => el === cell,
               );
               playerCoordinates[ship].splice(idx, 1);
               setPlayerShipsCoordinates(playerCoordinates);
@@ -239,7 +239,7 @@ function SinglePlayer() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const output = await response.json();
       return output;
@@ -248,83 +248,26 @@ function SinglePlayer() {
     }
   }
 
-  // const handleShipDrop = (event: any) => {
-  //   const { active, collisions, over } = event;
-  //   if (collisions && over?.id !== "player-ships") {
-  //     setIsShipValid({
-  //       BATTLESHIP: true,
-  //       CARRIER: true,
-  //       CRUISER: true,
-  //       DESTROYER: true,
-  //       SUBMARINE: true,
-  //     });
-  //     let sortedCollisions = collisions.sort((a: any, b: any) => a.id - b.id);
+  const checkIfShipIsOutOfBounds = (container: string, child: string) => {
+    var parentEl = document.getElementById(container);
+    var childEl = document.getElementById(child);
+    let parentRect = null;
+    let childRect = null;
 
-  //     /* In case the user is trying to drag outside the boundaries */
-  //     if (sortedCollisions.length < active.data.current.length) {
-  //       return false;
-  //     }
-
-  //     if (
-  //       sortedCollisions.length >= active.data.current.length &&
-  //       playerShipsOrientation[active.id] === "H"
-  //     ) {
-  //       let differenceInShipLengthAndCollisions =
-  //         sortedCollisions.length - active.data.current.length;
-  //       sortedCollisions.splice(0, differenceInShipLengthAndCollisions);
-  //       const draggedElement = document.getElementById(active.id);
-  //       let shipStartIndex, ifCollision;
-  //       if (draggedElement) {
-  //         shipStartIndex = sortedCollisions[0].id;
-  //         ifCollision = checkIfShipCollision(sortedCollisions, active.id);
-  //         if (ifCollision) {
-  //           return false;
-  //         }
-  //         const startIndexElement = document.getElementById(shipStartIndex);
-  //         // draggedElement.classList.add("truck-arrive");
-  //         draggedElement.style.position = "relative";
-  //         draggedElement.style.top = "-7px";
-  //         draggedElement.style.left = "5px";
-  //         startIndexElement?.append(draggedElement);
-  //         setPlayerShipsCoordinates((prev: any) => ({
-  //           ...prev,
-  //           [active.id]: [...sortedCollisions.map((el: any) => el.id)],
-  //         }));
-  //       }
-  //     }
-  //     if (
-  //       sortedCollisions.length >= active.data.current.length &&
-  //       playerShipsOrientation[active.id] === "V"
-  //     ) {
-  //       let differenceInShipLengthAndCollisions =
-  //         sortedCollisions.length - active.data.current.length;
-  //       sortedCollisions.splice(
-  //         active.data.current.length,
-  //         differenceInShipLengthAndCollisions
-  //       );
-
-  //       const draggedElement = document.getElementById(active.id);
-  //       let shipStartIndex, ifCollision;
-  //       if (draggedElement) {
-  //         shipStartIndex = sortedCollisions[0].id;
-  //         ifCollision = checkIfShipCollision(sortedCollisions, active.id);
-  //         if (ifCollision) {
-  //           return false;
-  //         }
-  //         // const startIndexElement = document.getElementById(shipStartIndex);
-  //         const startIndexElement = document.getElementById(over?.id);
-  //         draggedElement.style.position = "absolute";
-  //         // draggedElement.classList.add("truck-arrive-vertical");
-  //         draggedElement.style.top = "10px";
-  //         startIndexElement?.append(draggedElement);
-  //         setPlayerShipsCoordinates((prev: any) => ({
-  //           ...prev,
-  //           [active.id]: [...sortedCollisions.map((el: any) => el.id)],
-  //         }));
-  //       }
-  //     }
-  //   }
-  // };
+    if (parentEl && childEl) {
+      parentRect = parentEl.getBoundingClientRect();
+      childRect = childEl.getBoundingClientRect();
+      if (
+        childRect.left < parentRect.left ||
+        childRect.right > parentRect.right ||
+        childRect.top < parentRect.top ||
+        childRect.bottom > parentRect.bottom
+      ) {
+        return true;
+      }
+      return false;
+    }
+  };
 
   const newHandleShipDrop = (event: any) => {
     /* The new algo for deciding the drop coordinates of the ship */
@@ -353,24 +296,23 @@ function SinglePlayer() {
     if (playerShipsOrientation[id] === "H") {
       generatedCoordinatesForTruck = generateContinuousArrayHorizontal(
         over?.id,
-        length
+        length,
       );
     } else {
       generatedCoordinatesForTruck = generateContinuousArrayVertical(
         over?.id,
-        length
+        length,
       );
     }
     if (generatedCoordinatesForTruck.some((el) => el > 62)) {
-      return false;
+      setIsShipValid((prev) => ({ ...prev, [id]: false }));
     }
     /* Out of bounds edge case WIP */
     if (
-      invalidCells[id].includes(over?.id) &&
+      checkIfShipIsOutOfBounds("board", id) &&
       playerShipsOrientation[id] === "H"
     ) {
-      toast.error(`Truck can't be placed like that!`);
-      return false;
+      setIsShipValid((prev) => ({ ...prev, [id]: false }));
     }
 
     /* Overlapping edge case */
@@ -378,7 +320,7 @@ function SinglePlayer() {
       if (key !== id) {
         if (
           playerCoordinates[key].some((el: number) =>
-            generatedCoordinatesForTruck.includes(el)
+            generatedCoordinatesForTruck.includes(el),
           )
         ) {
           toast.error(`Trucks can't overlap!`);
@@ -445,7 +387,7 @@ function SinglePlayer() {
         ],
       };
       navigate(
-        `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+        `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`,
       );
       window.location.reload();
     }
@@ -454,7 +396,7 @@ function SinglePlayer() {
   function checkValidStartIndex(
     index: number,
     truckLength: number,
-    alreadyPlacedCells: Array<Array<number>>
+    alreadyPlacedCells: Array<Array<number>>,
   ) {
     if (
       index % 9 < truckLength &&
@@ -466,7 +408,7 @@ function SinglePlayer() {
     return checkValidStartIndex(
       Math.floor(Math.random() * (62 - 0 + 1)) + 0,
       truckLength,
-      alreadyPlacedCells
+      alreadyPlacedCells,
     );
   }
 
@@ -497,11 +439,11 @@ function SinglePlayer() {
       const newRandomStartIndex = checkValidStartIndex(
         randomStartIndex,
         ships[i].length,
-        shipPlacements
+        shipPlacements,
       );
       const newShipPlacement = generateContinuousArrayHorizontal(
         newRandomStartIndex,
-        ships[i].length
+        ships[i].length,
       );
       shipPlacements.push(newShipPlacement);
       const startCell = document.getElementById(newRandomStartIndex);
@@ -521,12 +463,12 @@ function SinglePlayer() {
   };
 
   return (
-    <main className="container-fluid text-white relative">
+    <main className="container-fluid relative text-white">
       <Toaster />
 
-      <div className="relative fixed top-0 flex justify-between items-center w-full pt-2 pb-1">
+      <div className="relative top-0 flex w-full items-center justify-between pb-1 pt-2">
         <img
-          className="absolute w-full top-0 h-full -z-[1]"
+          className="absolute top-0 -z-[1] h-full w-full"
           src={GameHeader}
           alt=""
         />
@@ -535,13 +477,13 @@ function SinglePlayer() {
             <img
               width={50}
               className={`ml-2 mt-2 ${
-                !playerReady ? "transition-all scale-75 opacity-40" : ""
+                !playerReady ? "scale-75 opacity-40 transition-all" : ""
               }`}
               src={PlayerFace}
               alt=""
             />
             {playerReady ? (
-              <span className="funky-font text-xl mt-2">
+              <span className="funky-font mt-2 text-xl">
                 {currentScore?.player}
               </span>
             ) : null}
@@ -551,7 +493,7 @@ function SinglePlayer() {
         )}
         <button
           onClick={() => setShowExitModal(true)}
-          className="text-sm p-1 rounded-md mb-4 mr-2"
+          className="mb-4 mr-2 rounded-md p-1 text-sm"
         >
           Exit Game
         </button>
@@ -564,19 +506,19 @@ function SinglePlayer() {
               Deploy <br />
               Your Trucks
             </h2>
-            <p className="text-sm opacity-50 uppercase">
+            <p className="text-sm uppercase opacity-50">
               drag to move and tap to rotate, you can also pick “assign random”
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => handleAssignRandom(PlayerShips)}
-                className="save-order p-2 rounded-md text-xs font-medium"
+                className="save-order rounded-md p-2 text-xs font-medium"
               >
                 Assign Random
               </button>
               <button
                 onClick={() => handlePlayerReadyScenario()}
-                className="save-order p-2 rounded-md text-xs font-medium"
+                className="save-order rounded-md p-2 text-xs font-medium"
               >
                 Save Order
               </button>
@@ -590,7 +532,7 @@ function SinglePlayer() {
           sensors={sensors}
           modifiers={[restrictToWindowEdges]}
         >
-          <div className={`grid grid-cols-1 xl:grid-cols-2 p-2 relative`}>
+          <div className={`relative grid grid-cols-1 p-2 xl:grid-cols-2`}>
             <PlayerBoard
               placedShips={placedCoordinates}
               playerShipsCoordinates={playerShipsCoordinates}
@@ -624,7 +566,7 @@ function SinglePlayer() {
               />
             ) : null}
             {botShipsPlacement ? (
-              <h1 className="text-white opacity-30 flex justify-center items-center h-[200px] text-md funky-font animate-pulse">
+              <h1 className="text-md funky-font flex h-[200px] animate-pulse items-center justify-center text-white opacity-30">
                 Bot is placing their trucks
               </h1>
             ) : null}
@@ -632,8 +574,8 @@ function SinglePlayer() {
           </div>
         </DndContext>
         {startTimer ? (
-          <div className="absolute top-0 left-0 z-[222] w-full h-[100%] grid place-items-center backdrop-blur-md">
-            <div className="flex flex-col gap-2 items-center justify-center">
+          <div className="absolute left-0 top-0 z-[222] grid h-[100%] w-full place-items-center backdrop-blur-md">
+            <div className="flex flex-col items-center justify-center gap-2">
               <span className="funky-font text-5xl">{timer}</span>
               <p className="funky-font text-3xl">Get Ready!</p>
             </div>
@@ -644,17 +586,17 @@ function SinglePlayer() {
       <div className="fixed bottom-0 w-full">
         <div className="relative w-full p-2">
           <img
-            className="absolute top-0 object-cover object-top -z-[1] h-full w-full"
+            className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
             src={GameFooter}
             alt=""
           />
-          <div className="flex justify-end items-center gap-5 h-full">
+          <div className="flex h-full items-center justify-end gap-5">
             {opponentReady ? (
               <span className="funky-font text-xl">{currentScore?.bot}</span>
             ) : null}
             <img
               className={`${
-                !opponentReady ? "transition-all scale-75 opacity-40" : ""
+                !opponentReady ? "scale-75 opacity-40 transition-all" : ""
               }`}
               src={BotFace}
               alt=""
@@ -665,22 +607,22 @@ function SinglePlayer() {
       </div>
       {showExitModal ? (
         <div
-          className="h-screen bg-black absolute w-full top-0 z-[99999] grid
-      place-items-center text-white"
+          className="absolute top-0 z-[99999] grid h-screen w-full place-items-center
+      bg-black text-white"
         >
-          <div className="flex flex-col gap-5 items-center justify-center p-1">
+          <div className="flex flex-col items-center justify-center gap-5 p-1">
             <h1 className="funky-font text-xl">
               Are you sure you want to quit?
             </h1>
             <div className="flex gap-5">
               <button
-                className="text-xl funky-font"
+                className="funky-font text-xl"
                 onClick={() => handleExit()}
               >
                 Yes
               </button>
               <button
-                className="text-xl funky-font"
+                className="funky-font text-xl"
                 onClick={() => setShowExitModal(false)}
               >
                 No

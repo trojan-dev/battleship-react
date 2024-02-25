@@ -76,7 +76,7 @@ function SinglePlayer() {
   });
   const [placedCoordinates, setPlacedCoordinates] = useState<any>([]);
   const [playerCellStatus, setPlayerCellStatus] = useState<Array<any>>(
-    [...Array(100).keys()].map(() => "EMPTY"),
+    [...Array(100).keys()].map(() => "EMPTY")
   );
 
   /* Bot info */
@@ -90,7 +90,7 @@ function SinglePlayer() {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
-      "data",
+      "data"
     );
     if (searchParams) {
       const decoded = JSON.parse(atob(searchParams));
@@ -105,9 +105,9 @@ function SinglePlayer() {
         0,
         Object.keys(playerCellStatus).filter(
           (el) =>
-            playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT",
-        ),
-      ),
+            playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT"
+        )
+      )
     );
   }, [playerReady]);
 
@@ -141,7 +141,7 @@ function SinglePlayer() {
           sendEndGameStats(newPayload);
         }
         navigate(
-          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`,
+          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
         );
         window.location.reload();
       } else {
@@ -171,7 +171,7 @@ function SinglePlayer() {
   function getRandomExcluding(
     min: number,
     max: number,
-    exclude: Array<string>,
+    exclude: Array<string>
   ) {
     let randomNum;
     do {
@@ -211,7 +211,7 @@ function SinglePlayer() {
                 cell,
               ]);
               let idx = playerCoordinates[ship].findIndex(
-                (el: any) => el === cell,
+                (el: any) => el === cell
               );
               playerCoordinates[ship].splice(idx, 1);
               setPlayerShipsCoordinates(playerCoordinates);
@@ -239,7 +239,7 @@ function SinglePlayer() {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       const output = await response.json();
       return output;
@@ -296,12 +296,12 @@ function SinglePlayer() {
     if (playerShipsOrientation[id] === "H") {
       generatedCoordinatesForTruck = generateContinuousArrayHorizontal(
         over?.id,
-        length,
+        length
       );
     } else {
       generatedCoordinatesForTruck = generateContinuousArrayVertical(
         over?.id,
-        length,
+        length
       );
     }
     if (generatedCoordinatesForTruck.some((el) => el > 62)) {
@@ -309,7 +309,7 @@ function SinglePlayer() {
     }
     /* Out of bounds edge case WIP */
     if (
-      checkIfShipIsOutOfBounds("board", id) &&
+      invalidCells[id].includes(over?.id) &&
       playerShipsOrientation[id] === "H"
     ) {
       setIsShipValid((prev) => ({ ...prev, [id]: false }));
@@ -320,11 +320,10 @@ function SinglePlayer() {
       if (key !== id) {
         if (
           playerCoordinates[key].some((el: number) =>
-            generatedCoordinatesForTruck.includes(el),
+            generatedCoordinatesForTruck.includes(el)
           )
         ) {
-          toast.error(`Trucks can't overlap!`);
-          return false;
+          setIsShipValid((prev) => ({ ...prev, [id]: false }));
         }
       }
     }
@@ -387,7 +386,7 @@ function SinglePlayer() {
         ],
       };
       navigate(
-        `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`,
+        `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
       );
       window.location.reload();
     }
@@ -396,7 +395,7 @@ function SinglePlayer() {
   function checkValidStartIndex(
     index: number,
     truckLength: number,
-    alreadyPlacedCells: Array<Array<number>>,
+    alreadyPlacedCells: Array<Array<number>>
   ) {
     if (
       index % 9 < truckLength &&
@@ -408,7 +407,7 @@ function SinglePlayer() {
     return checkValidStartIndex(
       Math.floor(Math.random() * (62 - 0 + 1)) + 0,
       truckLength,
-      alreadyPlacedCells,
+      alreadyPlacedCells
     );
   }
 
@@ -439,11 +438,11 @@ function SinglePlayer() {
       const newRandomStartIndex = checkValidStartIndex(
         randomStartIndex,
         ships[i].length,
-        shipPlacements,
+        shipPlacements
       );
       const newShipPlacement = generateContinuousArrayHorizontal(
         newRandomStartIndex,
-        ships[i].length,
+        ships[i].length
       );
       shipPlacements.push(newShipPlacement);
       const startCell = document.getElementById(newRandomStartIndex);

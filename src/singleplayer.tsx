@@ -251,27 +251,6 @@ function SinglePlayer() {
     }
   }
 
-  const checkIfShipIsOutOfBounds = (container: string, child: string) => {
-    var parentEl = document.getElementById(container);
-    var childEl = document.getElementById(child);
-    let parentRect = null;
-    let childRect = null;
-
-    if (parentEl && childEl) {
-      parentRect = parentEl.getBoundingClientRect();
-      childRect = childEl.getBoundingClientRect();
-      if (
-        childRect.left < parentRect.left ||
-        childRect.right > parentRect.right ||
-        childRect.top < parentRect.top ||
-        childRect.bottom > parentRect.bottom
-      ) {
-        return true;
-      }
-      return false;
-    }
-  };
-
   const newHandleShipDrop = (event: any) => {
     /* The new algo for deciding the drop coordinates of the ship */
     const {
@@ -430,6 +409,13 @@ function SinglePlayer() {
       SUBMARINE: "H",
     });
     setIsHorizontal({
+      BATTLESHIP: true,
+      CARRIER: true,
+      CRUISER: true,
+      DESTROYER: true,
+      SUBMARINE: true,
+    });
+    setIsShipValid({
       BATTLESHIP: true,
       CARRIER: true,
       CRUISER: true,
@@ -629,7 +615,7 @@ function SinglePlayer() {
             }`}
             src={BotFace}
             alt=""
-            width={60}
+            width={70}
           />
         </div>
       </footer>

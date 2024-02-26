@@ -1,9 +1,11 @@
 import { useEffect, useState } from "preact/hooks";
 import toast from "react-hot-toast";
-import BoardCell from "../../../assets/Cell";
+import Bombed from "../../../assets/bombed.svg";
+import BombedSmoke from "../../../assets/bombed-smoke.svg";
+import Canon from "../../../assets/canon.svg";
+import CellMiss from "../../../assets/cell-miss.png";
+import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
-import Bombed from "../../../assets/Bombed";
-import CellMiss from "../../../assets/CellMiss";
 
 function OpponentBoard(props: any) {
   const [opponentSunkShips, setOpponentSunkShips] = useState<any>([]);
@@ -75,41 +77,60 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="relative h-full flex flex-col items-center justify-center">
-      {/* {!props.opponentJoined ? (
-        <p className="text-md animate-pulse">Waiting for Player 2 to join</p>
-      ) : (
-        <p className="text-md animate-pulse">
-          Opponent is placing their ships.
-        </p>
-      )} */}
-
-      {props.startGame ? (
-        <div
-          className={`grid board grid-cols-[repeat(10,30px)] relative ${
-            props.opponentTurn
-              ? "pointer-events-none opacity-40"
-              : "pointer-events-auto opacity-100"
-          }`}
-        >
-          {[...Array(100).keys()].map((block: number | any) => (
+    <div className="flex flex-col items-center justify-center mt-5">
+      <div className={`${calculateCellStyle()}`}>
+        {[...Array(63).keys()].map((block: number | any) => (
+          <div
+            onClick={() => {
+              if (opponentCellStatus[block] === "EMPTY") {
+                fireMissle(block);
+              }
+            }}
+            className={`flex justify-center items-center ${
+              props.playerTurn
+                ? "pointer-events-auto"
+                : "pointer-events-none opacity-60"
+            }`}
+          >
             <div
-              onClick={() => fireMissle(block)}
-              className="flex justify-center items-center"
+              className={`${
+                props.startGame ? "relative" : ""
+              } border border-[rgb(36,41,42,0.8)] rounded-md aspect-square w-full bg-[rgb(36,41,42,1)]`}
             >
-              {/* <BoardCell>
-                {opponentCellStatus[block] === "EMPTY" ? "" : null}
-                {opponentCellStatus[block] === "MISS" ? <CellMiss /> : null}
-                {opponentCellStatus[block] === "HIT" ? <Bombed /> : null}
-              </BoardCell> */}
+              {opponentCellStatus[block] === "MISS" ? (
+                <div className="flex justify-center items-center h-full">
+                  {props.cellAnimationStatus[block] === "ANIMATE" ? (
+                    <img className="missile-drop" src={Canon} alt="" />
+                  ) : (
+                    <img className="w-[70%]" src={CellMiss} />
+                  )}
+                </div>
+              ) : null}
+              {opponentCellStatus[block] === "EMPTY" ? "" : null}
+              {opponentCellStatus[block] === "HIT" ? (
+                <div>
+                  {props.cellAnimationStatus[block] === "ANIMATE" ? (
+                    <img className="missile-drop" src={Canon} alt="" />
+                  ) : (
+                    <>
+                      <img
+                        width={40}
+                        className="bombed absolute top-0"
+                        src={Bombed}
+                      />
+                      <img
+                        width={40}
+                        className="bombed absolute top-0"
+                        src={BombedSmoke}
+                      />
+                    </>
+                  )}
+                </div>
+              ) : null}
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-center animate-pulse mt-5">
-          Waiting for player 2 to join and place their ships
-        </p>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -52,6 +52,7 @@ function PlayerBoard(props: any) {
               setPlayerShipsCoordinates={props.setPlayerShipsCoordinates}
               setIsShipValid={props.setIsShipValid}
               isShipValid={props.isShipValid}
+              invalidCells={props.invalidCells}
             />
           ))}
         </div>

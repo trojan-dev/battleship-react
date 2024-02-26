@@ -1,6 +1,6 @@
 function calculateCellStyle() {
-  let _cellStyle = `grid grid-cols-[repeat(9,35px)] auto-rows-[35px] gap-1`;
-  if (window.matchMedia("(max-device-width : 375px)").matches) {
+  let _cellStyle = `grid grid-cols-[repeat(9,32px)] auto-rows-[32px] gap-1`;
+  if (window.matchMedia("(max-device-width : 475px)").matches) {
     _cellStyle = `grid grid-cols-[repeat(9,32px)] auto-rows-[32px] gap-1`;
   }
   if (

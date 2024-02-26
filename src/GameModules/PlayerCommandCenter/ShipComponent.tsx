@@ -10,6 +10,7 @@ function ShipComponent({
   startGame,
   isShipValid,
   setIsShipValid,
+  invalidCells,
 }: any) {
   const { shipType, length, H, V, hDimensions, vDimensions } = ship;
   const { listeners, setNodeRef, transform } = useDraggable({
@@ -78,6 +79,7 @@ function ShipComponent({
     for (let i = 1; i < playerCoordinates[shipType].length; i++) {
       newCoordinateSystem.push(Number(playerCoordinates[shipType][0] + 1 * i));
     }
+
     if (
       newCoordinateSystem.some((el) =>
         allCoordinatesExceptCurrentShip.includes(el)
@@ -142,6 +144,9 @@ function ShipComponent({
                 shipType
               );
               if (newCoordinateSystem.length) {
+                if (invalidCells[shipType].includes(newCoordinateSystem[0])) {
+                  setIsShipValid((prev) => ({ ...prev, [shipType]: false }));
+                }
                 rotateShip(true);
                 setPlayerShipsCoordinates((prev: any) => ({
                   ...prev,

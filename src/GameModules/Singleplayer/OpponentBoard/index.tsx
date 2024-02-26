@@ -262,9 +262,3 @@ function OpponentBoard(props: any) {
 }
 
 export default OpponentBoard;
-
-{
-  /* <div className="canon">
-                    <img src={Canon} alt="" />
-                  </div> */
-}

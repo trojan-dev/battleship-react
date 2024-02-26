@@ -186,7 +186,7 @@ function OpponentBoard(props: any) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mt-2">
+    <div className="flex flex-col items-center justify-center mt-5">
       <div className={`${calculateCellStyle()}`}>
         {[...Array(63).keys()].map((block: number | any) => (
           <div
@@ -200,7 +200,7 @@ function OpponentBoard(props: any) {
                 wait(1500).then(() => {
                   props.setCellAnimationStatus((prev) => ({
                     ...prev,
-                    [block]: "empty",
+                    [block]: "EMPTY",
                   }));
                 });
               }
@@ -214,7 +214,7 @@ function OpponentBoard(props: any) {
             <div
               className={`${
                 props.startGame ? "relative" : ""
-              } border border-[rgb(36,41,42,0.5)] rounded-md aspect-square w-full bg-[rgb(36,41,42,0.8)]`}
+              } border border-[rgb(36,41,42,0.5)] rounded-md aspect-square w-full bg-[rgb(36,41,42,1)]`}
             >
               {opponentCellStatus[block] === "MISS" ? (
                 <div className="flex justify-center items-center h-full">

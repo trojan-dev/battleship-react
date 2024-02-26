@@ -501,7 +501,7 @@ function SinglePlayer() {
         </button>
       </div>
 
-      <main className="relative">
+      <main className="relative game-center">
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-1.5">
             <h2 className="funky-font text-3xl">
@@ -587,28 +587,27 @@ function SinglePlayer() {
         ) : null}
       </main>
 
-      <div className="fixed bottom-0 w-full">
-        <div className="relative w-full p-1">
+      <div className="fixed bottom-0 h-[3rem] w-full">
+        <img
+          className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
+          src={GameFooter}
+          alt=""
+        />
+        <div className="flex h-full items-center justify-end gap-5">
+          {opponentReady ? (
+            <span className="funky-font text-xl">{currentScore?.bot}</span>
+          ) : null}
           <img
-            className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
-            src={GameFooter}
+            className={`${
+              !opponentReady ? "scale-75 opacity-40 transition-all" : ""
+            }`}
+            src={BotFace}
             alt=""
+            width={50}
           />
-          <div className="flex h-full items-center justify-end gap-5">
-            {opponentReady ? (
-              <span className="funky-font text-xl">{currentScore?.bot}</span>
-            ) : null}
-            <img
-              className={`${
-                !opponentReady ? "scale-75 opacity-40 transition-all" : ""
-              }`}
-              src={BotFace}
-              alt=""
-              width={50}
-            />
-          </div>
         </div>
       </div>
+
       {showExitModal ? (
         <div
           className="absolute top-0 z-[99999] grid h-screen w-full place-items-center

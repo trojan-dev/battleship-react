@@ -16,6 +16,10 @@ main {
   letter-spacing: 0.05rem;
 }
 
+.game-center {
+  height: fit-content;
+}
+
 body {
   background-color: black;
   background-image: linear-gradient(

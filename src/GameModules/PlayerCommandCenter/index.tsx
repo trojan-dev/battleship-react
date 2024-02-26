@@ -32,28 +32,30 @@ function PlayerBoard(props: any) {
           />
         ))}
       </div>
-      <div
-        className={`grid grow grid-cols-2 gap-3 ${calculateShipsContainer()} ${
-          !props.startGame ? "mt-5 w-full" : "mt-0"
-        }`}
-        ref={setNodeRef}
-      >
-        {PlayerShips.map((ship) => (
-          <ShipComponent
-            isHorizontal={props.isHorizontal}
-            playerShipsCoordinates={props.playerShipsCoordinates}
-            setShipOrientation={props.setShipOrientation}
-            setIsHorizontal={props.setIsHorizontal}
-            ship={ship}
-            startGame={props.startGame}
-            playerShipsOrientation={props.playerShipsOrientation}
-            setPlayerShipsOrientation={props.setPlayerShipsOrientation}
-            setPlayerShipsCoordinates={props.setPlayerShipsCoordinates}
-            setIsShipValid={props.setIsShipValid}
-            isShipValid={props.isShipValid}
-          />
-        ))}
-      </div>
+      {!props.startGame ? (
+        <div
+          className={`grid grow grid-cols-2 gap-3 ${calculateShipsContainer()} ${
+            !props.startGame ? "mt-3 w-full" : "mt-0"
+          }`}
+          ref={setNodeRef}
+        >
+          {PlayerShips.map((ship) => (
+            <ShipComponent
+              isHorizontal={props.isHorizontal}
+              playerShipsCoordinates={props.playerShipsCoordinates}
+              setShipOrientation={props.setShipOrientation}
+              setIsHorizontal={props.setIsHorizontal}
+              ship={ship}
+              startGame={props.startGame}
+              playerShipsOrientation={props.playerShipsOrientation}
+              setPlayerShipsOrientation={props.setPlayerShipsOrientation}
+              setPlayerShipsCoordinates={props.setPlayerShipsCoordinates}
+              setIsShipValid={props.setIsShipValid}
+              isShipValid={props.isShipValid}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

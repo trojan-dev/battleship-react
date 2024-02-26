@@ -41,7 +41,7 @@ function Multiplayer() {
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
       delay: 120,
-      tolerance: 5,
+      tolerance: 20,
     },
   });
   const sensors = useSensors(touchSensor);
@@ -103,7 +103,7 @@ function Multiplayer() {
   const [opponentTurn, setOpponentTurn] = useState(false);
   const [currentScore, setCurrentScore] = useState<any>({
     player: 0,
-    bot: 0,
+    opponent: 0,
   });
 
   function checkWhichShipGotSunk() {
@@ -116,6 +116,16 @@ function Multiplayer() {
       }
     }
   }
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search).get(
+      "data"
+    );
+    if (searchParams) {
+      const decoded = JSON.parse(atob(searchParams));
+      setGamePayload(decoded);
+    }
+  }, []);
 
   useEffect(() => {
     const allPlacedCoordinates = Object.values(playerShipsCoordinates).flat(1);
@@ -163,8 +173,6 @@ function Multiplayer() {
       socket.disconnect();
     };
   }, []);
-
-  console.log({ playerReady, opponentReady, startGame });
 
   useEffect(() => {
     if (playerReady && opponentReady) {
@@ -293,9 +301,9 @@ function Multiplayer() {
             score: currentScore.player,
           },
           {
-            userID: "bot",
+            userID: gamePayload?.players[1]?._id,
             endResult: "winner",
-            score: currentScore.bot,
+            score: currentScore.opponent,
           },
         ],
       };
@@ -399,12 +407,14 @@ function Multiplayer() {
               <img
                 width={50}
                 className={`ml-2 mt-2 ${
-                  !playerTurn ? "scale-75 opacity-40 transition-all" : ""
+                  !opponentTurn && playerTurn
+                    ? "scale-75 opacity-40 transition-all"
+                    : ""
                 }`}
                 src={PlayerFace}
                 alt=""
               />
-              {!playerTurn ? (
+              {!opponentTurn && playerTurn ? (
                 <span className="funky-font mt-2 text-xl">
                   {currentScore?.player}
                 </span>
@@ -499,9 +509,9 @@ function Multiplayer() {
                   opponentTurn={opponentTurn}
                 />
               ) : null}
-              {!opponentReady ? (
-                <h1 className="text-sm funky-font flex h-[100px] animate-pulse items-center justify-center text-white opacity-30">
-                  Wait for player to join in and place their ships
+              {playerReady && !opponentReady ? (
+                <h1 className="text-sm funky-font mt-5 h-[100px] animate-pulse text-center text-white opacity-30">
+                  Waiting for player to join in and place their ships
                 </h1>
               ) : null}
               {/* <progress value={40}></progress> */}
@@ -550,12 +560,16 @@ function Multiplayer() {
             alt=""
           />
           <div className="flex h-full items-center justify-end gap-5">
-            {opponentTurn ? (
-              <span className="funky-font text-xl">{currentScore?.bot}</span>
+            {opponentTurn && !playerTurn ? (
+              <span className="funky-font text-xl">
+                {currentScore?.opponent}
+              </span>
             ) : null}
             <img
               className={`${
-                !opponentTurn ? "scale-75 opacity-40 transition-all" : ""
+                opponentTurn && !playerTurn
+                  ? "scale-75 opacity-40 transition-all"
+                  : ""
               }`}
               src={BotFace}
               alt=""

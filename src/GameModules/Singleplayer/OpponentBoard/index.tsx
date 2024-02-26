@@ -168,8 +168,6 @@ function OpponentBoard(props: any) {
   }
 
   function fireMissle(cell: number) {
-    props.setPlayerReady(false);
-    props.setOpponentReady(true);
     if (allPlacedCoordinates.includes(cell)) {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "HIT" }));
       const hitShip = checkWhichShipGotHit(shipCoordinatesArr, cell);
@@ -180,8 +178,14 @@ function OpponentBoard(props: any) {
         (el: any) => el !== cell
       );
       setShipCoordinates((prev: any) => ({ ...prev, [hitShip]: newArr }));
+      props.setPlayerReady(true);
+      props.setOpponentReady(false);
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
+      wait(1800).then(() => {
+        props.setPlayerReady(false);
+        props.setOpponentReady(true);
+      });
     }
   }
 

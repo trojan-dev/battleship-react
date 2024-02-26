@@ -32,7 +32,7 @@ function SinglePlayer() {
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
       delay: 120,
-      tolerance: 5,
+      tolerance: 20,
     },
   });
   const sensors = useSensors(touchSensor);
@@ -539,6 +539,7 @@ function SinglePlayer() {
               isShipValid={isShipValid}
               isHorizontal={isHorizontal}
               setIsHorizontal={setIsHorizontal}
+              invalidCells={invalidCells}
             />
             {startGame ? (
               <OpponentBoard

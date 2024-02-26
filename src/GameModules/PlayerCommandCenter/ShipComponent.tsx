@@ -134,6 +134,7 @@ function ShipComponent({
       </div>
     );
   } else {
+    console.log(invalidCells);
     return (
       <div className="relative">
         <div
@@ -144,7 +145,7 @@ function ShipComponent({
                 shipType
               );
               if (newCoordinateSystem.length) {
-                if (invalidCells[shipType].includes(newCoordinateSystem[0])) {
+                if (invalidCells[shipType]?.includes(newCoordinateSystem[0])) {
                   setIsShipValid((prev) => ({ ...prev, [shipType]: false }));
                 }
                 rotateShip(true);

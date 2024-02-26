@@ -500,8 +500,8 @@ function Multiplayer() {
                 />
               ) : null}
               {!opponentReady ? (
-                <h1 className="text-md funky-font flex h-[200px] animate-pulse items-center justify-center text-white opacity-30">
-                  Player placing their ships
+                <h1 className="text-sm funky-font flex h-[100px] animate-pulse items-center justify-center text-white opacity-30">
+                  Wait for player to join in and place their ships
                 </h1>
               ) : null}
               {/* <progress value={40}></progress> */}

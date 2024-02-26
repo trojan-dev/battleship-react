@@ -468,7 +468,7 @@ function SinglePlayer() {
     <main className="container-fluid relative text-white">
       <Toaster />
 
-      <div className="relative top-0 flex w-full items-center justify-between pb-1 pt-2">
+      <header className="fixed top-0 flex w-full items-center justify-between z-[2]">
         <img
           className="absolute top-0 -z-[1] h-full w-full"
           src={GameHeader}
@@ -499,9 +499,9 @@ function SinglePlayer() {
         >
           Exit Game
         </button>
-      </div>
+      </header>
 
-      <main className="relative game-center">
+      <section className="relative game-center pt-[60px] pb-[60px]">
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-1.5">
             <h2 className="funky-font text-3xl">
@@ -585,9 +585,35 @@ function SinglePlayer() {
             </div>
           </div>
         ) : null}
-      </main>
+        {showExitModal ? (
+          <div
+            className="absolute top-0 z-[99999] grid h-screen w-full place-items-center
+      bg-black text-white"
+          >
+            <div className="flex flex-col items-center justify-center gap-5 p-1">
+              <h1 className="funky-font text-xl">
+                Are you sure you want to quit?
+              </h1>
+              <div className="flex gap-5">
+                <button
+                  className="funky-font text-xl"
+                  onClick={() => handleExit()}
+                >
+                  Yes
+                </button>
+                <button
+                  className="funky-font text-xl"
+                  onClick={() => setShowExitModal(false)}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </section>
 
-      <div className="fixed bottom-0 h-[3rem] w-full">
+      <footer className="fixed bottom-0 w-full z-[2]">
         <img
           className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
           src={GameFooter}
@@ -603,37 +629,10 @@ function SinglePlayer() {
             }`}
             src={BotFace}
             alt=""
-            width={50}
+            width={60}
           />
         </div>
-      </div>
-
-      {showExitModal ? (
-        <div
-          className="absolute top-0 z-[99999] grid h-screen w-full place-items-center
-      bg-black text-white"
-        >
-          <div className="flex flex-col items-center justify-center gap-5 p-1">
-            <h1 className="funky-font text-xl">
-              Are you sure you want to quit?
-            </h1>
-            <div className="flex gap-5">
-              <button
-                className="funky-font text-xl"
-                onClick={() => handleExit()}
-              >
-                Yes
-              </button>
-              <button
-                className="funky-font text-xl"
-                onClick={() => setShowExitModal(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      </footer>
     </main>
   );
 }

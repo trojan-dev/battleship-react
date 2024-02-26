@@ -42,7 +42,7 @@ body {
     rgba(37, 60, 73, 1)
   );
   background-repeat: no-repeat;
-  /* overflow-x: hidden; */
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 

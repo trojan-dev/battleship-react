@@ -78,6 +78,9 @@ function SinglePlayer() {
   const [playerCellStatus, setPlayerCellStatus] = useState<Array<any>>(
     [...Array(100).keys()].map(() => "EMPTY")
   );
+  const [cellAnimationStatus, setCellAnimationStatus] = useState<Array<any>>(
+    [...Array(100).keys()].map(() => "STOP")
+  );
 
   /* Bot info */
   const [opponentReady, setOpponentReady] = useState(false);
@@ -336,7 +339,7 @@ function SinglePlayer() {
         draggedTruck.style.left = "5px";
       } else {
         draggedTruck.style.position = "absolute";
-        draggedTruck.style.top = "20px";
+        draggedTruck.style.top = "10px";
       }
       startIndex?.appendChild(draggedTruck);
       setPlayerShipsCoordinates((prev: any) => ({
@@ -562,6 +565,8 @@ function SinglePlayer() {
                 currentScore={currentScore}
                 setCurrentScore={setCurrentScore}
                 playerSunkShipsCoordinates={playerSunkShipsCoordinates}
+                cellAnimationStatus={cellAnimationStatus}
+                setCellAnimationStatus={setCellAnimationStatus}
               />
             ) : null}
             {botShipsPlacement ? (
@@ -583,7 +588,7 @@ function SinglePlayer() {
       </main>
 
       <div className="fixed bottom-0 w-full">
-        <div className="relative w-full p-2">
+        <div className="relative w-full p-1">
           <img
             className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
             src={GameFooter}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
+import Canon from "../../../assets/canon.svg";
 import CellMiss from "../../../assets/cell-miss.png";
 import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
@@ -191,13 +192,23 @@ function OpponentBoard(props: any) {
           <div
             onClick={() => {
               if (opponentCellStatus[block] === "EMPTY") {
+                props.setCellAnimationStatus((prev) => ({
+                  ...prev,
+                  [block]: "ANIMATE",
+                }));
                 fireMissle(block);
+                wait(1500).then(() => {
+                  props.setCellAnimationStatus((prev) => ({
+                    ...prev,
+                    [block]: "empty",
+                  }));
+                });
               }
             }}
             className={`flex justify-center items-center ${
               props.playerReady
                 ? "pointer-events-auto"
-                : "pointer-events-none opacity-40"
+                : "pointer-events-none opacity-60"
             }`}
           >
             <div
@@ -207,25 +218,41 @@ function OpponentBoard(props: any) {
             >
               {opponentCellStatus[block] === "MISS" ? (
                 <div className="flex justify-center items-center h-full">
-                  {/* <img className="missile-drop" src={Canon} alt="" /> */}
-                  <img className="w-[70%]" src={CellMiss} />
+                  {props.cellAnimationStatus[block] === "ANIMATE" ? (
+                    <img className="missile-drop" src={Canon} alt="" />
+                  ) : (
+                    <img className="w-[70%]" src={CellMiss} />
+                  )}
                 </div>
               ) : null}
               {opponentCellStatus[block] === "EMPTY" ? "" : null}
               {opponentCellStatus[block] === "HIT" ? (
-                <img
-                  width={40}
-                  className="bombed absolute top-0"
-                  src={Bombed}
-                />
+                <div>
+                  {props.cellAnimationStatus[block] === "ANIMATE" ? (
+                    <img className="missile-drop" src={Canon} alt="" />
+                  ) : (
+                    <>
+                      <img
+                        width={40}
+                        className="bombed absolute top-0"
+                        src={Bombed}
+                      />
+                      <img
+                        width={40}
+                        className="bombed absolute top-0"
+                        src={BombedSmoke}
+                      />
+                    </>
+                  )}
+                </div>
               ) : null}
-              {opponentSunkShipsCoordinates.includes(block) ? (
+              {/* {opponentSunkShipsCoordinates.includes(block) ? (
                 <img
                   width={40}
                   className="bombed absolute top-0"
                   src={BombedSmoke}
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </div>
         ))}

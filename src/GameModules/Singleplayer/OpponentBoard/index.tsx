@@ -1,6 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import {
+  sendEndGameStats,
+  generateContinuousArrayHorizontal,
+  generateContinuousArrayVertical,
+  checkValidStartIndex,
+} from "../../../helper/utils";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
 import Canon from "../../../assets/canon.svg";
@@ -9,7 +15,6 @@ import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
 
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
-const shipPlacements: Array<Array<number>> = [];
 
 function OpponentBoard(props: any) {
   const navigate = useNavigate();
@@ -83,63 +88,39 @@ function OpponentBoard(props: any) {
     }
   }, [sankShips]);
 
-  async function sendEndGameStats(payload: Response) {
-    try {
-      const response = await fetch(
-        `http://65.2.34.81:3000/sdk/conclude/${DUMMY_ROOM_ID}`,
-        {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const output = await response.json();
-      return output;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function generateContinuousArray(start: number, length: number) {
-    return Array.from({ length: length }, (_, index) => start + index);
-  }
-
-  function checkValidStartIndex(
-    index: number,
-    truckLength: number,
-    alreadyPlacedCells: Array<Array<number>>
-  ) {
-    if (
-      index % 9 < truckLength &&
-      !alreadyPlacedCells.flat(1).includes(index) &&
-      !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
-    ) {
-      return index;
-    }
-    return checkValidStartIndex(
-      Math.floor(Math.random() * (62 - 0 + 1)) + 0,
-      truckLength,
-      alreadyPlacedCells
-    );
-  }
-
   function generateOpponentShips() {
+    const shipPlacements: Array<Array<number>> = [];
     const truckLengths = [5, 4, 3, 3, 2];
     for (let i = 0; i < truckLengths.length; i++) {
       let randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
+      const isHorizontal = Math.random() < 0.5;
       const truckLength = truckLengths[i];
-      const newRandomStartIndex = checkValidStartIndex(
-        randomStartIndex,
-        truckLength,
-        shipPlacements
-      );
-      const newShipPlacement = generateContinuousArray(
-        newRandomStartIndex,
-        truckLength
-      );
-      shipPlacements.push(newShipPlacement);
+      if (isHorizontal) {
+        const newRandomStartIndex = checkValidStartIndex(
+          randomStartIndex,
+          truckLength,
+          shipPlacements,
+          "HORIZONTAL"
+        );
+        const newShipPlacement = generateContinuousArrayHorizontal(
+          newRandomStartIndex,
+          truckLength
+        );
+        shipPlacements.push(newShipPlacement);
+      }
+      if (!isHorizontal) {
+        const newRandomStartIndex = checkValidStartIndex(
+          randomStartIndex,
+          truckLength,
+          shipPlacements,
+          "VERTICAL"
+        );
+        const newShipPlacement = generateContinuousArrayVertical(
+          newRandomStartIndex,
+          truckLength
+        );
+        shipPlacements.push(newShipPlacement);
+      }
     }
     const placement: any = {
       CARRIER: shipPlacements[0],
@@ -151,6 +132,8 @@ function OpponentBoard(props: any) {
     setShipCoordinates(placement);
     setAllPlacedCoordinates(Object.values(placement).flat(Infinity));
   }
+
+  console.log(shipCoordinatesArr);
 
   function checkWhichShipGotHit(currentCoordinates: any, cell: any): string {
     for (let ship in currentCoordinates) {
@@ -182,10 +165,8 @@ function OpponentBoard(props: any) {
       props.setOpponentReady(false);
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
-      wait(1800).then(() => {
-        props.setPlayerReady(false);
-        props.setOpponentReady(true);
-      });
+      props.setPlayerReady(false);
+      props.setOpponentReady(true);
     }
   }
 

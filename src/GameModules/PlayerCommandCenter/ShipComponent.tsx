@@ -134,7 +134,6 @@ function ShipComponent({
       </div>
     );
   } else {
-    console.log(invalidCells);
     return (
       <div className="relative">
         <div

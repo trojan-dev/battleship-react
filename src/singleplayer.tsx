@@ -1,5 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
@@ -10,10 +11,16 @@ import PlayerFace from "./assets/PlayerFace.svg";
 import BotFace from "./assets/BotFace.svg";
 import GameHeader from "./assets/game-header.png";
 import GameFooter from "./assets/game-footer.svg";
+import {
+  generateContinuousArrayHorizontal,
+  generateContinuousArrayVertical,
+  wait,
+  getRandomExcluding,
+  checkValidStartIndex,
+} from "./helper/utils";
 
 const TOTAL_COORDINATES = 17;
-const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
-const shipPlacements: Array<Array<number>> = [];
+
 const invalidCells: any = {
   CARRIER: [
     5, 6, 7, 8, 14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44,
@@ -26,22 +33,13 @@ const invalidCells: any = {
   DESTROYER: [7, 8, 16, 17, 25, 26, 34, 35, 43, 44, 52, 53, 61, 62],
   SUBMARINE: [8, 17, 26, 35, 44, 53, 62],
 };
-let clock: string | null = null;
 
 function SinglePlayer() {
-  const touchSensor = useSensor(TouchSensor, {
-    activationConstraint: {
-      delay: 120,
-      tolerance: 20,
-    },
-  });
-  const sensors = useSensors(touchSensor);
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);
-  const [startTimer, setStartTimer] = useState(false);
-  const [timer, setTimerValue] = useState(3);
   const [showExitModal, setShowExitModal] = useState<boolean>(false);
+
   /* Current player info */
   const [playerReady, setPlayerReady] = useState(false);
   const [playerShipsCoordinates, setPlayerShipsCoordinates] = useState<any>({
@@ -90,6 +88,13 @@ function SinglePlayer() {
     player: 0,
     bot: 0,
   });
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 120,
+      tolerance: 20,
+    },
+  });
+  const sensors = useSensors(touchSensor);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
@@ -102,56 +107,13 @@ function SinglePlayer() {
   }, []);
 
   useEffect(() => {
-    computerFiresMissle(
-      getRandomExcluding(
-        62,
-        0,
-        Object.keys(playerCellStatus).filter(
-          (el) =>
-            playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT"
-        )
-      )
+    const excludeCells = Object.keys(playerCellStatus).filter(
+      (el: number | string) =>
+        playerCellStatus[el] === "MISS" || playerCellStatus[el] === "HIT"
     );
+    const randomIndex = getRandomExcluding(62, 0, excludeCells);
+    computerFiresMissle(randomIndex);
   }, [playerReady]);
-
-  useEffect(() => {
-    if (
-      startGame &&
-      Object.values(playerShipsCoordinates).flat(1).length === 0
-    ) {
-      toast.success(`Bot won!`);
-      if (gamePayload) {
-        const { mode } = gamePayload;
-        const newPayload = {
-          ...gamePayload,
-          gameStatus: "completed",
-          gameUrl: window.location.host,
-          result: [
-            {
-              userID: gamePayload?.players[0]?._id,
-              endResult: "loser",
-              score: currentScore.player,
-            },
-            {
-              userID: "bot",
-              endResult: "winner",
-              score: currentScore.bot,
-            },
-          ],
-          players: [gamePayload.players[0]],
-        };
-        // if (mode !== "0") {
-        //   sendEndGameStats(newPayload);
-        // }
-        navigate(
-          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
-        );
-        window.location.reload();
-      } else {
-        navigate(`/singleplayer?exit=true`);
-      }
-    }
-  }, [playerShipsCoordinates, startGame]);
 
   useEffect(() => {
     const allPlacedCoordinates = Object.values(playerShipsCoordinates).flat(1);
@@ -159,29 +121,8 @@ function SinglePlayer() {
   }, [playerShipsCoordinates]);
 
   useEffect(() => {
-    if (clock && timer === 0) {
-      clearInterval(clock);
-      setStartTimer(false);
-      setStartGame(true);
-    }
-    if (startTimer && clock === null && timer === 3) {
-      clock = setInterval(() => {
-        setTimerValue((prev) => prev - 1);
-      }, 1000);
-    }
-  }, [startTimer, timer]);
-
-  function getRandomExcluding(
-    min: number,
-    max: number,
-    exclude: Array<string>
-  ) {
-    let randomNum;
-    do {
-      randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
-    } while (exclude.includes(String(randomNum)));
-    return randomNum;
-  }
+    handlePlayerWinScenario(startGame, playerShipsCoordinates);
+  }, [playerShipsCoordinates, startGame]);
 
   function checkIfPlayerShipSank(ship: any) {
     if (!playerShipsCoordinates[ship].length) {
@@ -192,12 +133,6 @@ function SinglePlayer() {
         setOpponentReady(false);
       }, 1500);
     }
-  }
-
-  function wait(ms: number) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
   }
 
   function computerFiresMissle(cell: number) {
@@ -232,26 +167,48 @@ function SinglePlayer() {
     }, 2000);
   }
 
-  async function sendEndGameStats(payload: Response) {
-    try {
-      const response = await fetch(
-        `http://65.2.34.81:3000/sdk/conclude/${DUMMY_ROOM_ID}`,
-        {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const output = await response.json();
-      return output;
-    } catch (error) {
-      console.error(error);
+  function handlePlayerWinScenario(
+    currentGameStatus: boolean,
+    shipsPlacement: any
+  ) {
+    if (
+      currentGameStatus &&
+      Object.values(shipsPlacement).flat(1).length === 0
+    ) {
+      toast.success(`Bot won!`);
+      try {
+        const newPayload = {
+          ...gamePayload,
+          gameStatus: "completed",
+          gameUrl: window.location.host,
+          result: [
+            {
+              userID: gamePayload?.players[0]?._id,
+              endResult: "loser",
+              score: currentScore.player,
+            },
+            {
+              userID: "bot",
+              endResult: "winner",
+              score: currentScore.bot,
+            },
+          ],
+          players: [gamePayload.players[0]],
+        };
+        // if (mode !== "0") {
+        //   sendEndGameStats(newPayload);
+        // }
+        navigate(
+          `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+        );
+        window.location.reload();
+      } catch (error) {
+        return false;
+      }
     }
   }
 
-  const newHandleShipDrop = (event: any) => {
+  function handleShipDrop(event: any) {
     /* The new algo for deciding the drop coordinates of the ship */
     const {
       collisions,
@@ -326,10 +283,9 @@ function SinglePlayer() {
         [id]: generatedCoordinatesForTruck,
       }));
     }
-  };
+  }
 
-  // Run this after player has confirmed their ships
-  const handlePlayerReadyScenario = () => {
+  function handlePlayerReadyScenario() {
     if (
       Object.values(playerShipsCoordinates).flat(1).length === TOTAL_COORDINATES
     ) {
@@ -338,7 +294,7 @@ function SinglePlayer() {
         wait(2000).then(() => {
           setPlayerReady(true);
           setBotShipsPlacement(false);
-          setStartTimer(true);
+          setStartGame(true);
         });
       } else {
         toast.error(`Please place all your trucks correctly!`);
@@ -346,9 +302,9 @@ function SinglePlayer() {
     } else {
       toast.error(`Please place all your trucks first!`);
     }
-  };
+  }
 
-  const handleExit = () => {
+  function handleExit() {
     if (!isGameComplete) {
       const newPayload = {
         ...gamePayload,
@@ -372,35 +328,10 @@ function SinglePlayer() {
       );
       window.location.reload();
     }
-  };
-
-  function checkValidStartIndex(
-    index: number,
-    truckLength: number,
-    alreadyPlacedCells: Array<Array<number>>
-  ) {
-    if (
-      index % 9 < truckLength &&
-      !alreadyPlacedCells.flat(1).includes(index) &&
-      !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
-    ) {
-      return index;
-    }
-    return checkValidStartIndex(
-      Math.floor(Math.random() * (62 - 0 + 1)) + 0,
-      truckLength,
-      alreadyPlacedCells
-    );
   }
 
-  function generateContinuousArrayHorizontal(start: number, length: number) {
-    return Array.from({ length: length }, (_, index) => start + index);
-  }
-  function generateContinuousArrayVertical(start: number, length: number) {
-    return Array.from({ length: length }, (_, index) => start + 9 * index);
-  }
-
-  const handleAssignRandom = (ships: any) => {
+  function handleAssignRandom(trucks: any) {
+    const cellsAlreadyOccupied: Array<Array<number>> = [];
     setPlayerShipsOrientation({
       BATTLESHIP: "H",
       CARRIER: "H",
@@ -422,33 +353,68 @@ function SinglePlayer() {
       DESTROYER: true,
       SUBMARINE: true,
     });
-    for (let i = 0; i < ships.length; i++) {
+    for (let i = 0; i < trucks.length; i++) {
       const randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
-      const newRandomStartIndex = checkValidStartIndex(
-        randomStartIndex,
-        ships[i].length,
-        shipPlacements
-      );
-      const newShipPlacement = generateContinuousArrayHorizontal(
-        newRandomStartIndex,
-        ships[i].length
-      );
-      shipPlacements.push(newShipPlacement);
-      const startCell = document.getElementById(newRandomStartIndex);
-      const currentShip = document.getElementById(`${ships[i].shipType}`);
-      if (currentShip) {
-        // currentShip?.classList.add("truck-arrive");
-        currentShip.style.position = "relative";
-        currentShip.style.top = "-10px";
-        startCell?.append(currentShip);
-        setPlayerShipsCoordinates((prev: any) => ({
-          ...prev,
-          [ships[i].shipType]: newShipPlacement,
-        }));
+      const isHorizontal = Math.random() < 0.5;
+      if (isHorizontal) {
+        const newRandomStartIndex = checkValidStartIndex(
+          randomStartIndex,
+          trucks[i].length,
+          cellsAlreadyOccupied,
+          "HORIZONTAL"
+        );
+        const newShipPlacement = generateContinuousArrayHorizontal(
+          newRandomStartIndex,
+          trucks[i].length
+        );
+        cellsAlreadyOccupied.push(newShipPlacement);
+        const startCell = document.getElementById(`${newRandomStartIndex}`);
+        const currentShip = document.getElementById(`${trucks[i].shipType}`);
+        if (currentShip) {
+          // currentShip?.classList.add("truck-arrive");
+          currentShip.style.position = "relative";
+          currentShip.style.top = "-10px";
+          startCell?.append(currentShip);
+          setPlayerShipsCoordinates((prev: any) => ({
+            ...prev,
+            [trucks[i].shipType]: newShipPlacement,
+          }));
+        }
+      }
+      if (!isHorizontal) {
+        const newRandomStartIndex = checkValidStartIndex(
+          randomStartIndex,
+          trucks[i].length,
+          cellsAlreadyOccupied,
+          "VERTICAL"
+        );
+        const newShipPlacement = generateContinuousArrayVertical(
+          newRandomStartIndex,
+          trucks[i].length
+        );
+        cellsAlreadyOccupied.push(newShipPlacement);
+        const startCell = document.getElementById(`${newRandomStartIndex}`);
+        const currentShip = document.getElementById(`${trucks[i].shipType}`);
+        if (currentShip) {
+          // currentShip?.classList.add("truck-arrive");
+          currentShip.style.position = "absolute";
+          currentShip.style.top = "10px";
+          startCell?.append(currentShip);
+          setIsHorizontal((prev: any) => ({
+            ...prev,
+            [trucks[i].shipType]: false,
+          }));
+          setPlayerShipsCoordinates((prev: any) => ({
+            ...prev,
+            [trucks[i].shipType]: newShipPlacement,
+          }));
+        }
       }
     }
-    shipPlacements.length = 0;
-  };
+    cellsAlreadyOccupied.splice(0);
+  }
+
+  console.log(playerShipsCoordinates);
 
   return (
     <main className="container-fluid relative text-white">
@@ -514,9 +480,7 @@ function SinglePlayer() {
           </div>
         ) : null}
         <DndContext
-          // onDragEnd={handleShipDrop}
-          onDragEnd={newHandleShipDrop}
-          // onDragOver={(event) => console.log("sdasd", event)}
+          onDragEnd={handleShipDrop}
           sensors={sensors}
           modifiers={[restrictToWindowEdges]}
         >
@@ -564,14 +528,6 @@ function SinglePlayer() {
             {/* <progress value={40}></progress> */}
           </div>
         </DndContext>
-        {startTimer ? (
-          <div className="absolute left-0 top-0 z-[222] grid h-[100%] w-full place-items-center backdrop-blur-md">
-            <div className="flex flex-col items-center justify-center gap-2">
-              <span className="funky-font text-5xl">{timer}</span>
-              <p className="funky-font text-3xl">Get Ready!</p>
-            </div>
-          </div>
-        ) : null}
         {showExitModal ? (
           <div
             className="absolute top-0 z-[99999] grid h-screen w-full place-items-center

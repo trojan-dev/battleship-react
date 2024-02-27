@@ -111,6 +111,10 @@ function Multiplayer() {
       for (let ship in playerShipsCoordinates) {
         if (!playerShipsCoordinates[ship].length) {
           toast.error(`Your ${ship} got sunk`);
+          setCurrentScore((prev: any) => ({
+            ...prev,
+            opponent: prev.opponent + 1,
+          }));
           return true;
         }
       }

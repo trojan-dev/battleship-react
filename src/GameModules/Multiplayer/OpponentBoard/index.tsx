@@ -22,6 +22,10 @@ function OpponentBoard(props: any) {
       toast.success(`Opponent's ${ship} has been sunk. Bravo!`, {
         duration: 1500,
       });
+      props.setCurrentScore((prev: any) => ({
+        ...prev,
+        player: prev.player + 1,
+      }));
       setOpponentSunkShips((prev: any) => [...prev, ship]);
     }
   };

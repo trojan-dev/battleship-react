@@ -140,9 +140,9 @@ function SinglePlayer() {
           ],
           players: [gamePayload.players[0]],
         };
-        if (mode !== "0") {
-          sendEndGameStats(newPayload);
-        }
+        // if (mode !== "0") {
+        //   sendEndGameStats(newPayload);
+        // }
         navigate(
           `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
         );

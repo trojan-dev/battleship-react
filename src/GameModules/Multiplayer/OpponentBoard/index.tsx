@@ -1,4 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
@@ -8,6 +9,7 @@ import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
 
 function OpponentBoard(props: any) {
+  const navigate = useNavigate();
   const [opponentSunkShips, setOpponentSunkShips] = useState<any>([]);
 
   // Opponent's ship cell status
@@ -27,9 +29,35 @@ function OpponentBoard(props: any) {
   useEffect(() => {
     if (opponentSunkShips.length === 5) {
       toast.success(`You are victorious!`);
-      setTimeout(() => {
+      if (props.gamePayload) {
+        const newPayload = {
+          ...props.gamePayload,
+          gameStatus: "completed",
+          gameUrl: window.location.host,
+          result: [
+            {
+              userID: props.gamePayload?.players[0]?._id,
+              endResult: "winner",
+              score: props.currentScore.player,
+            },
+            {
+              userID: props.gamePayload?.players[1]?._id,
+              endResult: "loser",
+              score: props.currentScore.opponent,
+            },
+          ],
+          players: [props.gamePayload.players[0], props.gamePayload.players[1]],
+        };
+
+        props.sendEndGameStats(newPayload);
+
+        navigate(
+          `/multiplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+        );
         window.location.reload();
-      }, 5000);
+      } else {
+        navigate(`/multiplayer?exit=true`);
+      }
     }
   }, [opponentSunkShips]);
 

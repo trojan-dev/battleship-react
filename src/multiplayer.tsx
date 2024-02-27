@@ -114,6 +114,7 @@ function Multiplayer() {
           return true;
         }
       }
+      return "";
     }
   }
 
@@ -183,11 +184,56 @@ function Multiplayer() {
   useEffect(() => {
     if (startGame && !Object.values(playerShipsCoordinates).flat().length) {
       toast.error(`You lost!`);
-      setTimeout(() => {
+      if (gamePayload) {
+        const newPayload = {
+          ...gamePayload,
+          gameStatus: "completed",
+          gameUrl: window.location.host,
+          result: [
+            {
+              userID: gamePayload?.players[0]?._id,
+              endResult: "loser",
+              score: currentScore.player,
+            },
+            {
+              userID: gamePayload?.players[1]?._id,
+              endResult: "winner",
+              score: currentScore.opponent,
+            },
+          ],
+          players: [gamePayload.players[0], gamePayload.players[1]],
+        };
+
+        sendEndGameStats(newPayload);
+
+        navigate(
+          `/multiplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
+        );
         window.location.reload();
-      }, 3000);
+      } else {
+        navigate(`/multiplayer?exit=true`);
+      }
     }
   }, [playerShipsCoordinates]);
+
+  async function sendEndGameStats(payload: Response) {
+    try {
+      const response = await fetch(
+        `http://65.2.34.81:3000/sdk/conclude/${DUMMY_ROOM_ID}`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const output = await response.json();
+      return output;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   // Ship drop algo
   const newHandleShipDrop = (event: any) => {
@@ -507,6 +553,7 @@ function Multiplayer() {
                   setPlayerTurn={setPlayerTurn}
                   playerTurn={playerTurn}
                   opponentTurn={opponentTurn}
+                  sendEndGameStats={sendEndGameStats}
                 />
               ) : null}
               {playerReady && !opponentReady ? (

@@ -2,7 +2,13 @@ import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
-import { DndContext, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { setIsAnimationPhase } from "./store/singlePlayerSlice";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
@@ -97,7 +103,13 @@ function SinglePlayer() {
       tolerance: 20,
     },
   });
-  const sensors = useSensors(touchSensor);
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      delay: 200,
+      tolerance: 20,
+    },
+  });
+  const sensors = useSensors(touchSensor, mouseSensor);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search).get(
@@ -313,7 +325,7 @@ function SinglePlayer() {
         ...gamePayload,
         status: "abandoned",
         gameUrl: window.location.host,
-        results: [
+        result: [
           {
             userID: gamePayload?.players[0]?._id,
             endResult: "loser",
@@ -458,9 +470,17 @@ function SinglePlayer() {
         </button>
       </header>
 
-      <section className="relative game-center pt-[60px] pb-[60px]">
+      <section
+        className="relative game-center pt-[60px] pb-[60px]"
+        id="game-center"
+      >
+        {/* <div id="player-time">
+          <div
+            style={{ height: "50%", width: "100%", background: "red" }}
+          ></div>
+        </div> */}
         {!startGame && !botShipsPlacement ? (
-          <div className="flex flex-col gap-1.5 p-1.5">
+          <div className="flex flex-col gap-1.5 p-4">
             <h2 className="funky-font text-3xl">
               Deploy <br />
               Your Trucks
@@ -530,7 +550,6 @@ function SinglePlayer() {
                 Bot is placing their trucks
               </h1>
             ) : null}
-            {/* <progress value={40}></progress> */}
           </div>
         </DndContext>
         {showExitModal ? (
@@ -559,6 +578,15 @@ function SinglePlayer() {
             </div>
           </div>
         ) : null}
+        {/* <div id="bot-time">
+          <div
+            style={{
+              height: "10%",
+              width: "100%",
+              background: "red",
+            }}
+          ></div>
+        </div> */}
       </section>
 
       <footer className="fixed bottom-0 w-full z-[2]">

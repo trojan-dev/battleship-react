@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 import {
   DndContext,
   TouchSensor,
+  MouseSensor,
   rectIntersection,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import {
-  wait,
   checkValidStartIndex,
   generateContinuousArrayHorizontal,
   generateContinuousArrayVertical,
@@ -25,8 +25,6 @@ import GameFooter from "./assets/game-footer.svg";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
 const TOTAL_COORDINATES = 17;
-const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
-
 const invalidCells: any = {
   CARRIER: [
     5, 6, 7, 8, 14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44,
@@ -49,12 +47,16 @@ function Multiplayer() {
       tolerance: 20,
     },
   });
-  const sensors = useSensors(touchSensor);
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      delay: 200,
+      tolerance: 20,
+    },
+  });
+  const sensors = useSensors(touchSensor, mouseSensor);
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);
-  const [startTimer, setStartTimer] = useState(false);
-  const [timer, setTimerValue] = useState(3);
   const [showExitModal, setShowExitModal] = useState<boolean>(false);
 
   /* Current player info */
@@ -560,17 +562,9 @@ function Multiplayer() {
                   Waiting for player to join in and place their ships
                 </h1>
               ) : null}
-              {/* <progress value={40}></progress> */}
             </div>
           </DndContext>
-          {/* {startTimer ? (
-            <div className="absolute left-0 top-0 z-[222] grid h-[100%] w-full place-items-center backdrop-blur-md">
-              <div className="flex flex-col items-center justify-center gap-2">
-                <span className="funky-font text-5xl">{timer}</span>
-                <p className="funky-font text-3xl">Get Ready!</p>
-              </div>
-            </div>
-          ) : null} */}
+
           {showExitModal ? (
             <div
               className="absolute top-0 z-[99999] grid h-screen w-full place-items-center
@@ -629,67 +623,3 @@ function Multiplayer() {
 }
 
 export default Multiplayer;
-/*
-<main className="container-fluid text-white p-3">
-        <Toaster />
-        <section className="container mx-auto">
-          {!startGame ? (
-            <div className="flex flex-col md:flex-row my-5 gap-10">
-              <div>
-                <h1 className="text-4xl ">Deploy your ships</h1>
-                <h2 className="text-white opacity-60">
-                  drag to move and tap the rotate button to rotate.
-                </h2>
-
-                <div className="flex gap-2 my-2">
-                  {!playerReady ? (
-                    <button
-                      className={`border basis-3/12 p-2 rounded-md`}
-                      onClick={() => handlePlayerReadyScenario()}
-                    >
-                      Confirm
-                    </button>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <PlayerBoard
-              placedShips={placedCoordinates}
-              playerShipsCoordinates={playerShipsCoordinates}
-              playerCellStatus={playerCellStatus}
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              playerTurn={playerTurn}
-              opponentTurn={opponentTurn}
-            />
-
-            <OpponentBoard
-              socket={userSocketInstance}
-              startGame={startGame}
-              playerReady={playerReady}
-              opponentReady={opponentReady}
-              opponentPlacedShips={opponentPlacedShips}
-              opponentCoordinates={opponentCoordinates}
-              setOpponentPlacedShips={setOpponentPlacedShips}
-              setOpponentTurn={setOpponentTurn}
-              setPlayerTurn={setPlayerTurn}
-              playerTurn={playerTurn}
-              opponentTurn={opponentTurn}
-            />
-          </div>
-          {startGame ? (
-            <div className="flex justify-center p-1">
-              <p className="text-md">
-                {playerTurn ? "Your Turn" : "Opponent's Turn"}
-              </p>
-            </div>
-          ) : null}
-        </section>
-      </main>
-
-
-*/

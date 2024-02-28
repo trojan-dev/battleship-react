@@ -174,3 +174,20 @@ svg {
     scale: 1.5;
   }
 }
+
+#player-time {
+  width: 0.2rem;
+  background-color: black;
+  height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+#bot-time {
+  width: 0.2rem;
+  background-color: black;
+  height: 100vh;
+  position: absolute;
+  right: 0;
+  top: 0;
+}

@@ -13,7 +13,7 @@ body,
 main {
   min-height: 100lvh;
   min-height: 100vh;
-  letter-spacing: 0.05rem;
+  letter-spacing: 0.06rem;
 }
 
 .game-center {
@@ -71,52 +71,10 @@ svg {
   background-color: #40ffff;
 }
 
-.missile-drop {
-  animation: drop-opponent 1.5s ease-out;
-  z-index: 2222222;
-}
-.missile-drop-opponent {
-  animation: drop-player 1.5s ease-out;
-}
-
-@keyframes drop-opponent {
-  0% {
-    opacity: 0;
-    transform: translateY(-200px) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-100px) scale(5);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(2);
-  }
-}
-@keyframes drop-player {
-  0% {
-    opacity: 0;
-    transform: translateY(200px) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(100px) scale(5);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(2);
-  }
-}
-
 .funky-font {
   font-family: "Gridular";
 }
 
-.game-header {
-  /* background-image: url("./assets/game-header.png");
-  background-repeat: no-repeat;
-  background-size: cover; */
-}
 .game-footer {
   background-image: url("./assets/game-footer.svg");
   background-repeat: no-repeat;
@@ -136,26 +94,51 @@ svg {
   text-transform: uppercase;
 }
 
-.truck-arrive {
-  animation: truck-arrive 1.3s ease-in;
+.missile-drop {
+  position: relative;
+  animation: drop-opponent 1.5s ease-out;
+  z-index: 333;
 }
-@keyframes truck-arrive {
+.missile-drop-opponent {
+  position: relative;
+  animation: drop-player 1.5s ease-out;
+  z-index: 333;
+}
+
+@keyframes drop-opponent {
   0% {
-    transform: translateX(-10px);
+    opacity: 0;
+    transform: translateY(-200px) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-100px) scale(5);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0px) scale(0.5);
   }
   100% {
-    transform: translateX(0);
+    opacity: 1;
+    transform: translateY(0) scale(0);
   }
 }
-.truck-arrive-vertical {
-  animation: truck-arrive-v 1.3s ease-in;
-}
-@keyframes truck-arrive-v {
+@keyframes drop-player {
   0% {
-    transform: translateY(-10px);
+    opacity: 0;
+    transform: translateY(200px) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(100px) scale(5);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0px) scale(0.5);
   }
   100% {
-    transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0) scale(0);
   }
 }
 
@@ -173,7 +156,7 @@ svg {
     scale: 1;
   }
   50% {
-    scale: 2;
+    scale: 1.5;
     opacity: 1;
   }
   100% {
@@ -186,6 +169,6 @@ svg {
     scale: 0;
   }
   100% {
-    scale: 2;
+    scale: 1.5;
   }
 }

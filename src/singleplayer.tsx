@@ -1,6 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
@@ -400,6 +399,10 @@ function SinglePlayer() {
           currentShip.style.position = "absolute";
           currentShip.style.top = "10px";
           startCell?.append(currentShip);
+          setPlayerShipsOrientation((prev) => ({
+            ...prev,
+            [trucks[i].shipType]: "V",
+          }));
           setIsHorizontal((prev: any) => ({
             ...prev,
             [trucks[i].shipType]: false,
@@ -413,8 +416,6 @@ function SinglePlayer() {
     }
     cellsAlreadyOccupied.splice(0);
   }
-
-  console.log(playerShipsCoordinates);
 
   return (
     <main className="container-fluid relative text-white">

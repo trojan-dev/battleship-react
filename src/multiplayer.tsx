@@ -9,6 +9,12 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import {
+  wait,
+  checkValidStartIndex,
+  generateContinuousArrayHorizontal,
+  generateContinuousArrayVertical,
+} from "./helper/utils";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Multiplayer/OpponentBoard";
 import PlayerShips from "./assets/PlayerShips";
@@ -20,7 +26,7 @@ import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
 const TOTAL_COORDINATES = 17;
 const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
-const shipPlacements: Array<Array<number>> = [];
+
 const invalidCells: any = {
   CARRIER: [
     5, 6, 7, 8, 14, 15, 16, 17, 23, 24, 25, 26, 32, 33, 34, 35, 41, 42, 43, 44,
@@ -33,7 +39,6 @@ const invalidCells: any = {
   DESTROYER: [7, 8, 16, 17, 25, 26, 34, 35, 43, 44, 52, 53, 61, 62],
   SUBMARINE: [8, 17, 26, 35, 44, 53, 62],
 };
-let clock: string | null = null;
 
 function Multiplayer() {
   const [userSocketInstance, setUserSocketInstance] = useState<any>(null);
@@ -220,27 +225,7 @@ function Multiplayer() {
     }
   }, [playerShipsCoordinates]);
 
-  async function sendEndGameStats(payload: Response) {
-    try {
-      const response = await fetch(
-        `http://65.2.34.81:3000/sdk/conclude/${DUMMY_ROOM_ID}`,
-        {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const output = await response.json();
-      return output;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  // Ship drop algo
-  const newHandleShipDrop = (event: any) => {
+  function handleShipDrop(event: any) {
     /* The new algo for deciding the drop coordinates of the ship */
     const {
       collisions,
@@ -315,10 +300,9 @@ function Multiplayer() {
         [id]: generatedCoordinatesForTruck,
       }));
     }
-  };
+  }
 
-  // Run this after player has confirmed their ships
-  const handlePlayerReadyScenario = () => {
+  function handlePlayerReadyScenario() {
     if (
       Object.values(playerShipsCoordinates).flat(1).length === TOTAL_COORDINATES
     ) {
@@ -336,9 +320,9 @@ function Multiplayer() {
     } else {
       toast.error(`Please place all your trucks first!`);
     }
-  };
+  }
 
-  const handleExit = () => {
+  function handleExit() {
     if (!isGameComplete) {
       const newPayload = {
         ...gamePayload,
@@ -362,33 +346,10 @@ function Multiplayer() {
       );
       window.location.reload();
     }
-  };
+  }
 
-  function checkValidStartIndex(
-    index: number,
-    truckLength: number,
-    alreadyPlacedCells: Array<Array<number>>
-  ) {
-    if (
-      index % 9 < truckLength &&
-      !alreadyPlacedCells.flat(1).includes(index) &&
-      !alreadyPlacedCells.flat(1).includes(index + truckLength - 1)
-    ) {
-      return index;
-    }
-    return checkValidStartIndex(
-      Math.floor(Math.random() * (62 - 0 + 1)) + 0,
-      truckLength,
-      alreadyPlacedCells
-    );
-  }
-  function generateContinuousArrayHorizontal(start: number, length: number) {
-    return Array.from({ length: length }, (_, index) => start + index);
-  }
-  function generateContinuousArrayVertical(start: number, length: number) {
-    return Array.from({ length: length }, (_, index) => start + 9 * index);
-  }
-  const handleAssignRandom = (ships: any) => {
+  function handleAssignRandom(trucks: any) {
+    const cellsAlreadyOccupied: Array<Array<number>> = [];
     setPlayerShipsOrientation({
       BATTLESHIP: "H",
       CARRIER: "H",
@@ -410,38 +371,75 @@ function Multiplayer() {
       DESTROYER: true,
       SUBMARINE: true,
     });
-    for (let i = 0; i < ships.length; i++) {
+    for (let i = 0; i < trucks.length; i++) {
       const randomStartIndex = Math.floor(Math.random() * (62 - 0 + 1)) + 0;
-      const newRandomStartIndex = checkValidStartIndex(
-        randomStartIndex,
-        ships[i].length,
-        shipPlacements
-      );
-      const newShipPlacement = generateContinuousArrayHorizontal(
-        newRandomStartIndex,
-        ships[i].length
-      );
-      shipPlacements.push(newShipPlacement);
-      const startCell = document.getElementById(newRandomStartIndex);
-      const currentShip = document.getElementById(`${ships[i].shipType}`);
-      if (currentShip) {
-        // currentShip?.classList.add("truck-arrive");
-        currentShip.style.position = "relative";
-        currentShip.style.top = "-10px";
-        startCell?.append(currentShip);
-        setPlayerShipsCoordinates((prev: any) => ({
-          ...prev,
-          [ships[i].shipType]: newShipPlacement,
-        }));
+      const isHorizontal = Math.random() < 0.5;
+      if (isHorizontal) {
+        const newRandomStartIndex = checkValidStartIndex(
+          randomStartIndex,
+          trucks[i].length,
+          cellsAlreadyOccupied,
+          "HORIZONTAL"
+        );
+        const newShipPlacement = generateContinuousArrayHorizontal(
+          newRandomStartIndex,
+          trucks[i].length
+        );
+        cellsAlreadyOccupied.push(newShipPlacement);
+        const startCell = document.getElementById(`${newRandomStartIndex}`);
+        const currentShip = document.getElementById(`${trucks[i].shipType}`);
+        if (currentShip) {
+          // currentShip?.classList.add("truck-arrive");
+          currentShip.style.position = "relative";
+          currentShip.style.top = "-10px";
+          startCell?.append(currentShip);
+          setPlayerShipsCoordinates((prev: any) => ({
+            ...prev,
+            [trucks[i].shipType]: newShipPlacement,
+          }));
+        }
+      }
+      if (!isHorizontal) {
+        const newRandomStartIndex = checkValidStartIndex(
+          randomStartIndex,
+          trucks[i].length,
+          cellsAlreadyOccupied,
+          "VERTICAL"
+        );
+        const newShipPlacement = generateContinuousArrayVertical(
+          newRandomStartIndex,
+          trucks[i].length
+        );
+        cellsAlreadyOccupied.push(newShipPlacement);
+        const startCell = document.getElementById(`${newRandomStartIndex}`);
+        const currentShip = document.getElementById(`${trucks[i].shipType}`);
+        if (currentShip) {
+          // currentShip?.classList.add("truck-arrive");
+          currentShip.style.position = "absolute";
+          currentShip.style.top = "10px";
+          startCell?.append(currentShip);
+          setPlayerShipsOrientation((prev) => ({
+            ...prev,
+            [trucks[i].shipType]: "V",
+          }));
+          setIsHorizontal((prev: any) => ({
+            ...prev,
+            [trucks[i].shipType]: false,
+          }));
+          setPlayerShipsCoordinates((prev: any) => ({
+            ...prev,
+            [trucks[i].shipType]: newShipPlacement,
+          }));
+        }
       }
     }
-    shipPlacements.length = 0;
-  };
+    cellsAlreadyOccupied.splice(0);
+  }
 
   return (
     <DndContext
       collisionDetection={rectIntersection}
-      onDragEnd={newHandleShipDrop}
+      onDragEnd={handleShipDrop}
     >
       <main className="container-fluid relative text-white">
         <Toaster />
@@ -509,9 +507,7 @@ function Multiplayer() {
             </div>
           ) : null}
           <DndContext
-            // onDragEnd={handleShipDrop}
-            onDragEnd={newHandleShipDrop}
-            // onDragOver={(event) => console.log("sdasd", event)}
+            onDragEnd={handleShipDrop}
             sensors={sensors}
             modifiers={[restrictToWindowEdges]}
           >
@@ -557,7 +553,6 @@ function Multiplayer() {
                   setPlayerTurn={setPlayerTurn}
                   playerTurn={playerTurn}
                   opponentTurn={opponentTurn}
-                  sendEndGameStats={sendEndGameStats}
                 />
               ) : null}
               {playerReady && !opponentReady ? (

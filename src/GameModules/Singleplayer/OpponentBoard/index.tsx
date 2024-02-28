@@ -6,6 +6,7 @@ import {
   generateContinuousArrayHorizontal,
   generateContinuousArrayVertical,
   checkValidStartIndex,
+  wait,
 } from "../../../helper/utils";
 import Bombed from "../../../assets/bombed.svg";
 import BombedSmoke from "../../../assets/bombed-smoke.svg";
@@ -14,16 +15,12 @@ import CellMiss from "../../../assets/cell-miss.png";
 import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
 
-const DUMMY_ROOM_ID = "65969992a6e67c6d75cf938b";
-
 function OpponentBoard(props: any) {
   const navigate = useNavigate();
   const [shipCoordinatesArr, setShipCoordinates] = useState<any>({});
   const [allPlacedCoordinates, setAllPlacedCoordinates] = useState<any>([]);
   const [sankShips, setSankShips] = useState<any>([]);
   const [currentHitShip, setCurrentHitShip] = useState<any>(null);
-  const [opponentSunkShipsCoordinates, setOpponentSunkShipsCoordinates] =
-    useState<any>([]);
   // Opponent's ship cell status
   const [opponentCellStatus, setOpponentCellStatus] = useState<any>(
     [...Array(63).keys()].map(() => "EMPTY")
@@ -133,8 +130,6 @@ function OpponentBoard(props: any) {
     setAllPlacedCoordinates(Object.values(placement).flat(Infinity));
   }
 
-  console.log(shipCoordinatesArr);
-
   function checkWhichShipGotHit(currentCoordinates: any, cell: any): string {
     for (let ship in currentCoordinates) {
       if (currentCoordinates[ship].includes(cell)) {
@@ -144,18 +139,11 @@ function OpponentBoard(props: any) {
     return "";
   }
 
-  function wait(ms: number) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  }
-
   function fireMissle(cell: number) {
     if (allPlacedCoordinates.includes(cell)) {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "HIT" }));
       const hitShip = checkWhichShipGotHit(shipCoordinatesArr, cell);
       toast.success(`You hit ${hitShip}`);
-      setOpponentSunkShipsCoordinates((prev: Array<number>) => [...prev, cell]);
       setCurrentHitShip(hitShip);
       const newArr = shipCoordinatesArr[hitShip].filter(
         (el: any) => el !== cell

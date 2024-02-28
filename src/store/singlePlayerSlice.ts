@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState: any = {
+  cellAnimationPhase: [...Array(100).keys()].map(() => "STOP"),
   playerReady: false,
   opponentReady: false,
   startGame: false,
@@ -51,6 +52,11 @@ export const singlePlayerSlice = createSlice({
   name: "singlePlayerSlice",
   initialState,
   reducers: {
+    setCellAnimationPhase: (state, action) => {
+      const newCellStates = state.cellAnimationPhase.slice();
+      newCellStates[action.payload.cell] = action.payload.status;
+      state.cellAnimationPhase = newCellStates;
+    },
     setPlayerReady: (state, action) => {
       state.playerReady = action.payload;
     },
@@ -58,46 +64,47 @@ export const singlePlayerSlice = createSlice({
       state.opponentReady = action.payload;
     },
     setStartGame: (state, action) => {
-      return (state.startGame = action.payload);
+      state.startGame = action.payload;
     },
     setPlayerShipsCoordinates: (state, action) => {
-      return (state.playerShipsCoordinates = action.payload);
+      state.playerShipsCoordinates = action.payload;
     },
     setBotShipsCoordinates: (state, action) => {
-      return (state.botShipsCoordinates = action.payload);
+      state.botShipsCoordinates = action.payload;
     },
     setPlayerPlacedCoordinates: (state, action) => {
-      return (state.playerPlacedCoordinates = action.payload);
+      state.playerPlacedCoordinates = action.payload;
     },
     setBotPlacedCoordinates: (state, action) => {
-      return (state.botPlacedCoordinates = action.payload);
+      state.botPlacedCoordinates = action.payload;
     },
     setPlayerShipsOrientation: (state, action) => {
-      return (state.playerShipsOrientation = action.payload);
+      state.playerShipsOrientation = action.payload;
     },
     setIsHorizontal: (state, action) => {
-      return (state.isHorizontal = action.payload);
+      state.isHorizontal = action.payload;
     },
     setIsShipValid: (state, action) => {
-      return (state.isShipValid = action.payload);
+      state.isShipValid = action.payload;
     },
     setPlayerCellStatus: (state, action) => {
-      return (state.playerCellStatus = action.payload);
+      state.playerCellStatus = action.payload;
     },
     setOpponentCellStatus: (state, action) => {
-      return (state.opponentCellStatus = action.payload);
+      state.opponentCellStatus = action.payload;
     },
     setPlayerScore: (state, action) => {
-      return (state.playerScore = action.payload);
+      state.playerScore = action.payload;
     },
     setBotScore: (state, action) => {
-      return (state.botScore = action.payload);
+      state.botScore = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {
+  setCellAnimationPhase,
   setPlayerShipsCoordinates,
   setBotPlacedCoordinates,
   setPlayerPlacedCoordinates,

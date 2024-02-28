@@ -97,11 +97,13 @@ svg {
 .missile-drop {
   position: relative;
   animation: drop-opponent 1.5s ease-out;
+  animation-fill-mode: forwards;
   z-index: 333;
 }
 .missile-drop-opponent {
   position: relative;
   animation: drop-player 1.5s ease-out;
+  animation-fill-mode: forwards;
   z-index: 333;
 }
 
@@ -115,11 +117,11 @@ svg {
     transform: translateY(-100px) scale(5);
   }
   90% {
-    opacity: 1;
+    opacity: 0.5;
     transform: translateY(0px) scale(0.5);
   }
   100% {
-    opacity: 1;
+    opacity: 0;
     transform: translateY(0) scale(0);
   }
 }
@@ -133,11 +135,11 @@ svg {
     transform: translateY(100px) scale(5);
   }
   90% {
-    opacity: 1;
+    opacity: 0.5;
     transform: translateY(0px) scale(0.5);
   }
   100% {
-    opacity: 1;
+    opacity: 0;
     transform: translateY(0) scale(0);
   }
 }

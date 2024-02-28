@@ -1,6 +1,8 @@
 import { useEffect, useState } from "preact/hooks";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { setCellAnimationPhase } from "../../../store/singlePlayerSlice";
 import {
   sendEndGameStats,
   generateContinuousArrayHorizontal,
@@ -16,6 +18,8 @@ import { calculateCellStyle } from "../../../helper/SIZES";
 import "./style.css";
 
 function OpponentBoard(props: any) {
+  const dispatch = useDispatch();
+  const singlePlayerState = useSelector((state) => state.singlePlayer);
   const navigate = useNavigate();
   const [shipCoordinatesArr, setShipCoordinates] = useState<any>({});
   const [allPlacedCoordinates, setAllPlacedCoordinates] = useState<any>([]);
@@ -140,6 +144,7 @@ function OpponentBoard(props: any) {
   }
 
   function fireMissle(cell: number) {
+    dispatch(setCellAnimationPhase({ cell: cell, status: "ANIMATE" }));
     if (allPlacedCoordinates.includes(cell)) {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "HIT" }));
       const hitShip = checkWhichShipGotHit(shipCoordinatesArr, cell);
@@ -149,12 +154,18 @@ function OpponentBoard(props: any) {
         (el: any) => el !== cell
       );
       setShipCoordinates((prev: any) => ({ ...prev, [hitShip]: newArr }));
-      props.setPlayerReady(true);
-      props.setOpponentReady(false);
+      wait(1600).then(() => {
+        dispatch(setCellAnimationPhase({ cell: cell, status: "STOP" }));
+        props.setPlayerReady(true);
+        props.setOpponentReady(false);
+      });
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));
-      props.setPlayerReady(false);
-      props.setOpponentReady(true);
+      wait(1600).then(() => {
+        dispatch(setCellAnimationPhase({ cell: cell, status: "STOP" }));
+        props.setPlayerReady(false);
+        props.setOpponentReady(true);
+      });
     }
   }
 
@@ -164,24 +175,18 @@ function OpponentBoard(props: any) {
         {[...Array(63).keys()].map((block: number | any) => (
           <div
             onClick={() => {
-              if (opponentCellStatus[block] === "EMPTY") {
-                props.setCellAnimationStatus((prev) => ({
-                  ...prev,
-                  [block]: "ANIMATE",
-                }));
+              if (
+                singlePlayerState.cellAnimationPhase.every(
+                  (el: string) => el === "STOP"
+                )
+              ) {
                 fireMissle(block);
-                wait(1500).then(() => {
-                  props.setCellAnimationStatus((prev) => ({
-                    ...prev,
-                    [block]: "EMPTY",
-                  }));
-                });
               }
             }}
             className={`flex justify-center items-center ${
               props.playerReady
                 ? "pointer-events-auto"
-                : "pointer-events-none opacity-60"
+                : "pointer-events-none opacity-50"
             }`}
           >
             <div
@@ -191,7 +196,7 @@ function OpponentBoard(props: any) {
             >
               {opponentCellStatus[block] === "MISS" ? (
                 <div className="flex justify-center items-center h-full">
-                  {props.cellAnimationStatus[block] === "ANIMATE" ? (
+                  {singlePlayerState.cellAnimationPhase[block] === "ANIMATE" ? (
                     <img className="missile-drop" src={Canon} alt="" />
                   ) : (
                     <img className="w-[70%]" src={CellMiss} />
@@ -201,7 +206,7 @@ function OpponentBoard(props: any) {
               {opponentCellStatus[block] === "EMPTY" ? "" : null}
               {opponentCellStatus[block] === "HIT" ? (
                 <div>
-                  {props.cellAnimationStatus[block] === "ANIMATE" ? (
+                  {singlePlayerState.cellAnimationPhase[block] === "ANIMATE" ? (
                     <img className="missile-drop" src={Canon} alt="" />
                   ) : (
                     <>

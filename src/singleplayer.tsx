@@ -1,8 +1,10 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import { DndContext, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+import { setIsAnimationPhase } from "./store/singlePlayerSlice";
 import PlayerBoard from "./GameModules/PlayerCommandCenter";
 import OpponentBoard from "./GameModules/Singleplayer/OpponentBoard";
 import PlayerShips from "./assets/PlayerShips";
@@ -34,6 +36,8 @@ const invalidCells: any = {
 };
 
 function SinglePlayer() {
+  const dispatch = useDispatch();
+  const singlePlayerState = useSelector((state) => state.singlePlayerState);
   const navigate = useNavigate();
   const [gamePayload, setGamePayload] = useState<any>(null);
   const [isGameComplete] = useState<boolean>(false);

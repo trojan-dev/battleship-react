@@ -23,6 +23,7 @@ import BotFace from "./assets/BotFace.svg";
 import GameHeader from "./assets/game-header.png";
 import GameFooter from "./assets/game-footer.svg";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+import { sendEndGameStats } from "./helper/utils";
 
 const TOTAL_COORDINATES = 17;
 const invalidCells: any = {

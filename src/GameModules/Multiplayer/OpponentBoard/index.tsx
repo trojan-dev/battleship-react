@@ -6,6 +6,7 @@ import BombedSmoke from "../../../assets/bombed-smoke.svg";
 import Canon from "../../../assets/canon.svg";
 import CellMiss from "../../../assets/cell-miss.png";
 import { calculateCellStyle } from "../../../helper/SIZES";
+import { sendEndGameStats } from "../../../helper/utils";
 import "./style.css";
 
 function OpponentBoard(props: any) {
@@ -53,7 +54,7 @@ function OpponentBoard(props: any) {
           players: [props.gamePayload.players[0], props.gamePayload.players[1]],
         };
 
-        props.sendEndGameStats(newPayload);
+        sendEndGameStats(newPayload);
 
         navigate(
           `/multiplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`

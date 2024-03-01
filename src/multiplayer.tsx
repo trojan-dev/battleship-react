@@ -331,7 +331,7 @@ function Multiplayer() {
         ...gamePayload,
         status: "abandoned",
         gameUrl: window.location.host,
-        results: [
+        result: [
           {
             userID: gamePayload?.players[0]?._id,
             endResult: "loser",

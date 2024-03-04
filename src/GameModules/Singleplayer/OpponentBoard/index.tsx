@@ -58,17 +58,17 @@ function OpponentBoard(props: any) {
         const { mode } = props.gamePayload;
         const newPayload = {
           ...props.gamePayload,
-          gameStatus: "completed",
+          status: "completed",
           gameUrl: window.location.host,
           result: [
             {
               userID: props.gamePayload?.players[0]?._id,
-              endResult: "winner",
+              endresult: "winner",
               score: props.currentScore.player,
             },
             {
               userID: "bot",
-              endResult: "loser",
+              endresult: "loser",
               score: props.currentScore.bot,
             },
           ],

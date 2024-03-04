@@ -199,17 +199,17 @@ function Multiplayer() {
       if (gamePayload) {
         const newPayload = {
           ...gamePayload,
-          gameStatus: "completed",
+          status: "completed",
           gameUrl: window.location.host,
           result: [
             {
               userID: gamePayload?.players[0]?._id,
-              endResult: "loser",
+              endresult: "loser",
               score: currentScore.player,
             },
             {
               userID: gamePayload?.players[1]?._id,
-              endResult: "winner",
+              endresult: "winner",
               score: currentScore.opponent,
             },
           ],
@@ -334,12 +334,12 @@ function Multiplayer() {
         result: [
           {
             userID: gamePayload?.players[0]?._id,
-            endResult: "loser",
+            endresult: "loser",
             score: currentScore.player,
           },
           {
             userID: gamePayload?.players[1]?._id,
-            endResult: "winner",
+            endresult: "winner",
             score: currentScore.opponent,
           },
         ],

@@ -7,6 +7,7 @@ const MULTIPLAYER_BASE64 =
 const searchParams = import.meta.env.DEV
   ? SINGLE_PLAYER_BASE64
   : new URLSearchParams(window.location.search)?.get("data");
+
 function HomePage() {
   const navigate = useNavigate();
   useEffect(() => {

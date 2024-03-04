@@ -42,12 +42,12 @@ function OpponentBoard(props: any) {
           result: [
             {
               userID: props.gamePayload?.players[0]?._id,
-              endResult: "winner",
+              endresult: "winner",
               score: props.currentScore.player,
             },
             {
               userID: props.gamePayload?.players[1]?._id,
-              endResult: "loser",
+              endresult: "loser",
               score: props.currentScore.opponent,
             },
           ],

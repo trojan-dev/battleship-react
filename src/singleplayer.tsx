@@ -191,17 +191,17 @@ function SinglePlayer() {
       try {
         const newPayload = {
           ...gamePayload,
-          gameStatus: "completed",
+          status: "completed",
           gameUrl: window.location.host,
           result: [
             {
               userID: gamePayload?.players[0]?._id,
-              endResult: "loser",
+              endresult: "loser",
               score: currentScore.player,
             },
             {
               userID: "bot",
-              endResult: "winner",
+              endresult: "winner",
               score: currentScore.bot,
             },
           ],
@@ -325,12 +325,12 @@ function SinglePlayer() {
         result: [
           {
             userID: gamePayload?.players[0]?._id,
-            endResult: "loser",
+            endresult: "loser",
             score: currentScore.player,
           },
           {
             userID: "bot",
-            endResult: "winner",
+            endresult: "winner",
             score: currentScore.bot,
           },
         ],

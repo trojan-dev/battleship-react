@@ -179,6 +179,10 @@ function Multiplayer() {
     socket.on("disconnect", () => {
       toast.error(`You seem to be disconnected from the server!`);
     });
+    socket.on("opponent-left", () => {
+      toast.error(`Opponent left the game`);
+      window.location.reload();
+    });
 
     return () => {
       socket.off("receive-opponent-status");
@@ -204,12 +208,12 @@ function Multiplayer() {
           result: [
             {
               userID: gamePayload?.players[0]?._id,
-              endresult: "loser",
+              endResult: "loser",
               score: currentScore.player,
             },
             {
               userID: gamePayload?.players[1]?._id,
-              endresult: "winner",
+              endResult: "winner",
               score: currentScore.opponent,
             },
           ],
@@ -334,12 +338,12 @@ function Multiplayer() {
         result: [
           {
             userID: gamePayload?.players[0]?._id,
-            endresult: "loser",
+            endResult: "loser",
             score: currentScore.player,
           },
           {
             userID: gamePayload?.players[1]?._id,
-            endresult: "winner",
+            endResult: "winner",
             score: currentScore.opponent,
           },
         ],
@@ -347,6 +351,7 @@ function Multiplayer() {
       navigate(
         `/multiplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
       );
+      userSocketInstance.emit("player-abandoned", true);
       window.location.reload();
     }
   }

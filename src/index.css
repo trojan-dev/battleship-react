@@ -110,11 +110,15 @@ svg {
 @keyframes drop-opponent {
   0% {
     opacity: 0;
-    transform: translateY(-200px) scale(1);
+    transform: translateY(-500px) scale(0);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(-300px) scale(2.5);
   }
   50% {
     opacity: 1;
-    transform: translateY(-100px) scale(5);
+    transform: translateY(-250px) scale(5);
   }
   90% {
     opacity: 0.5;
@@ -128,11 +132,11 @@ svg {
 @keyframes drop-player {
   0% {
     opacity: 0;
-    transform: translateY(200px) scale(1);
+    transform: translateY(500px) scale(1);
   }
   50% {
     opacity: 1;
-    transform: translateY(100px) scale(5);
+    transform: translateY(250px) scale(5);
   }
   90% {
     opacity: 0.5;

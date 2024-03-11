@@ -15,4 +15,7 @@ io.on('connection', async (socket) => {
     socket.on('fire-missile', (cell, strike, opponentShips) => {
         socket.broadcast.emit('send-cell-info', { cell, strike, opponentShips });
     })
+    socket.on('player-abandoned', (playerExit) => {
+        socket.broadcast.emit('opponent-left', playerExit);
+    })
 })

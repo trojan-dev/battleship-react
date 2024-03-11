@@ -196,12 +196,12 @@ function SinglePlayer() {
           result: [
             {
               userID: gamePayload?.players[0]?._id,
-              endresult: "loser",
+              endResult: "loser",
               score: currentScore.player,
             },
             {
               userID: "bot",
-              endresult: "winner",
+              endResult: "winner",
               score: currentScore.bot,
             },
           ],
@@ -325,12 +325,12 @@ function SinglePlayer() {
         result: [
           {
             userID: gamePayload?.players[0]?._id,
-            endresult: "loser",
+            endResult: "loser",
             score: currentScore.player,
           },
           {
             userID: "bot",
-            endresult: "winner",
+            endResult: "winner",
             score: currentScore.bot,
           },
         ],

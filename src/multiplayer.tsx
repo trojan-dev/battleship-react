@@ -24,6 +24,7 @@ import GameHeader from "./assets/game-header.png";
 import GameFooter from "./assets/game-footer.svg";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { sendEndGameStats } from "./helper/utils";
+import logger from "./helper/logger";
 
 const TOTAL_COORDINATES = 17;
 const invalidCells: any = {
@@ -158,12 +159,14 @@ function Multiplayer() {
           duration: 2000,
         }
       );
+      gamePayload.isDebug === true && logger("Connection established");
     });
     socket.on("receive-opponent-status", (message: any) => {
       const { coordinates, shipsPlacement, playerReady } = message;
       setOpponentPlacedShips(shipsPlacement);
       setOpponentCoordinates(coordinates);
       setOpponentReady(playerReady);
+      gamePayload.isDebug === true && logger("Opponent stat received");
     });
 
     socket.on("send-cell-info", (message: any) => {
@@ -174,13 +177,16 @@ function Multiplayer() {
       setPlayerTurn(true);
       setOpponentTurn(false);
       checkWhichShipGotSunk();
+      gamePayload.isDebug === true && logger("Missile info relayed");
     });
 
     socket.on("disconnect", () => {
       toast.error(`You seem to be disconnected from the server!`);
+      gamePayload.isDebug === true && logger("Connection broken");
     });
     socket.on("opponent-left", () => {
       toast.error(`Opponent left the game`);
+      gamePayload.isDebug === true && logger("Opponent disconnected");
       window.location.reload();
     });
 

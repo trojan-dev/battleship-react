@@ -181,7 +181,7 @@ svg {
 
 #player-time {
   width: 0.2rem;
-  background-color: black;
+  background-color: transparent;
   height: 100vh;
   position: absolute;
   left: 0;

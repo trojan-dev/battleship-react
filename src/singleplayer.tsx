@@ -26,6 +26,8 @@ import {
 } from "./helper/utils";
 
 const TOTAL_COORDINATES = 17;
+let PlayerTimer: number;
+let BotTimer: number;
 
 const invalidCells: any = {
   CARRIER: [
@@ -85,6 +87,24 @@ function SinglePlayer() {
   const [cellAnimationStatus, setCellAnimationStatus] = useState<Array<any>>(
     [...Array(100).keys()].map(() => "STOP")
   );
+  const [playerTime, setPlayerTime] = useState<number>(10);
+
+  useEffect(() => {
+    if (playerReady) {
+      PlayerTimer = setInterval(() => {
+        setPlayerTime((prev) => prev - 1);
+      }, 1000);
+      if (Math.floor(playerTime) === 0) {
+        clearInterval(PlayerTimer);
+        setPlayerTime(10);
+        setPlayerReady(false);
+        setOpponentReady(true);
+      }
+      return () => {
+        clearInterval(PlayerTimer);
+      };
+    }
+  }, [playerTime, playerReady]);
 
   /* Bot info */
   const [opponentReady, setOpponentReady] = useState(false);
@@ -94,6 +114,27 @@ function SinglePlayer() {
     player: 0,
     bot: 0,
   });
+  // const [botTime, setBotTime] = useState<number>(10);
+
+  // useEffect(() => {
+  //   if (opponentReady) {
+  //     BotTimer = setInterval(() => {
+  //       setBotTime((prev) => prev - 1);
+  //     }, 1000);
+  //     if (Math.floor(botTime) === 0) {
+  //       clearInterval(BotTimer);
+  //     }
+  //     return () => {
+  //       clearInterval(BotTimer);
+  //     };
+  //   }
+  // }, [botTime, opponentReady]);
+  useEffect(() => {
+    if (opponentReady) {
+      clearInterval(PlayerTimer);
+      setPlayerTime(10);
+    }
+  }, [opponentReady]);
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
       delay: 120,
@@ -471,11 +512,18 @@ function SinglePlayer() {
         className="relative game-center pt-[60px] pb-[60px]"
         id="game-center"
       >
-        {/* <div id="player-time">
-          <div
-            style={{ height: "50%", width: "100%", background: "red" }}
-          ></div>
-        </div> */}
+        {startGame ? (
+          <div id="player-time">
+            <div
+              style={{
+                height: playerTime === 0 ? `100%` : `${playerTime * 10}%`,
+                width: "100%",
+                background: "rgba(200,0,0,0.4)",
+                transition: "height 1s ease-in",
+              }}
+            ></div>
+          </div>
+        ) : null}
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-4">
             <h2 className="funky-font text-3xl">
@@ -578,9 +626,11 @@ function SinglePlayer() {
         {/* <div id="bot-time">
           <div
             style={{
-              height: "10%",
+              height: botTime === 0 ? "0%" : `${100 - botTime * 10}%`,
               width: "100%",
-              background: "red",
+              background: "white",
+              transition: "height 1s ease-in",
+              transform: "rotate(180deg)",
             }}
           ></div>
         </div> */}
@@ -611,3 +661,8 @@ function SinglePlayer() {
 }
 
 export default SinglePlayer;
+
+/*
+  Player's turn goes up, reducing the height of the internal div
+  Bot's turn goes down, increasing the height of the internal div
+*/

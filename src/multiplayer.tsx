@@ -25,6 +25,7 @@ import GameFooter from "./assets/game-footer.svg";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { sendEndGameStats } from "./helper/utils";
 import logger from "./helper/logger";
+import { MessageService } from "./services/MessagingService";
 
 const TOTAL_COORDINATES = 17;
 const invalidCells: any = {
@@ -358,6 +359,7 @@ function Multiplayer() {
         `/multiplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
       );
       userSocketInstance.emit("player-abandoned", true);
+      MessageService.sendGameEndMessage(btoa(JSON.stringify(newPayload)));
       window.location.reload();
     }
   }

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
 import {
   DndContext,
@@ -24,6 +23,7 @@ import {
   getRandomExcluding,
   checkValidStartIndex,
 } from "./helper/utils";
+import { MessageService } from "./services/MessagingService";
 
 const TOTAL_COORDINATES = 17;
 let PlayerTimer: number;
@@ -379,6 +379,7 @@ function SinglePlayer() {
       navigate(
         `/singleplayer?exit=true&data=${btoa(JSON.stringify(newPayload))}`
       );
+      MessageService.sendGameEndMessage(btoa(JSON.stringify(newPayload)));
       window.location.reload();
     }
   }
@@ -526,13 +527,18 @@ function SinglePlayer() {
         ) : null}
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-4">
-            <h2 className="funky-font text-3xl">
-              Deploy <br />
-              Your Trucks
-            </h2>
-            <p className="text-sm uppercase opacity-50">
-              drag to move and tap to rotate, you can also pick “assign random”
-            </p>
+            {!window.matchMedia("(min-device-width : 769px)").matches ? (
+              <>
+                <h2 className="funky-font text-3xl">
+                  Deploy <br />
+                  Your Trucks
+                </h2>
+                <p className="text-sm uppercase opacity-50">
+                  drag to move and tap to rotate, you can also pick “assign
+                  random”
+                </p>
+              </>
+            ) : null}
             <div className="flex gap-3">
               <button
                 onClick={() => handleAssignRandom(PlayerShips)}

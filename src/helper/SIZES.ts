@@ -14,10 +14,10 @@ function calculateCellStyle() {
       "(min-device-width : 476px) && (max-device-width : 768px)"
     ).matches
   ) {
-    _cellStyle = `grid grid-cols-[repeat(9,46px)] auto-rows-[46px] gap-1`;
+    _cellStyle = `grid grid-cols-[repeat(9,40px)] auto-rows-[40px] gap-1`;
   }
   if (window.matchMedia("(min-device-width : 769px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,60px)] auto-rows-[60px] gap-1`;
+    _cellStyle = `grid grid-cols-[repeat(9,45px)] auto-rows-[45px] gap-1`;
   }
   return _cellStyle;
 }
@@ -36,10 +36,10 @@ function calculateCellSize() {
     window.matchMedia("(min-device-width : 476px) && (max-device-width: 768px)")
       .matches
   ) {
-    _cellSize = 46;
+    _cellSize = 40;
   }
   if (window.matchMedia("(min-device-width : 769px)").matches) {
-    _cellSize = 60;
+    _cellSize = 45;
   }
 
   return _cellSize;
@@ -60,10 +60,10 @@ function calculateShipsContainer() {
       "(min-device-width : 476px) && (max-device-width : 768px)"
     ).matches
   ) {
-    _cellStyle = `max-w-[460px]`;
+    _cellStyle = `max-w-[400px]`;
   }
   if (window.matchMedia("(min-device-width : 769px)").matches) {
-    _cellStyle = `max-w-[600px]`;
+    _cellStyle = `max-w-[450px]`;
   }
   return _cellStyle;
 }

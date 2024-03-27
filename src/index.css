@@ -195,3 +195,10 @@ svg {
   right: 0;
   top: 0;
 }
+
+@media screen and (min-width: 769px) {
+  body {
+    background-color: black !important;
+    background-image: none;
+  }
+}

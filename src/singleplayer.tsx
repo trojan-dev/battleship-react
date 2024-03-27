@@ -22,6 +22,7 @@ import {
   wait,
   getRandomExcluding,
   checkValidStartIndex,
+  isDesktop,
 } from "./helper/utils";
 import { MessageService } from "./services/MessagingService";
 
@@ -114,21 +115,7 @@ function SinglePlayer() {
     player: 0,
     bot: 0,
   });
-  // const [botTime, setBotTime] = useState<number>(10);
 
-  // useEffect(() => {
-  //   if (opponentReady) {
-  //     BotTimer = setInterval(() => {
-  //       setBotTime((prev) => prev - 1);
-  //     }, 1000);
-  //     if (Math.floor(botTime) === 0) {
-  //       clearInterval(BotTimer);
-  //     }
-  //     return () => {
-  //       clearInterval(BotTimer);
-  //     };
-  //   }
-  // }, [botTime, opponentReady]);
   useEffect(() => {
     if (opponentReady) {
       clearInterval(PlayerTimer);
@@ -477,11 +464,13 @@ function SinglePlayer() {
       <Toaster />
 
       <header className="fixed top-0 flex w-full items-center justify-between z-[2]">
-        <img
-          className="absolute top-0 -z-[1] h-full w-full"
-          src={GameHeader}
-          alt=""
-        />
+        {!isDesktop() ? (
+          <img
+            className="absolute top-0 -z-[1] h-full w-full"
+            src={GameHeader}
+            alt=""
+          />
+        ) : null}
         {startGame ? (
           <div className="flex items-center gap-5">
             <img
@@ -527,7 +516,7 @@ function SinglePlayer() {
         ) : null}
         {!startGame && !botShipsPlacement ? (
           <div className="flex flex-col gap-1.5 p-4">
-            {!window.matchMedia("(min-device-width : 769px)").matches ? (
+            {!isDesktop() ? (
               <>
                 <h2 className="funky-font text-3xl">
                   Deploy <br />
@@ -594,6 +583,7 @@ function SinglePlayer() {
                 playerSunkShipsCoordinates={playerSunkShipsCoordinates}
                 cellAnimationStatus={cellAnimationStatus}
                 setCellAnimationStatus={setCellAnimationStatus}
+                setPlayerTime={setPlayerTime}
               />
             ) : null}
             {botShipsPlacement ? (
@@ -629,25 +619,16 @@ function SinglePlayer() {
             </div>
           </div>
         ) : null}
-        {/* <div id="bot-time">
-          <div
-            style={{
-              height: botTime === 0 ? "0%" : `${100 - botTime * 10}%`,
-              width: "100%",
-              background: "white",
-              transition: "height 1s ease-in",
-              transform: "rotate(180deg)",
-            }}
-          ></div>
-        </div> */}
       </section>
 
       <footer className="fixed bottom-0 w-full z-[2]">
-        <img
-          className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
-          src={GameFooter}
-          alt=""
-        />
+        {!isDesktop() ? (
+          <img
+            className="absolute top-0 -z-[1] h-full w-full object-cover object-top"
+            src={GameFooter}
+            alt=""
+          />
+        ) : null}
         <div className="flex h-full items-center justify-end gap-5">
           {opponentReady ? (
             <span className="funky-font text-xl">{currentScore?.bot}</span>

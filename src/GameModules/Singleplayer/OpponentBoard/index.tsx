@@ -158,6 +158,7 @@ function OpponentBoard(props: any) {
         dispatch(setCellAnimationPhase({ cell: cell, status: "STOP" }));
         props.setPlayerReady(true);
         props.setOpponentReady(false);
+        props.setPlayerTime(10);
       });
     } else {
       setOpponentCellStatus((prev: any) => ({ ...prev, [cell]: "MISS" }));

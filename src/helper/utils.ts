@@ -105,3 +105,7 @@ export {
   sendEndGameStats,
   checkValidStartIndex,
 };
+
+export const isDesktop = () => {
+  return window.matchMedia("(min-device-width : 769px)").matches;
+};

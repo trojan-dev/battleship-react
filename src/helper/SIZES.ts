@@ -17,7 +17,7 @@ function calculateCellStyle() {
     _cellStyle = `grid grid-cols-[repeat(9,40px)] auto-rows-[40px] gap-1`;
   }
   if (window.matchMedia("(min-device-width : 769px)").matches) {
-    _cellStyle = `grid grid-cols-[repeat(9,45px)] auto-rows-[45px] gap-1`;
+    _cellStyle = `grid grid-cols-[repeat(9,42px)] auto-rows-[42px] gap-1`;
   }
   return _cellStyle;
 }
@@ -39,7 +39,7 @@ function calculateCellSize() {
     _cellSize = 40;
   }
   if (window.matchMedia("(min-device-width : 769px)").matches) {
-    _cellSize = 45;
+    _cellSize = 42;
   }
 
   return _cellSize;
@@ -63,7 +63,7 @@ function calculateShipsContainer() {
     _cellStyle = `max-w-[400px]`;
   }
   if (window.matchMedia("(min-device-width : 769px)").matches) {
-    _cellStyle = `max-w-[450px]`;
+    _cellStyle = `max-w-[420px]`;
   }
   return _cellStyle;
 }
